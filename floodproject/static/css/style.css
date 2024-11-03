@@ -1,4 +1,3 @@
-/* General Styles */
 * {
     margin: 0;
     padding: 0;
@@ -6,11 +5,6 @@
     font-family: Arial, sans-serif;
 }
 
-body {
-    background-color: #f9f9f9;
-    color: #333;
-    line-height: 1.6;
-}
 
 /* Header */
 .header {
@@ -25,9 +19,6 @@ body {
     justify-content: space-between;
 }
 
-.logo {
-    height: 20px;
-}
 
 .main-nav ul {
     list-style: none;
@@ -40,30 +31,6 @@ body {
     text-decoration: none;
 }
 
-.search-lang {
-    display: flex;
-    gap: 10px;
-}
-
-.lang-btn, .search-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-/* Breadcrumb */
-.breadcrumb {
-    padding: 10px 20px;
-    font-size: 0.9em;
-    background-color: #e0e0e0;
-}
-
-.breadcrumb a {
-    color: #003366;
-    text-decoration: none;
-}
 
 /* Main Content */
 .main-content {
@@ -71,29 +38,6 @@ body {
     padding: 20px;
     max-width: 1200px;
     margin: auto;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 25%;
-    padding-right: 20px;
-}
-
-.side-menu {
-    list-style: none;
-}
-
-.side-menu li {
-    margin-bottom: 10px;
-}
-
-.side-menu a {
-    text-decoration: none;
-    color: #003366;
-}
-
-.side-menu a:hover {
-    text-decoration: underline;
 }
 
 /* Content Section */
@@ -105,27 +49,4 @@ body {
     font-size: 1.8em;
     color: #003366;
     margin-bottom: 20px;
-}
-
-.content p {
-    margin-bottom: 10px;
-}
-
-.content a {
-    color: #003366;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.content a:hover {
-    text-decoration: underline;
-}
-
-/* Download Links */
-.content a[href$=".pdf"]::before {
-    content: "📄 ";
-}
-
-.content a[href$=".zip"]::before {
-    content: "📁 ";
 }

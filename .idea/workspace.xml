@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="Created Documentation.md">
-      <change afterPath="$PROJECT_DIR$/floodproject/static/css/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/floodproject/templates/main.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40__Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40__Changes_1.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AFS_Group1/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/AFS_Group1/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/main.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/static/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/static/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/templates/main.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,8 +159,8 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AFS_Group1$asgi.coverage" NAME="asgi Coverage Results" MODIFIED="1730485644661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
     <SUITE FILE_PATH="coverage/AFS_Group1$urls.coverage" NAME="urls Coverage Results" MODIFIED="1730485652573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$manage.coverage" NAME="manage Coverage Results" MODIFIED="1730485616409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AFS_Group1$wsgi.coverage" NAME="wsgi Coverage Results" MODIFIED="1730485634120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
     <SUITE FILE_PATH="coverage/AFS_Group1$settings.coverage" NAME="settings Coverage Results" MODIFIED="1730485649269" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$manage.coverage" NAME="manage Coverage Results" MODIFIED="1730641269744" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
