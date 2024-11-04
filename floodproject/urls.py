@@ -5,4 +5,7 @@ from . import views
 #basically for pathing and rendering different templates
 urlpatterns = [
     path("", views.index, name="main"),
+    path("report/", views.report, name="report"),
+    path("login/", views.login, name="login"),
+    path("register/", views.register, name="register")
 ]
