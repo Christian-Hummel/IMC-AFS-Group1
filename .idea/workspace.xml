@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/floodproject/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/templates/main.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/floodproject/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/templates/register.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
