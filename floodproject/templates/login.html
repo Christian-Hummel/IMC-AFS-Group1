@@ -34,7 +34,6 @@
         <div class="card p-4" style="width: 100%; max-width: 400px;">
             <h2 class="text-center mb-4">Login</h2>
             <form method="post" action="{% url 'login' %}"> <!-- Backend URL needed here -->
-                {% csrf_token %} <!-- CSRF token for backend security, required for Django -->
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
