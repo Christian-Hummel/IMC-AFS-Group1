@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="../static/css/layout.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -30,14 +31,13 @@
         </div>
     </nav>
 
+    <div class="blue-line"></div>
+
+
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="card p-4" style="width: 100%; max-width: 400px;">
-            <h2 class="text-center mb-4">Register</h2>
+            <h2 class="text-center mb-4">Login</h2>
             <form method="post" action="{% url 'login' %}"> <!-- Backend URL here -->
-                <div class="mb-3">
-                    <label for="name" class="form-label">Your Name</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
-                </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
@@ -46,15 +46,10 @@
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Repeat Password</label>
-                    <input type="password" class="form-control" id="2nd_password" name="2nd_password" placeholder="Enter your password again" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-cbmwSD7PvBRHJbA0QeRYfvsIw1OkPYM2Ij+WH1DRuPTxxD9xCV8MM3XbX0djfD0i" crossorigin="anonymous"></script>
 </body>
 </html>
