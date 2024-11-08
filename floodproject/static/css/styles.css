@@ -1,0 +1,53 @@
+
+
+
+
+/* size controls for base map layer*/
+#mapid{
+    height: 75vh;
+    width: 75vw;
+}
+
+
+body {
+    letter-spacing: .011rem;
+    word-break: break-word;
+}
+
+body {
+    margin: 0;
+    font-family: "Source Sans Pro", Arial, sans-serif;
+    font-size: 1.0625rem;
+    font-weight: 400;
+    line-height: 1.765;
+    color: #000;
+    text-align: left;
+    background-color: #fff;
+}
+
+
+h1 {
+    font-size: 24px;
+    color: #0063a3;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Link Style */
+.nav-link:hover {
+    text-decoration: #0063a3;
+}
+
+
+/* Blue Line Below Navbar */
+.blue-line {
+    height: 10px;
+    background-color: #0063a3;
+    width: 100%;
+}
+

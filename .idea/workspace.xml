@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/floodproject/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/floodproject/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/templates/main.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/floodproject/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/templates/register.html" afterDir="false" />
-    </list>
+    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,8 +48,8 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\lisah\OneDrive - IMC\IMC\Semester 3\Software Engineering and Project Management\project-flooding\AFS_Group1\floodproject" />
       <recent name="C:\Users\lisah\OneDrive - IMC\IMC\Semester 3\Software Engineering and Project Management\project-flooding\AFS_Group1" />
+      <recent name="C:\Users\lisah\OneDrive - IMC\IMC\Semester 3\Software Engineering and Project Management\project-flooding\AFS_Group1\floodproject" />
     </key>
   </component>
   <component name="RunManager" selected="Django Server.AFS_Group1">
@@ -124,6 +120,7 @@
       <workItem from="1730485236153" duration="5158000" />
       <workItem from="1730636305793" duration="777000" />
       <workItem from="1730637095595" duration="599000" />
+      <workItem from="1730837911836" duration="7914000" />
     </task>
     <task id="LOCAL-00001" summary="Created Documentation.md">
       <option name="closed" value="true" />
@@ -157,8 +154,8 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AFS_Group1$asgi.coverage" NAME="asgi Coverage Results" MODIFIED="1730485644661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
     <SUITE FILE_PATH="coverage/AFS_Group1$urls.coverage" NAME="urls Coverage Results" MODIFIED="1730485652573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$manage.coverage" NAME="manage Coverage Results" MODIFIED="1730485616409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AFS_Group1$wsgi.coverage" NAME="wsgi Coverage Results" MODIFIED="1730485634120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
     <SUITE FILE_PATH="coverage/AFS_Group1$settings.coverage" NAME="settings Coverage Results" MODIFIED="1730485649269" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$manage.coverage" NAME="manage Coverage Results" MODIFIED="1730641269744" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
