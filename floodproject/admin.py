@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
-from .models import CustomUser
+from .models import CustomUser, Report
 
 class UserAdmin(BaseUserAdmin):
     model = CustomUser
@@ -32,4 +32,5 @@ class UserAdmin(BaseUserAdmin):
 
 # Register the custom user model and unregister the Group model
 admin.site.register(CustomUser, UserAdmin)
+admin.site.register(Report)
 admin.site.unregister(Group)
