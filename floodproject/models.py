@@ -39,20 +39,33 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Report(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
-    # x_coordinate = models.CharField(max_length=100)
-    # y_coordinate = models.CharField(max_length=100)
-    # user_id = models.CharField(max_length=100)
+    x_coordinate = models.CharField(max_length=100,default=1)
+    y_coordinate = models.CharField(max_length=100,default=2)
+    user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,default=1)
 
     def __str__(self):
-        return f"{self.title} - {self.description}"
-        #return f"{self.title} - {self.description} - {self.x_coordinate} - {self.y_coordinate} - {self.user_id}"
+        return f"{self.title} - {self.description} - {self.x_coordinate} - {self.y_coordinate} - {self.user_id}"
 
-# class Task(models.Model):
-#     description = models.CharField(max_length=100)
-#     ManagerID = models.CharField(max_length=100)
-#     AgentID = models.CharField(max_length=100)
-#     AssignedDate = models.CharField(max_length=100)
-#     DueDate = models.CharField(max_length=100)
-#
-#     def __str__(self):
-#         return f"{self.description} - {self.ManagerID} - {self.AgentID} - {self.AssignedDate} - {self.DueDate}"
+class Task(models.Model):
+    description = models.CharField(max_length=100)
+    managerID = models.ForeignKey(CustomUser, related_name='manager', on_delete=models.CASCADE)
+    agentID = models.ForeignKey(CustomUser,related_name='agent', on_delete=models.CASCADE)
+    assignedDate = models.CharField(max_length=100)
+    dueDate = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.description} - {self.managerID} - {self.agentID} - {self.assignedDate} - {self.dueDate}"
+
+class Vote(models.Model):
+    report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    downvote = models.CharField(max_length=100)
+    upvote = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = ('report_id','user_id')
+
+    def __str__(self):
+        return f"{self.report_id} - {self.user_id} - {self.downvote} - {self.upvote}"
+
+
