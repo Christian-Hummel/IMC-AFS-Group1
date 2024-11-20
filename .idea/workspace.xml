@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="" />
+    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,7 +43,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Frontend__Application&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/offic/OneDrive/Dokumente/Uni/Informatics IMC/3.Semester/Software Engineering and Project Management/AFS_Group1&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/lisah/OneDrive - IMC/IMC/Semester 3/Networking II/networking_examples-main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -121,6 +126,14 @@
       <workItem from="1730636305793" duration="777000" />
       <workItem from="1730637095595" duration="599000" />
       <workItem from="1730837911836" duration="7914000" />
+      <workItem from="1731070701865" duration="785000" />
+      <workItem from="1731074151919" duration="1160000" />
+      <workItem from="1731239320676" duration="3659000" />
+      <workItem from="1731441125019" duration="317000" />
+      <workItem from="1731677792267" duration="2055000" />
+      <workItem from="1731848244237" duration="582000" />
+      <workItem from="1731931391370" duration="58000" />
+      <workItem from="1732124935513" duration="425000" />
     </task>
     <task id="LOCAL-00001" summary="Created Documentation.md">
       <option name="closed" value="true" />

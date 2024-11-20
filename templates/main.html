@@ -8,10 +8,10 @@
     {% load static %} <!-- necessary to connect to CSS in django -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}"></head>
     <!-- leaflet css stylesheet below -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <body>
     <!-- scripts for base leaflet map below -->
-    <script src="../static/js/main.js"></script>
+    <script src={% static 'js/main.js' %}></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -37,19 +37,17 @@
     <div class="blue-line"></div>
 
     <div class="container-fluid">
-        <div class="row">
+         <div class="row">
             <!-- Sidebar Section -->
             <div class="col-md-3">
                 <!-- Placeholder  for sidebar content -->
             </div>
 
             <!-- Main Content Section -->
-            <div class="col-md-9">
+            <div class="col-md-9" id="mapid">
                 <!-- Placeholder content for main section (map) -->
             </div>
         </div>
     </div>
-    <!-- map container -->
-    <div id="mapid"></div>
 </body>
 </html>
