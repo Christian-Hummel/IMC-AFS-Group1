@@ -13,5 +13,6 @@ Request calls to get data from the WFS service. The following calls are supporte
     To get detailed information about the water level data's structure (such as the names of the attributes)
 - GetCapabilities
     To get information about the WFS service's capabilities
+    -- Get necessary Data in a compatible format for python parsing - see example in get_features.py
 
 ... many more, I don't know yet
