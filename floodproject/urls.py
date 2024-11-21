@@ -7,5 +7,6 @@ urlpatterns = [
     path("", views.index, name="main"),
     path("report/", views.report, name="report"),
     path("login/", views.login, name="login"),
-    path("register/", views.register, name="register")
+    path("register/", views.register, name="register"),
+    path("water-levels/", views.water_level_data, name='water_level_data'),  # GeoJSON data URL
 ]
