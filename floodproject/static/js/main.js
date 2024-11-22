@@ -9,8 +9,21 @@ document.addEventListener("DOMContentLoaded", function () {
     // Create a layer group to hold the water level data
     var waterLevelLayer = L.layerGroup();
 
+    // fetch information of water levels from main.html
+    levels = fetchWaterLevelData();
+
+    // no data yet
+    reports = fetchReportData();
+
+    var overlayMaps = {
+        "Surface Water Levels": levels,
+        "Reports": reports
+    };
+
+    var layerControl = L.control.layers(null,overlayMaps,{collapsed:false}).addTo(autmap);
+
     // Fetch the water level data from the backend and add it to the map
-    fetchWaterLevelData(waterLevelLayer, autmap);
+    // fetchWaterLevelData(waterLevelLayer, autmap);
 
     // Add event listener for the checkbox to toggle water level layer visibility
     setupCheckboxToggle(waterLevelLayer, autmap);
@@ -21,10 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initializeMap() {
 
-    var test1 = L.marker([47.6964, 13.3458]).bindPopup('Test Marker 1')
-        test2 = L.marker([47.6964, 13.3624]).bindPopup('Test Marker 2');
 
-    var info = L.layerGroup([test1, test2])
 
     const map = L.map('mapid', {
         center: [47.6964, 13.3458],
@@ -40,11 +50,7 @@ function initializeMap() {
     console.log("Map initialized");
 
 
-    var overlayMaps = {
-        "Surface Water Levels": info
-    };
 
-    var layerControl = L.control.layers(null,overlayMaps,{collapsed:false}).addTo(map);
     //
     // console.log("Layer Control initialized")
 
@@ -67,17 +73,33 @@ function initializeMap() {
 
 
 
-// this does not work so far (the data is not displayed on the map), but the data is fetched correctly
-function fetchWaterLevelData(waterLevelLayer, autmap) {
-    let watermarks = JSON.parse(document.getElementById('water_json').textContent)
+
+function fetchWaterLevelData() {
+
+    let levels = [];
+
+    let watermarks = JSON.parse(document.getElementById('water_json').textContent);
 
     watermarks.forEach(watermark => {
-        L.marker([watermark.latitude, watermark.longitude]).addTo(waterLevelLayer)
-    })
+        L.marker([watermark.latitude, watermark.longitude]).addTo(levels)
+    });
+
+
+    return levels;
+
+}
+
+// test function with example markers to show functionality with layer control
+function fetchReportData() {
 
 
 
+    var test1 = L.marker([47.6964, 13.3458]).bindPopup('Test Marker 1')
+        test2 = L.marker([47.6964, 13.3624]).bindPopup('Test Marker 2');
 
+    var reports = L.layerGroup([test1, test2])
+
+    return reports;
 
 }
 
