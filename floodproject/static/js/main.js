@@ -15,16 +15,22 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add event listener for the checkbox to toggle water level layer visibility
     setupCheckboxToggle(waterLevelLayer, autmap);
 
-    // ADD water level markers
-    displayWaterLevels(autmap);
+
 });
 
 
 function initializeMap() {
+
+    var test1 = L.marker([47.6964, 13.3458]).bindPopup('Test Marker 1')
+        test2 = L.marker([47.6964, 13.3624]).bindPopup('Test Marker 2');
+
+    var info = L.layerGroup([test1, test2])
+
     const map = L.map('mapid', {
         center: [47.6964, 13.3458],
         zoom: 7,
         minZoom: 7,
+        layers: []
     });
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
@@ -34,11 +40,22 @@ function initializeMap() {
     console.log("Map initialized");
 
 
+    var overlayMaps = {
+        "Surface Water Levels": info
+    };
+
+    var layerControl = L.control.layers(null,overlayMaps,{collapsed:false}).addTo(map);
+    //
+    // console.log("Layer Control initialized")
+
+
+
+
 
     // Test marker (to be removed later)
-    L.marker([47.6964, 13.3458]).addTo(map)
-        .bindPopup("Test Marker")
-        .openPopup();
+    // L.marker([47.6964, 13.3458]).addTo(map)
+    //     .bindPopup("Test Marker")
+    //     .openPopup();
 
 
 
@@ -46,53 +63,22 @@ function initializeMap() {
 }
 
 
-// should add the markers for the water levels, but does not work right now
-function displayWaterLevels(autmap){
 
-    let watermarks = JSON.parse(document.getElementById('water_json').textContent)
-
-    watermarks.forEach(watermark => {
-        L.marker([watermark.latitude, watermark.longitude]).addTo(autmap)
-    })
-
-
-    console.log(watermarks)
-}
 
 
 
 // this does not work so far (the data is not displayed on the map), but the data is fetched correctly
 function fetchWaterLevelData(waterLevelLayer, autmap) {
-    fetch('/water-levels/')
-        .then(response => response.json())
-        .then(data => {
-            console.log("Water level data fetched:", data);
+    let watermarks = JSON.parse(document.getElementById('water_json').textContent)
 
-            // Create GeoJSON layer and add to waterLevelLayer
-            const geoJsonLayer = L.geoJSON(data, {
-                // Create a marker for each feature
-                pointToLayer: function (feature, latlng) { // latlng is the coordinates of the feature
-                    console.log("Adding marker at:", latlng); // Check the latlng for each feature
-                    return L.marker(latlng); // Return the marker
-                },
+    watermarks.forEach(watermark => {
+        L.marker([watermark.latitude, watermark.longitude]).addTo(waterLevelLayer)
+    })
 
-                // Add popup with feature properties
-                onEachFeature: function (feature, layer) {
-                    var infoContent = `
-                        <strong>Messstelle:</strong> ${feature.properties.messstelle} <br>
-                        <strong>Wert:</strong> ${feature.properties.wertw_cm} cm <br>
-                        <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a>
-                    `;
-                    layer.bindPopup(infoContent);
-                }
-            });
 
-            // Add GeoJSON layer to the waterLevelLayer group
-            geoJsonLayer.addTo(waterLevelLayer);
 
-            console.log("GeoJSON data added to layer");
-        })
-        .catch(err => console.error('Error fetching water levels:', err));
+
+
 }
 
 // Sidebar checkbox toggle
