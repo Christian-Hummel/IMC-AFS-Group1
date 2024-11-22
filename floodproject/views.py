@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Report
+from .models import Report, WaterLevel
 
 # Create your views here.
 
@@ -22,7 +22,9 @@ def process_report_entry(request):
 
 
 def index(request):
-    return render(request, "main.html")
+    waterlevels = list(WaterLevel.objects.values('latitude', 'longitude', 'measuring_point', 'value', 'unit'))
+    context = {'waterlevels':waterlevels}
+    return render(request, "main.html", context)
 
 def register(request):
     return render(request, "register.html")
