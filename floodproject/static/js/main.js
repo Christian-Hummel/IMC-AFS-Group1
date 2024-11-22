@@ -32,9 +32,9 @@ function initializeMap() {
     console.log("Map initialized");
 
     // Test marker (to be removed later)
-    L.marker([47.6964, 13.3458]).addTo(map)
-        .bindPopup("Test Marker")
-        .openPopup();
+    // L.marker([47.6964, 13.3458]).addTo(map)
+    //     .bindPopup("Test Marker")
+    //     .openPopup();
 
     return map;
 }
