@@ -40,7 +40,6 @@ function initializeMap() {
 }
 
 
-// this does not work so far (the data is not displayed on the map), but the data is fetched correctly
 function fetchWaterLevelData(waterLevelLayer, autmap) {
     fetch('/water-levels/')
         .then(response => response.json())
@@ -49,20 +48,31 @@ function fetchWaterLevelData(waterLevelLayer, autmap) {
 
             // Create GeoJSON layer and add to waterLevelLayer
             const geoJsonLayer = L.geoJSON(data, {
-                // Create a marker for each feature
-                pointToLayer: function (feature, latlng) { // latlng is the coordinates of the feature
-                    console.log("Adding marker at:", latlng); // Check the latlng for each feature
-                    return L.marker(latlng); // Return the marker
+                pointToLayer: function (feature, latlng) {
+                    // Parse the lon and lat from the feature properties
+                    let lon = parseFloat(feature.properties.lon.replace(",", "."));
+                    let lat = parseFloat(feature.properties.lat.replace(",", "."));
+
+                    if (!isNaN(lon) && !isNaN(lat)) {
+                        console.log("Using parsed coordinates:", { lon, lat });
+                        return L.marker([lat, lon]); // Use the parsed coordinates
+                    } else {
+                        console.warn("Invalid coordinates for feature:", feature);
+                        return null; // Skip invalid markers
+                    }
                 },
 
                 // Add popup with feature properties
                 onEachFeature: function (feature, layer) {
-                    var infoContent = `
-                        <strong>Messstelle:</strong> ${feature.properties.messstelle} <br>
-                        <strong>Wert:</strong> ${feature.properties.wertw_cm} cm <br>
-                        <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a>
-                    `;
-                    layer.bindPopup(infoContent);
+                    if (layer) { // Ensure the layer is valid
+                        var infoContent = `
+                            <strong>Measuring point:</strong> ${feature.properties.messstelle || "N/A"} <br>
+                            <strong>Waters:</strong> ${feature.properties.gewaesser || "N/A"} <br>
+                            <strong>Amount:</strong> ${feature.properties.wert || "N/A"} ${feature.properties.einheit} <br>
+                            <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a>
+                        `;
+                        layer.bindPopup(infoContent);
+                    }
                 }
             });
 
@@ -70,9 +80,14 @@ function fetchWaterLevelData(waterLevelLayer, autmap) {
             geoJsonLayer.addTo(waterLevelLayer);
 
             console.log("GeoJSON data added to layer");
+
+            // Add waterLevelLayer to the map by default (when starting the app)
+            waterLevelLayer.addTo(autmap);
+
         })
         .catch(err => console.error('Error fetching water levels:', err));
 }
+
 
 // Sidebar checkbox toggle
 function setupCheckboxToggle(waterLevelLayer, autmap) {
