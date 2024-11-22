@@ -50,39 +50,40 @@ function initializeMap() {
     console.log("Map initialized");
 
 
-
-    //
-    // console.log("Layer Control initialized")
-
-
-
-
-
-    // Test marker (to be removed later)
-    // L.marker([47.6964, 13.3458]).addTo(map)
-    //     .bindPopup("Test Marker")
-    //     .openPopup();
-
-
-
     return map;
 }
 
 
 
 
-
-
-
 function fetchWaterLevelData() {
 
-    let levels = [];
+    var levels = L.layerGroup();
 
-    let watermarks = JSON.parse(document.getElementById('water_json').textContent);
+
+    // JSON function to parse json data from main.html
+    let watermarks = JSON.parse(document.getElementById('waterlevels_json').textContent);
+
+    // console.log(watermarks[0])
 
     watermarks.forEach(watermark => {
-        L.marker([watermark.latitude, watermark.longitude]).addTo(levels)
+        var lat = watermark.latitude;
+        var lon = watermark.longitude;
+        var location = new L.latLng(lat, lon);
+        var marker = new L.marker(location);
+        marker.addTo(levels)
     });
+
+    var marker1 = L.marker([watermarks[0].latitude, watermarks[0].longitude]);
+
+    var marker2 = L.marker([50, 14]);
+
+
+
+    marker1.addTo(levels);
+
+
+    console.log(levels[0]);
 
 
     return levels;
@@ -97,7 +98,10 @@ function fetchReportData() {
     var test1 = L.marker([47.6964, 13.3458]).bindPopup('Test Marker 1')
         test2 = L.marker([47.6964, 13.3624]).bindPopup('Test Marker 2');
 
-    var reports = L.layerGroup([test1, test2])
+    var reports = L.layerGroup()
+
+    test1.addTo(reports);
+    test2.addTo(reports);
 
     return reports;
 
