@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add event listener for the checkbox to toggle water level layer visibility
     setupCheckboxToggle(waterLevelLayer, autmap);
+
+    // ADD water level markers
+    displayWaterLevels(autmap);
 });
 
 
@@ -30,13 +33,32 @@ function initializeMap() {
 
     console.log("Map initialized");
 
+
+
     // Test marker (to be removed later)
     L.marker([47.6964, 13.3458]).addTo(map)
         .bindPopup("Test Marker")
         .openPopup();
 
+
+
     return map;
 }
+
+
+// should add the markers for the water levels, but does not work right now
+function displayWaterLevels(autmap){
+
+    let watermarks = JSON.parse(document.getElementById('water_json').textContent)
+
+    watermarks.forEach(watermark => {
+        L.marker([watermark.latitude, watermark.longitude]).addTo(autmap)
+    })
+
+
+    console.log(watermarks)
+}
+
 
 
 // this does not work so far (the data is not displayed on the map), but the data is fetched correctly
