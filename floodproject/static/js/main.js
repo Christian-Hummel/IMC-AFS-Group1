@@ -1,5 +1,7 @@
 
-// to see the console.log messages, open the browser console (F12 and go to the console tab)
+// This script is responsible for fetching data from the backend and displaying it on the map.
+// It also handles user interactions, such as toggling the visibility of data layers.
+// To see the console output, open the browser's developer tools (F12) and go to the console tab.
 
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM is fully loaded");
@@ -7,14 +9,66 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the map
     const autmap = initializeMap();
 
-    // Create a layer group to hold the water level data
-    var waterLevelLayer = L.layerGroup();
+    // Create a cluster groups (for aggregating markers) for each data type
+    var waterLevelCluster = L.markerClusterGroup({
+        maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
+        iconCreateFunction: function (cluster) {
+            // Count the number of markers in the cluster
+            var childCount = cluster.getChildCount();
+
+            // Define a base size and scale it based on the child count
+            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
+
+            // Define color based on the number of markers in the cluster
+            var color = '#5fb564'; // Default color
+            if (childCount < 10) {
+                color = '#bccf00';
+            }
+
+            // Return a custom icon for the cluster
+            return L.divIcon({
+                html: `<div style="background-color: ${color}; 
+                    border-radius: 50%; 
+                    height: ${size}px; 
+                    width: ${size}px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    color: white; 
+                    font-weight: bold;
+                    font-size: ${size / 4}px;">
+                        ${childCount}
+                    </div>`,
+                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
+                iconSize: [size, size]
+            });
+        }
+    });
+
+    var reportCluster = L.markerClusterGroup({
+        maxClusterRadius: 40,
+    });
+
+    // ... more cluster groups to be added for other data types (HQ100?,..)
+
+
 
     // Fetch the water level data from the backend and add it to the map
-    fetchWaterLevelData(waterLevelLayer, autmap);
+    fetchWaterLevelData(waterLevelCluster, autmap);
+
+    // Fetch and display report data
+    // fetchReportData(reportCluster, autmap);
+
+    // ... more to be added (HQ100, ...)
+
+
 
     // Add event listener for the checkbox to toggle water level layer visibility
-    setupCheckboxToggle(waterLevelLayer, autmap);
+    //setupCheckboxToggle(waterLevelCluster, autmap);
+
+    // Add event listeners for toggling layers
+    setupCheckboxToggle('toggleWaterLevels', waterLevelCluster, autmap);
+    setupCheckboxToggle('toggleReports', reportCluster, autmap);
 });
 
 
@@ -31,30 +85,23 @@ function initializeMap() {
 
     console.log("Map initialized");
 
-    // Test marker (to be removed later)
-    // L.marker([47.6964, 13.3458]).addTo(map)
-    //     .bindPopup("Test Marker")
-    //     .openPopup();
-
     return map;
 }
 
-
-function fetchWaterLevelData(waterLevelLayer, autmap) {
+function fetchWaterLevelData(waterLevelCluster, autmap) {
     fetch('/water-levels/')
         .then(response => response.json())
         .then(data => {
             console.log("Water level data fetched:", data);
 
-            // Create GeoJSON layer and add to waterLevelLayer
-            const geoJsonLayer = L.geoJSON(data, {
+            // Create GeoJSON layer and add markers to the cluster
+            L.geoJSON(data, {
                 pointToLayer: function (feature, latlng) {
                     // Parse the lon and lat from the feature properties
                     let lon = parseFloat(feature.properties.lon.replace(",", "."));
                     let lat = parseFloat(feature.properties.lat.replace(",", "."));
 
-                    if (!isNaN(lon) && !isNaN(lat)) {
-                        console.log("Using parsed coordinates:", { lon, lat });
+                    if (!isNaN(lon) && !isNaN(lat)) { // Check if coordinates are valid
                         return L.marker([lat, lon]); // Use the parsed coordinates
                     } else {
                         console.warn("Invalid coordinates for feature:", feature);
@@ -62,49 +109,43 @@ function fetchWaterLevelData(waterLevelLayer, autmap) {
                     }
                 },
 
-                // Add popup with feature properties
                 onEachFeature: function (feature, layer) {
-                    if (layer) { // Ensure the layer is valid
+                    if (layer) {
                         var infoContent = `
                             <strong>Measuring point:</strong> ${feature.properties.messstelle || "N/A"} <br>
-                            <strong>Waters:</strong> ${feature.properties.gewaesser || "N/A"} <br>
+                            <strong>Water body:</strong> ${feature.properties.gewaesser || "N/A"} <br>
                             <strong>Amount:</strong> ${feature.properties.wert || "N/A"} ${feature.properties.einheit} <br>
+                            <strong>Time:</strong> ${feature.properties.zeitpunkt || "N/A"} <br>
                             <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a>
                         `;
                         layer.bindPopup(infoContent);
                     }
                 }
+            }).eachLayer(function (layer) {
+                waterLevelCluster.addLayer(layer); // Add each marker to the cluster group
             });
 
-            // Add GeoJSON layer to the waterLevelLayer group
-            geoJsonLayer.addTo(waterLevelLayer);
-
-            console.log("GeoJSON data added to layer");
-
-            // Add waterLevelLayer to the map by default (when starting the app)
-            waterLevelLayer.addTo(autmap);
+            // Add cluster layer to the map by default (when starting the app)
+            waterLevelCluster.addTo(autmap);
 
         })
         .catch(err => console.error('Error fetching water levels:', err));
 }
 
+// to be implemented:
+//function fetchReportData(reportCluster, autmap) {}
 
-// Sidebar checkbox toggle
-function setupCheckboxToggle(waterLevelLayer, autmap) {
-    document.getElementById('toggleWaterLevels').addEventListener('change', function (event) {
-        console.log("Checkbox state changed");
 
+// Sidebar toggle
+function setupCheckboxToggle(checkboxId, clusterGroup, map) {
+    document.getElementById(checkboxId).addEventListener('change', function (event) {
         if (event.target.checked) {
-            console.log("Water levels checkbox checked");
-
-            if (!autmap.hasLayer(waterLevelLayer)) {
-                waterLevelLayer.addTo(autmap); // Add the layer group to the map if not already added
+            if (!map.hasLayer(clusterGroup)) {
+                clusterGroup.addTo(map);
             }
         } else {
-            console.log("Water levels checkbox unchecked");
-
-            if (autmap.hasLayer(waterLevelLayer)) {
-                autmap.removeLayer(waterLevelLayer); // Remove the layer group from the map
+            if (map.hasLayer(clusterGroup)) {
+                map.removeLayer(clusterGroup);
             }
         }
     });

@@ -1,14 +1,5 @@
 
 
-
-
-/* size controls for base map layer*/
-#mapid{
-    height: 100vh;
-    width: 75vw;
-}
-
-
 body {
     letter-spacing: .011rem;
     word-break: break-word;
@@ -51,3 +42,7 @@ p {
     width: 100%;
 }
 
+.btn-blue {
+    background-color: #0063a3;
+    color: white;
+}
