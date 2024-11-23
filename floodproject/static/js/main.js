@@ -4,13 +4,13 @@
 // To see the console output, open the browser's developer tools (F12) and go to the console tab.
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("DOM is fully loaded");
 
     // Initialize the map
     const autmap = initializeMap();
 
-    // Create a cluster groups (for aggregating markers) for each data type
-    var waterLevelCluster = L.markerClusterGroup({
+    // Create a cluster groups
+    var CombinedCluster  = L.markerClusterGroup({
+
         maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
         iconCreateFunction: function (cluster) {
             // Count the number of markers in the cluster
@@ -39,36 +39,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     font-size: ${size / 4}px;">
                         ${childCount}
                     </div>`,
-                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
+                className: 'cluster-icon', // can be used for more styling in CSS
                 iconSize: [size, size]
             });
         }
     });
 
-    var reportCluster = L.markerClusterGroup({
-        maxClusterRadius: 40,
-    });
-
-    // ... more cluster groups to be added for other data types (HQ100?,..)
-
 
 
     // Fetch the water level data from the backend and add it to the map
-    fetchWaterLevelData(waterLevelCluster, autmap);
+    fetchWaterLevelData(CombinedCluster, autmap);
 
-    // Fetch and display report data
-    // fetchReportData(reportCluster, autmap);
+    // Fetch and display report data (to be implemented)
+    // fetchReportData(Cluster, autmap);
 
     // ... more to be added (HQ100, ...)
 
 
 
-    // Add event listener for the checkbox to toggle water level layer visibility
-    //setupCheckboxToggle(waterLevelCluster, autmap);
-
-    // Add event listeners for toggling layers
-    setupCheckboxToggle('toggleWaterLevels', waterLevelCluster, autmap);
-    setupCheckboxToggle('toggleReports', reportCluster, autmap);
+    // Add event listeners for toggling visibility of the combined data
+    setupCheckboxToggle('toggleWaterLevels', CombinedCluster, autmap);
+    setupCheckboxToggle('toggleReports', CombinedCluster, autmap);
 });
 
 
@@ -88,7 +79,7 @@ function initializeMap() {
     return map;
 }
 
-function fetchWaterLevelData(waterLevelCluster, autmap) {
+function fetchWaterLevelData(CombinedCluster, autmap) {
     fetch('/water-levels/')
         .then(response => response.json())
         .then(data => {
@@ -122,18 +113,19 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                     }
                 }
             }).eachLayer(function (layer) {
-                waterLevelCluster.addLayer(layer); // Add each marker to the cluster group
+                CombinedCluster .addLayer(layer); // Add each marker to the cluster group
             });
 
             // Add cluster layer to the map by default (when starting the app)
-            waterLevelCluster.addTo(autmap);
+            CombinedCluster.addTo(autmap);
 
         })
         .catch(err => console.error('Error fetching water levels:', err));
 }
 
 // to be implemented:
-//function fetchReportData(reportCluster, autmap) {}
+//function fetchReportData(reportCluster, autmap) {
+// }
 
 
 // Sidebar toggle

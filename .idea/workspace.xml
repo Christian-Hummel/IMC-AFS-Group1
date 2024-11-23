@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/floodproject/static/css/map.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/static/css/map.css" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/static/css/map.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/floodproject/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/static/css/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/floodproject/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/static/js/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/report.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
