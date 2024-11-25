@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.core import serializers
 from .models import Report, WaterLevel
 import requests
+import json
 
 # Create your views here.
 
@@ -25,6 +27,8 @@ def process_report_entry(request):
 def index(request):
     waterlevels = list(WaterLevel.objects.values('latitude', 'longitude', 'measuring_point', 'value', 'unit'))
     context = {'waterlevels':waterlevels}
+
+
     return render(request, "main.html", context)
 
 def register(request):
@@ -46,6 +50,14 @@ def water_level_data(request):
     response = requests.get(wfs_url)
     data = response.json()  # GeoJSON data
 
+
     ################## Space for optional Data processing before sending it to frontend ##################
 
     return JsonResponse(data)  # Return the data as a JSON response to the frontend
+
+def report_data(request):
+
+    reports = serializers.serialize('json', Report.objects.all())
+    reports = json.loads(reports)
+    return JsonResponse(reports,safe=False, status=200)
+
