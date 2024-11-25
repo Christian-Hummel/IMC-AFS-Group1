@@ -45,7 +45,39 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     var reportCluster = L.markerClusterGroup({
-        maxClusterRadius: 40,
+        maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
+        iconCreateFunction: function (cluster) {
+            // Count the number of markers in the cluster
+            var childCount = cluster.getChildCount();
+
+            // Define a base size and scale it based on the child count
+            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
+
+            // Define color based on the number of markers in the cluster
+            var color = '#5fb564'; // Default color
+            if (childCount < 10) {
+                color = '#bccf00';
+            }
+
+            // Return a custom icon for the cluster
+            return L.divIcon({
+                html: `<div style="background-color: ${color}; 
+                    border-radius: 50%; 
+                    height: ${size}px; 
+                    width: ${size}px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    color: white; 
+                    font-weight: bold;
+                    font-size: ${size / 4}px;">
+                        ${childCount}
+                    </div>`,
+                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
+                iconSize: [size, size]
+            });
+        }
+
     });
 
     // ... more cluster groups to be added for other data types (HQ100?,..)
@@ -56,7 +88,11 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchWaterLevelData(waterLevelCluster, autmap);
 
     // Fetch and display report data
-    // fetchReportData(reportCluster, autmap);
+    fetchReportData(reportCluster, autmap);
+
+    console.log("reportCluster", reportCluster)
+
+
 
     // ... more to be added (HQ100, ...)
 
@@ -132,6 +168,52 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
         .catch(err => console.error('Error fetching water levels:', err));
 }
 
+// not working yet
+function fetchReportData(reportCluster, autmap) {
+    fetch('/reports/')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Report data fetched:", data);
+
+            // Create GeoJSON layer and add markers to the cluster
+            L.geoJSON(data, {
+                pointToLayer: function (feature, latlng) {
+                    // Parse the lon and lat from the feature - dict denoted as "fields" in this case
+                    let lon = feature.lon;
+                    let lat = feature.lat;
+
+
+                    if (!isNaN(lon) && !isNaN(lat)) { // Check if coordinates are valid
+                        return L.marker([lat, lon]); // Use the parsed coordinates
+                    } else {
+                        console.warn("Invalid coordinates for feature:", feature);
+                        return null; // Skip invalid markers
+                    }
+                },
+
+                onEachFeature: function (feature, layer) {
+                    if (layer) {
+                        var infoContent = `
+                            <strong>Title:</strong> ${feature.title || "N/A"} <br>
+                            <strong>Description:</strong> ${feature.description || "N/A"} <br>
+                            <strong>User_id:</strong> ${feature.user_id || "N/A"} <br>
+                            <strong>Date:</strong> ${feature.date || "N/A"} <br>
+                            
+                        `;
+                        layer.bindPopup(infoContent);
+                    }
+                }
+            }).eachLayer(function (layer) {
+                reportCluster.addLayer(layer); // Add each marker to the cluster group
+            });
+
+            // Add cluster layer to the map by default (when starting the app)
+            reportCluster.addTo(autmap);
+
+        })
+        .catch(err => console.error('Error fetching report:', err));
+}
+
 
 
 
@@ -169,21 +251,21 @@ function fetchWaterLevelData1() {
 }
 
 // test function with example markers to show functionality with layer control
-function fetchReportData() {
-
-
-
-    var test1 = L.marker([47.6964, 13.3458]).bindPopup('Test Marker 1')
-        test2 = L.marker([47.6964, 13.3624]).bindPopup('Test Marker 2');
-
-    var reports = L.layerGroup()
-
-    test1.addTo(reports);
-    test2.addTo(reports);
-
-    return reports;
-
-}
+// function fetchReportData() {
+//
+//
+//
+//     var test1 = L.marker([47.6964, 13.3458]).bindPopup('Test Marker 1')
+//         test2 = L.marker([47.6964, 13.3624]).bindPopup('Test Marker 2');
+//
+//     var reports = L.layerGroup()
+//
+//     test1.addTo(reports);
+//     test2.addTo(reports);
+//
+//     return reports;
+//
+// }
 
 // Sidebar toggle
 function setupCheckboxToggle(checkboxId, clusterGroup, map) {
