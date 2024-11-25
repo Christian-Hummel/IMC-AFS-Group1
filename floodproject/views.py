@@ -25,11 +25,7 @@ def process_report_entry(request):
 
 
 def index(request):
-    waterlevels = list(WaterLevel.objects.values('latitude', 'longitude', 'measuring_point', 'value', 'unit'))
-    context = {'waterlevels':waterlevels}
-
-
-    return render(request, "main.html", context)
+    return render(request, "main.html")
 
 def register(request):
     return render(request, "register.html")
