@@ -41,7 +41,8 @@ class Report(models.Model):
     description = models.CharField(max_length=100)
     lon = models.FloatField()
     lat = models.FloatField()
-    user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,default=1)
+    #user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,default=1)
+    user_id = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
