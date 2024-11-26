@@ -39,9 +39,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Report(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
-    x_coordinate = models.CharField(max_length=100,default=1)
-    y_coordinate = models.CharField(max_length=100,default=2)
-    user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,default=1)
+    lon = models.FloatField()
+    lat = models.FloatField()
+    #user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,default=1)
+    user_id = models.IntegerField(default=0)
+    date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.title} - {self.description} - {self.x_coordinate} - {self.y_coordinate} - {self.user_id}"
