@@ -15,7 +15,7 @@ def process_report_entry(request):
         title = request.POST.get('title')
         description = request.POST.get('description')
 
-        rep = Report(title=title,description=description)
+        rep = Report(title=title,description=description,lon=1,lat=1,user_id=0)
         rep.save()
 
         return HttpResponse("Data sucessfully inserted!")
