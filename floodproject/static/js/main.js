@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the map
     const autmap = initializeMap();
 
+
+
     // Create a cluster groups (for aggregating markers) for each data type
     var waterLevelCluster = L.markerClusterGroup({
         maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
@@ -98,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchWaterLevelData(waterLevelCluster, autmap);
 
     // Fetch and display report data
-    fetchReportData(reportCluster, autmap);
+    fetchReportData(reportCluster);
 
     // console.log("reportCluster", reportCluster)
 
@@ -181,17 +183,26 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
 }
 
 
-function fetchReportData(reportCluster, autmap) {
+function fetchReportData(reportCluster) {
     fetch('/reports/')
         .then(response => response.json())
         .then(data => {
             console.log("Report data fetched:", data);
             console.log("latitude of first element in array:", data[0].fields.lat);
 
+            // Create variable for custom marker icon
+            var repMarker = L.ExtraMarkers.icon({
+                icon: 'fa-exclamation-triangle',
+                markerColor: 'red',
+                shape: 'square',
+                prefix: 'fa'
+                });
 
             data.forEach(report => {
+
+
                 report_layer = L.layerGroup()
-                marker = L.marker([report.fields.lat, report.fields.lon])
+                marker = L.marker([report.fields.lat, report.fields.lon], {icon:repMarker})
                 marker.addTo(report_layer)
 
 
