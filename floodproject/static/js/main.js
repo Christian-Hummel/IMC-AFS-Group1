@@ -54,9 +54,9 @@ document.addEventListener("DOMContentLoaded", function () {
             var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
 
             // Define color based on the number of markers in the cluster
-            var color = '#5fb564'; // Default color
+            var color = '#ff3300'; // Default color
             if (childCount < 10) {
-                color = '#bccf00';
+                color = '#cc0099';
             }
 
             // Return a custom icon for the cluster
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Fetch and display report data
     fetchReportData(reportCluster, autmap);
 
-    console.log("reportCluster", reportCluster)
+    // console.log("reportCluster", reportCluster)
 
 
 
@@ -129,6 +129,8 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
         .then(response => response.json())
         .then(data => {
             console.log("Water level data fetched:", data);
+
+
 
             // Create GeoJSON layer and add markers to the cluster
             L.geoJSON(data, {
@@ -174,41 +176,32 @@ function fetchReportData(reportCluster, autmap) {
         .then(response => response.json())
         .then(data => {
             console.log("Report data fetched:", data);
-
-            // Create GeoJSON layer and add markers to the cluster
-            L.geoJSON(data, {
-                pointToLayer: function (feature, latlng) {
-                    // Parse the lon and lat from the feature - dict denoted as "fields" in this case
-                    let lon = feature.lon;
-                    let lat = feature.lat;
+            console.log("latitude of first element in array:", data[0].fields.lat);
 
 
-                    if (!isNaN(lon) && !isNaN(lat)) { // Check if coordinates are valid
-                        return L.marker([lat, lon]); // Use the parsed coordinates
-                    } else {
-                        console.warn("Invalid coordinates for feature:", feature);
-                        return null; // Skip invalid markers
-                    }
-                },
+            data.forEach(report => {
+                report_layer = L.layerGroup()
+                marker = L.marker([report.fields.lat, report.fields.lon])
+                marker.addTo(report_layer)
 
-                onEachFeature: function (feature, layer) {
-                    if (layer) {
+
+                // info content for each marker
+
+
+                if (marker) {
                         var infoContent = `
-                            <strong>Title:</strong> ${feature.title || "N/A"} <br>
-                            <strong>Description:</strong> ${feature.description || "N/A"} <br>
-                            <strong>User_id:</strong> ${feature.user_id || "N/A"} <br>
-                            <strong>Date:</strong> ${feature.date || "N/A"} <br>
-                            
+                            <strong>Title:</strong> ${report.fields.title || "N/A"} <br>
+                            <strong>Description:</strong> ${report.fields.description || "N/A"} <br>
+                            <strong>User_id:</strong> ${report.fields.user_id || "N/A"} <br>
+                            <strong>Date:</strong> ${report.fields.date || "N/A"} <br>
                         `;
-                        layer.bindPopup(infoContent);
+                        marker.bindPopup(infoContent);
                     }
-                }
-            }).eachLayer(function (layer) {
-                reportCluster.addLayer(layer); // Add each marker to the cluster group
-            });
 
-            // Add cluster layer to the map by default (when starting the app)
-            reportCluster.addTo(autmap);
+                reportCluster.addLayer(report_layer)
+            })
+
+
 
         })
         .catch(err => console.error('Error fetching report:', err));
@@ -216,56 +209,6 @@ function fetchReportData(reportCluster, autmap) {
 
 
 
-
-
-function fetchWaterLevelData1() {
-
-    var levels = L.layerGroup();
-
-
-    // JSON function to parse json data from main.html
-    let watermarks = JSON.parse(document.getElementById('waterlevels_json').textContent);
-
-    // console.log(watermarks[0])
-    // does not work because wrong coordinates got parsed
-    watermarks.forEach(watermark => {
-        var lat = watermark.latitude;
-        var lon = watermark.longitude;
-        var location = new L.latLng(lat, lon);
-        var marker = new L.marker(location);
-        marker.addTo(levels)
-    });
-
-    var marker1 = L.marker([watermarks[0].latitude, watermarks[0].longitude]);
-
-    var marker2 = L.marker([50, 14]);
-
-    marker1.addTo(levels);
-
-
-    console.log(levels[0]);
-
-
-    return levels;
-
-}
-
-// test function with example markers to show functionality with layer control
-// function fetchReportData() {
-//
-//
-//
-//     var test1 = L.marker([47.6964, 13.3458]).bindPopup('Test Marker 1')
-//         test2 = L.marker([47.6964, 13.3624]).bindPopup('Test Marker 2');
-//
-//     var reports = L.layerGroup()
-//
-//     test1.addTo(reports);
-//     test2.addTo(reports);
-//
-//     return reports;
-//
-// }
 
 // Sidebar toggle
 function setupCheckboxToggle(checkboxId, clusterGroup, map) {
