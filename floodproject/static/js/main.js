@@ -25,6 +25,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 color = '#bccf00';
             }
 
+            // Define a base size and scale it based on the child count
+            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
+
+            // Define color based on the number of markers in the cluster
+            var color = '#5fb564'; // Default color
+            if (childCount < 10) {
+                color = '#bccf00';
+            }
+
             // Return a custom icon for the cluster
             return L.divIcon({
                 html: `<div style="background-color: ${color}; 
@@ -46,7 +55,39 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     var reportCluster = L.markerClusterGroup({
-        maxClusterRadius: 40,
+        maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
+        iconCreateFunction: function (cluster) {
+            // Count the number of markers in the cluster
+            var childCount = cluster.getChildCount();
+
+            // Define a base size and scale it based on the child count
+            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
+
+            // Define color based on the number of markers in the cluster
+            var color = '#ff3300'; // Default color
+            if (childCount < 10) {
+                color = '#cc0099';
+            }
+
+            // Return a custom icon for the cluster
+            return L.divIcon({
+                html: `<div style="background-color: ${color}; 
+                    border-radius: 50%; 
+                    height: ${size}px; 
+                    width: ${size}px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    color: white; 
+                    font-weight: bold;
+                    font-size: ${size / 4}px;">
+                        ${childCount}
+                    </div>`,
+                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
+                iconSize: [size, size]
+            });
+        }
+
     });
 
     // ... more cluster groups to be added for other data types (HQ100?,..)
@@ -57,7 +98,11 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchWaterLevelData(waterLevelCluster, autmap);
 
     // Fetch and display report data
-    // fetchReportData(reportCluster, autmap);
+    fetchReportData(reportCluster, autmap);
+
+    // console.log("reportCluster", reportCluster)
+
+
 
     // ... more to be added (HQ100, ...)
 
@@ -88,11 +133,14 @@ function initializeMap() {
     return map;
 }
 
+
 function fetchWaterLevelData(waterLevelCluster, autmap) {
     fetch('/water-levels/')
         .then(response => response.json())
         .then(data => {
             console.log("Water level data fetched:", data);
+
+
 
             // Create GeoJSON layer and add markers to the cluster
             L.geoJSON(data, {
@@ -132,8 +180,44 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
         .catch(err => console.error('Error fetching water levels:', err));
 }
 
-// to be implemented:
-//function fetchReportData(reportCluster, autmap) {}
+
+function fetchReportData(reportCluster, autmap) {
+    fetch('/reports/')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Report data fetched:", data);
+            console.log("latitude of first element in array:", data[0].fields.lat);
+
+
+            data.forEach(report => {
+                report_layer = L.layerGroup()
+                marker = L.marker([report.fields.lat, report.fields.lon])
+                marker.addTo(report_layer)
+
+
+                // info content for each marker
+
+
+                if (marker) {
+                        var infoContent = `
+                            <strong>Title:</strong> ${report.fields.title || "N/A"} <br>
+                            <strong>Description:</strong> ${report.fields.description || "N/A"} <br>
+                            <strong>User_id:</strong> ${report.fields.user_id || "N/A"} <br>
+                            <strong>Date:</strong> ${report.fields.date || "N/A"} <br>
+                        `;
+                        marker.bindPopup(infoContent);
+                    }
+
+                reportCluster.addLayer(report_layer)
+            })
+
+
+
+        })
+        .catch(err => console.error('Error fetching report:', err));
+}
+
+
 
 
 // Sidebar toggle
