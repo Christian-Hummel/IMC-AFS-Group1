@@ -14,6 +14,13 @@ from geopy.geocoders import Nominatim
 def report(request):
     return render(request,"report.html")
 
+def report_details(request, id):
+
+    report = Report.objects.get(id=id)
+    context = {}
+    context["report"] = report
+    return render(request, "reportdetails.html", context)
+
 def process_report_entry(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -103,8 +110,6 @@ def login(request):
     else:
         return render(request, "login.html")
 
-# def report(request):
-#     return render(request, "report.html")
 
 def water_level_data(request):
     # URL to fetch the water levels in GeoJSON format

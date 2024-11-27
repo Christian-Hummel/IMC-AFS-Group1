@@ -47,7 +47,7 @@ class Report(models.Model):
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.title}"
+        return f"{self.title} - {self.description} - {self.lat} - {self.lon} - {self.user_id}"
 
 class Task(models.Model):
     description = models.CharField(max_length=100)
@@ -57,7 +57,7 @@ class Task(models.Model):
     dueDate = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.description}"
+        return f"{self.description} - {self.managerID} - {self.agentID} - {self.assignedDate} - {self.dueDate}"
 
 class Vote(models.Model):
     report_id = models.ForeignKey(Report, on_delete=models.CASCADE)

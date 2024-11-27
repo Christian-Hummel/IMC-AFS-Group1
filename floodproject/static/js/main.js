@@ -184,6 +184,7 @@ function fetchReportData(reportCluster) {
         .then(data => {
             console.log("Report data fetched:", data);
             console.log("latitude of first element in array:", data[0].fields.lat);
+            console.log("id of first report", data[0].pk);
 
             // Create variable for custom marker icon
             var repMarker = L.ExtraMarkers.icon({
@@ -207,9 +208,8 @@ function fetchReportData(reportCluster) {
                 if (marker) {
                         var infoContent = `
                             <strong>Title:</strong> ${report.fields.title || "N/A"} <br>
-                            <strong>Description:</strong> ${report.fields.description || "N/A"} <br>
-                            <strong>User_id:</strong> ${report.fields.user_id || "N/A"} <br>
-                            <strong>Date:</strong> ${report.fields.date || "N/A"} <br>
+                            <p>Click below to view full report details:</p>
+                            <a href="/report/${report.pk}" target="_blank" class="btn btn-primary">View Details</a>
                         `;
                         marker.bindPopup(infoContent);
                     }
