@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import auth
+from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, WaterLevel
+from .models import Report, WaterLevel, CustomUser
 import requests
 import json
 import geopy
@@ -48,12 +50,60 @@ def index(request):
     return render(request, "main.html")
 
 def register(request):
-    return render(request, "register.html")
+    if request.method == "POST":
+        full_name = request.POST["name"]
+        password = request.POST["password"]
+        password_repeat = request.POST["password_repeat"]
+        email = request.POST["email"]
+        gender = request.POST["gender"]
+        first_name = full_name.split()[0]
+        last_name = full_name.split()[1]
+        
+        
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, 'Email already exists.')
+            return redirect('register')
+        
+        elif password != password_repeat:
+            messages.info(request, "Passwords do not match!")
+            return redirect("register")
+        
+        user = CustomUser.objects.create_user(
+            email = email,
+            first_name= first_name,  
+            last_name= last_name,
+            gender = gender,
+            password=password,
+        )
+
+        user.set_password(password)
+        user.save()
+
+        messages.success(request, 'Registration successful!')
+        return redirect('login') 
+
+    else:
+        return render(request, "register.html")
 
 def login(request):
-    return render(request, "login.html")
+    if request.method == "POST":
+        email= request.POST["email"]
+        password = request.POST["password"]
 
-# def report(request):
+        user = auth.authenticate(request, email = email, password=password)
+
+        if user:
+            auth.login(request, user)
+            return redirect("main")
+        
+        else:
+            messages.info(request, "Invalid Email or Password")
+            return redirect("login")
+    
+    else:
+        return render(request, "login.html")
+    
+# def report(request):  
 #     return render(request, "report.html")
 
 def water_level_data(request):

@@ -44,6 +44,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'register' %}">Register</a>
                     </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -86,5 +91,12 @@
             </div>
         </div>
     </div>
+    <footer>
+        <div class="container-fluid">
+            {% if user.is_authenticated %}
+                <p>Hello {{ user.first_name }}, your role is {{ user.role}}</p>
+            {% endif %}
+        </div>
+    </footer>
 </body>
 </html>
