@@ -4,13 +4,15 @@
 // To see the console output, open the browser's developer tools (F12) and go to the console tab.
 
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOM is fully loaded");
 
     // Initialize the map
     const autmap = initializeMap();
 
-    // Create a cluster groups
-    var CombinedCluster  = L.markerClusterGroup({
 
+
+    // Create a cluster groups (for aggregating markers) for each data type
+    var waterLevelCluster = L.markerClusterGroup({
         maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
         iconCreateFunction: function (cluster) {
             // Count the number of markers in the cluster
@@ -19,10 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
             // Define a base size and scale it based on the child count
             var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
 
+
+            // Define a base size and scale it based on the child count
+            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
+
             // Define color based on the number of markers in the cluster
-            var color = '#5fb564'; // Default color
+            var color = '#4d9553'; // Default color
             if (childCount < 10) {
-                color = '#bccf00';
+                color = '#ffd400';
             }
 
             // Return a custom icon for the cluster
@@ -39,27 +45,72 @@ document.addEventListener("DOMContentLoaded", function () {
                     font-size: ${size / 4}px;">
                         ${childCount}
                     </div>`,
-                className: 'cluster-icon', // can be used for more styling in CSS
+                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
                 iconSize: [size, size]
             });
         }
     });
 
+    var reportCluster = L.markerClusterGroup({
+        maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
+        iconCreateFunction: function (cluster) {
+            // Count the number of markers in the cluster
+            var childCount = cluster.getChildCount();
+
+            // Define a base size and scale it based on the child count
+            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
+
+            // Define color based on the number of markers in the cluster
+            var color = '#ca0237'; // Default color
+            if (childCount < 10) {
+                color = '#f59c00';
+            }
+
+            // Return a custom icon for the cluster
+            return L.divIcon({
+                html: `<div style="background-color: ${color}; 
+                    border-radius: 50%; 
+                    height: ${size}px; 
+                    width: ${size}px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    color: white; 
+                    font-weight: bold;
+                    font-size: ${size / 4}px;">
+                        ${childCount}
+                    </div>`,
+                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
+                iconSize: [size, size]
+            });
+        }
+
+    });
+
+    // ... more cluster groups to be added for other data types (HQ100?,..)
+
 
 
     // Fetch the water level data from the backend and add it to the map
-    fetchWaterLevelData(CombinedCluster, autmap);
+    fetchWaterLevelData(waterLevelCluster, autmap);
 
-    // Fetch and display report data (to be implemented)
-    // fetchReportData(Cluster, autmap);
+    // Fetch and display report data
+    fetchReportData(reportCluster);
+
+    // console.log("reportCluster", reportCluster)
+
+
 
     // ... more to be added (HQ100, ...)
 
 
 
-    // Add event listeners for toggling visibility of the combined data
-    setupCheckboxToggle('toggleWaterLevels', CombinedCluster, autmap);
-    setupCheckboxToggle('toggleReports', CombinedCluster, autmap);
+    // Add event listener for the checkbox to toggle water level layer visibility
+    //setupCheckboxToggle(waterLevelCluster, autmap);
+
+    // Add event listeners for toggling layers
+    setupCheckboxToggle('toggleWaterLevels', waterLevelCluster, autmap);
+    setupCheckboxToggle('toggleReports', reportCluster, autmap);
 });
 
 
@@ -79,11 +130,14 @@ function initializeMap() {
     return map;
 }
 
-function fetchWaterLevelData(CombinedCluster, autmap) {
+
+function fetchWaterLevelData(waterLevelCluster, autmap) {
     fetch('/water-levels/')
         .then(response => response.json())
         .then(data => {
             console.log("Water level data fetched:", data);
+
+
 
             // Create GeoJSON layer and add markers to the cluster
             L.geoJSON(data, {
@@ -113,19 +167,63 @@ function fetchWaterLevelData(CombinedCluster, autmap) {
                     }
                 }
             }).eachLayer(function (layer) {
-                CombinedCluster .addLayer(layer); // Add each marker to the cluster group
+                waterLevelCluster.addLayer(layer); // Add each marker to the cluster group
             });
 
             // Add cluster layer to the map by default (when starting the app)
-            CombinedCluster.addTo(autmap);
+            waterLevelCluster.addTo(autmap);
 
         })
         .catch(err => console.error('Error fetching water levels:', err));
 }
 
-// to be implemented:
-//function fetchReportData(reportCluster, autmap) {
-// }
+
+function fetchReportData(reportCluster) {
+    fetch('/reports/')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Report data fetched:", data);
+            console.log("latitude of first element in array:", data[0].fields.lat);
+
+            // Create variable for custom marker icon
+            var repMarker = L.ExtraMarkers.icon({
+                icon: 'fa-exclamation-triangle',
+                markerColor: '#ca0237',
+                shape: 'square',
+                prefix: 'fa'
+                });
+
+            data.forEach(report => {
+
+
+                report_layer = L.layerGroup()
+                marker = L.marker([report.fields.lat, report.fields.lon], {icon:repMarker})
+                marker.addTo(report_layer)
+
+
+                // info content for each marker
+
+
+                if (marker) {
+                        var infoContent = `
+                            <strong>Title:</strong> ${report.fields.title || "N/A"} <br>
+                            <strong>Description:</strong> ${report.fields.description || "N/A"} <br>
+                            <strong>User_id:</strong> ${report.fields.user_id || "N/A"} <br>
+                            <strong>Date:</strong> ${report.fields.date || "N/A"} <br>
+                        `;
+                        marker.bindPopup(infoContent);
+                    }
+
+                reportCluster.addLayer(report_layer)
+            })
+
+
+
+        })
+        .catch(err => console.error('Error fetching report:', err));
+}
+
+
 
 
 // Sidebar toggle
