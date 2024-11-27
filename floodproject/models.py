@@ -46,7 +46,7 @@ class Report(models.Model):
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.title} - {self.description} - {self.x_coordinate} - {self.y_coordinate} - {self.user_id}"
+        return f"{self.title} - {self.description} - {self.lat} - {self.lon} - {self.user_id}"
 
 class Task(models.Model):
     description = models.CharField(max_length=100)
