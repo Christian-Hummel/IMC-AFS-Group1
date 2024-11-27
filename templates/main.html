@@ -5,15 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flooding map</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> <!-- for icons -->
     {% load static %} <!-- necessary to connect to CSS in django -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}"></head>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/map.css' %}">
+    <link rel="stylesheet" href="{% static 'css/leaflet.extra-markers.min.css' %}"> <!-- additional icons -->
+</head>
+
     <!-- leaflet css stylesheet below -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <body>
+
     <!-- scripts for base leaflet map below -->
-    <script src="../static/js/main.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <script src={% static 'js/main.js' %}></script>
+
+    <!-- script for additonal icons -->
+
+    <script src={% static 'js/leaflet.extra-markers.min.js' %}></script>
+
+    <!-- Leaflet.markercluster script below for map clusters-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'main' %}">Home</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,13 +40,15 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'report' %}">Create new report</a> <!-- Backend URL here -->
+                    <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'report' %}">
+                        <i class="fas fa-plus me-2"></i> New Report
+                    </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a> <!-- Backend URL here -->
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a> <!-- Backend URL here -->
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
                     </li>
                 </ul>
             </div>
@@ -37,19 +57,40 @@
     <div class="blue-line"></div>
 
     <div class="container-fluid">
-        <div class="row">
+         <div class="row">
+
             <!-- Sidebar Section -->
-            <div class="col-md-3">
-                <!-- Placeholder  for sidebar content -->
+            <div class="col-md-3" id="sidebar">
+                <label>
+                    <input type="checkbox" id="toggleWaterLevels" checked/> Show Current Water Levels
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="toggleReports"/> Show Reports
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="toggleHQ300"/> Show HQ300
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="toggleHQ100"/> Show HQ100
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" id="toggleAllTimeHighs"/> Show All Time Highs
+                </label>
+                <br>
+
+
+
             </div>
 
             <!-- Main Content Section -->
-            <div class="col-md-9">
+            <div class="col-md-9" id="mapid">
                 <!-- Placeholder content for main section (map) -->
             </div>
         </div>
     </div>
-    <!-- map container -->
-    <div id="mapid"></div>
 </body>
 </html>

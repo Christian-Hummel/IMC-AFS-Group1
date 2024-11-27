@@ -31,13 +31,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+    'floodproject',        
+    'django.contrib.admin',    
+    'django.contrib.auth',     
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "floodproject",
 ]
 
 MIDDLEWARE = [
@@ -127,3 +127,9 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'floodproject.CustomUser'
+
+dependencies = [
+    ('auth', '0001_initial'),
+]
