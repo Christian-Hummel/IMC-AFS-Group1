@@ -21,19 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
             // Define a base size and scale it based on the child count
             var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
 
-            // Define color based on the number of markers in the cluster
-            var color = '#5fb564'; // Default color
-            if (childCount < 10) {
-                color = '#bccf00';
-            }
 
             // Define a base size and scale it based on the child count
             var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
 
             // Define color based on the number of markers in the cluster
-            var color = '#5fb564'; // Default color
+            var color = '#4d9553'; // Default color
             if (childCount < 10) {
-                color = '#bccf00';
+                color = '#ffd400';
             }
 
             // Return a custom icon for the cluster
@@ -66,9 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
             var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
 
             // Define color based on the number of markers in the cluster
-            var color = '#ff3300'; // Default color
+            var color = '#ca0237'; // Default color
             if (childCount < 10) {
-                color = '#cc0099';
+                color = '#f59c00';
             }
 
             // Return a custom icon for the cluster
@@ -193,7 +188,7 @@ function fetchReportData(reportCluster) {
             // Create variable for custom marker icon
             var repMarker = L.ExtraMarkers.icon({
                 icon: 'fa-exclamation-triangle',
-                markerColor: 'red',
+                markerColor: '#ca0237',
                 shape: 'square',
                 prefix: 'fa'
                 });
