@@ -4,6 +4,8 @@ from django.core import serializers
 from .models import Report, WaterLevel
 import requests
 import json
+import geopy
+from geopy.geocoders import Nominatim
 
 # Create your views here.
 
@@ -14,9 +16,27 @@ def process_report_entry(request):
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
+        location = request.POST.get('location')
 
-        rep = Report(title=title,description=description,lon=1,lat=1,user_id=0)
-        rep.save()
+        if location:
+
+            # calling the Nominatim tool and create Nominatim class
+            loc = Nominatim(user_agent="Geopy Library")
+
+            # entering the location name
+            getLoc = loc.geocode(location)
+
+            # printing address
+            log = getLoc.longitude
+            lat = getLoc.latitude
+
+            rep = Report(title=title, description=description, lon=log, lat=lat, user_id=0)
+            rep.save()
+
+        else:
+
+            rep = Report(title=title,description=description, lon=1, lat=1, user_id=0)
+            rep.save()
 
         return HttpResponse("Data sucessfully inserted!")
     else:
