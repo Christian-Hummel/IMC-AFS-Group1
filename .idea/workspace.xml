@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="Changed Report.html, Data from Created Reports now get saved in Database">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/floodproject/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/floodproject/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="Implemented Location Transformation into Longitude and Latitude" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -133,7 +129,7 @@
       <workItem from="1732613483268" duration="385000" />
       <workItem from="1732644350380" duration="3409000" />
       <workItem from="1732648084474" duration="784000" />
-      <workItem from="1732694692338" duration="1914000" />
+      <workItem from="1732694692338" duration="2231000" />
     </task>
     <task id="LOCAL-00001" summary="Created Documentation.md">
       <option name="closed" value="true" />
@@ -167,7 +163,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732648233714</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Implemented Location Transformation into Longitude and Latitude">
+      <option name="closed" value="true" />
+      <created>1732696884128</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732696884128</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -189,7 +193,8 @@
     <MESSAGE value="Implemented basic Tables" />
     <MESSAGE value="Created Superuser" />
     <MESSAGE value="Changed Report.html, Data from Created Reports now get saved in Database" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed Report.html, Data from Created Reports now get saved in Database" />
+    <MESSAGE value="Implemented Location Transformation into Longitude and Latitude" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented Location Transformation into Longitude and Latitude" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AFS_Group1$asgi.coverage" NAME="asgi Coverage Results" MODIFIED="1730485644661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
