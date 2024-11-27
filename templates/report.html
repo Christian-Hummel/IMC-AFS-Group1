@@ -43,28 +43,19 @@
     <br>
     <div class="container-fluid">
         <form method="post" action="{% url 'process-report-entry' %}">
+            {% csrf_token %}
         <div class="row">
             <div class="col-md-6">
                 <div class="container-fluid "style="margin-top: 10%">
-
-
- <!-- already known through registering: -->
-                 <!--    <form action="/action_page.php">
-                        <label for="gender">Choose your Gender: </label>
-                        <select class="" name="genders" id="genders">
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                        </form>
-                        <br>
-                    <input type="text" class="form-control" id="first_name" placeholder="First Name" style="width: 80%;">
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Title "style="width: 80%;">
                     <br>
-                    <input type="text" class="form-control" id="last_name" placeholder="Last Name" style="width: 80%;">  
-                    <br> -->
 
-
-                    <input type="text" class="form-control" id="location" placeholder="Location "style="width: 80%;">
+                    <input type="text" class="form-control" id="location" name="location" placeholder="Location "style="width: 80%;">
                     <br>
+
+                    <input type="text" class="form-control" id="description" name="description" placeholder="Description "style="width: 80%;">
+                    <br>
+
 
                     <!-- backend for picture upload needed -->
                     <input type="text" class="form-control" id="picture" placeholder="Picture description" style="width: 80%;">
@@ -77,24 +68,6 @@
                     <button type="submit">Submit Information</button>
                 </div>
 
-            </div>
-            <div class="col-md-6">
-{#                #<form method="post" action="{% url 'process-report-entry' %}">#}
-{#                    {% csrf_token %}#}
-{#                    <label for="title">Title:</label>#}
-{#                    <input type="text" name="title" required>#}
-{#                    <br>#}
-{#                    <label for="description">Description:</label>#}
-{#                    <input type="text" name="description" required>#}
-{#                    <br>#}
-{#                    <button type="submit">Submit</button>#}
-{#                </form>#}
-{#                <label for="description"></label>#}
-{#                <textarea name="description" id="description" cols="60" rows="10" style="border-radius: 20px; border-width: 3px; border-style: groove;" placeholder="  Report Description.."></textarea>#}
-{#    #}
-{#                <div class="d-grid gap-2">#}
-{#                    <button class="btn btn-primary" type="button" style="width: 70%; margin-left: 3%; margin-top: 2%;">Submit report</button>#}
-{#                </div>#}
             </div>
         </div>
         </form>

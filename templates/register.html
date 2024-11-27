@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Register Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> <!-- for icons -->
     {% load static %}
@@ -40,35 +40,37 @@
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="card p-4" style="width: 100%; max-width: 400px;">
             <h2 class="text-center mb-4">Register</h2>
-            <form method="post" action="{% url 'login' %}"> <!-- Backend URL here -->
+            <form method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                
                 <div class="mb-3">
-                    <form action="/action_page.php">
-                        <label for="gender">Choose your Gender: </label>
-                        <select class="" name="genders" id="genders">
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                        </select>
-                    </form>
+                    <label for="gender">Choose your Gender:</label>
+                    <select class="form-control" name="gender" id="gender" required>
+                        <option value="Male" {% if request.POST.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if request.POST.gender == 'Female' %}selected{% endif %}>Female</option>
+                    </select>
                 </div>
+            
                 <div class="mb-3">
                     <label for="name" class="form-label">Your Name</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" value="{{ request.POST.name|default_if_none:'' }}" required>
                 </div>
+            
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ request.POST.email|default_if_none:'' }}" required>
                 </div>
+            
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
                 </div>
+            
                 <div class="mb-3">
-                    <label for="password" class="form-label">Repeat Password</label>
-                    <input type="password" class="form-control" id="2nd_password" name="2nd_password" placeholder="Enter your password again" required>
+                    <label for="password_repeat" class="form-label">Repeat Password</label>
+                    <input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter your password again" required>
                 </div>
+            
                 <button type="submit" class="btn btn-primary w-100">Register</button>
             </form>
-        </div>
-    </div>
-</body>
-</html>
+            

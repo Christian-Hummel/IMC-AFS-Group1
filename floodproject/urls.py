@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.views import LogoutView
 from . import views
 
 #urlpatterns is a variable that is used for the urls.py in the Quiz_Game folder 
@@ -10,5 +11,6 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path('report-entry/',views.process_report_entry,name="process-report-entry"),
     path("water-levels/", views.water_level_data, name='water_level_data'), # GeoJSON data URL
-    path("reports/", views.report_data, name='report_data')
+    path("reports/", views.report_data, name='report_data'),
+    path("logout/", LogoutView.as_view(next_page="main"), name="logout"),
 ]
