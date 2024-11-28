@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, WaterLevel
+from .models import Report
 import requests
 import json
 
@@ -9,6 +9,13 @@ import json
 
 def report(request):
     return render(request,"report.html")
+
+def report_details(request, id):
+
+    report = Report.objects.get(id=id)
+    context = {}
+    context["report"] = report
+    return render(request, "reportdetails.html", context)
 
 def process_report_entry(request):
     if request.method == 'POST':
