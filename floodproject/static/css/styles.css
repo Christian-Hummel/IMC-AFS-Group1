@@ -46,3 +46,18 @@ p {
     background-color: #0063a3;
     color: white;
 }
+
+.btn-logout {
+    padding-top: 10px;
+    background-color: #0063a3;
+    color: white;
+
+}
+
+.report-container {
+    margin: auto;
+    margin-top: 100px;
+    width: 50%;
+    border: 3px solid black;
+    padding: 10px;
+}
