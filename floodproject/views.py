@@ -14,16 +14,12 @@ from geopy.geocoders import Nominatim
 def report(request):
     return render(request, "report.html")
 
-
 def report_details(request, id):
+
     report = Report.objects.get(id=id)
     context = {}
     context["report"] = report
     return render(request, "reportdetails.html", context)
-
-
-from django.shortcuts import render
-
 
 def process_report_entry(request):
     if request.method == 'POST':

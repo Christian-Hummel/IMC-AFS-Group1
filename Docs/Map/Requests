@@ -1,0 +1,18 @@
+
+To access the API, we need to use the WFS (Web Feature Service) protocol.
+This protocol is used to request geographical features across the web using platform-independent calls.
+The WFS protocol is based on the GML (Geography Markup Language) standard, which is an XML-based format for encoding geographical data:
+
+
+using http://geo.irceline.be/wfs we can access the API to get all our necessary data.
+    for example see the following link: http://geo.irceline.be/wfs?service=WFS&request=GetCapabilities
+
+
+Request calls to get data from the WFS service. The following calls are supported:
+- DescribeFeatureType
+    To get detailed information about the water level data's structure (such as the names of the attributes)
+- GetCapabilities
+    To get information about the WFS service's capabilities
+    -- Get necessary Data in a compatible format for python parsing - see example in get_features.py
+
+... many more, I don't know yet
