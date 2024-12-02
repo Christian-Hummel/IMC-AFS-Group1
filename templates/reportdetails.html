@@ -13,6 +13,10 @@
     <p><strong>Description:</strong> {{ report.description }}</p>
     <p><strong>Location:</strong> [{{ report.lat }}, {{ report.lon }}]</p>
     <p><strong>Date:</strong> {{ report.date }}</p>
+{#    {% if report.image %}#}
+    <p> {{ report.picture }}</p>
+    <p> Picture Description:<strong></strong> {{ report.picture_description }}</p>
+{#    {% endif %}#}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
 </div>
 
