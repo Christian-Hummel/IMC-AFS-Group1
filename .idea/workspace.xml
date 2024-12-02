@@ -6,8 +6,20 @@
   <component name="ChangeListManager">
     <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="updated xml files">
       <change beforePath="$PROJECT_DIR$/.idea/AFS_Group1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AFS_Group1.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_40__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_52__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_03_11_2024_13_52__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_05_11_2024_23_42__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_05_11_2024_23_42__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AFS_Group1/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/AFS_Group1/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/report.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,18 +211,19 @@
     <MESSAGE value="Created Superuser" />
     <MESSAGE value="Changed Report.html, Data from Created Reports now get saved in Database" />
     <MESSAGE value="Implemented Location Transformation into Longitude and Latitude" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented Location Transformation into Longitude and Latitude" />
+    <MESSAGE value="updated xml files" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated xml files" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/AFS_Group1$get_capabilities.coverage" NAME="get_capabilities Coverage Results" MODIFIED="1732208505835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$available_features.coverage" NAME="available_features Coverage Results" MODIFIED="1732136605205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$settings.coverage" NAME="settings Coverage Results" MODIFIED="1730485649269" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$manage.coverage" NAME="manage Coverage Results" MODIFIED="1730485616409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/AFS_Group1$describe_features.coverage" NAME="describe_features Coverage Results" MODIFIED="1732208401872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$wsgi.coverage" NAME="wsgi Coverage Results" MODIFIED="1730485634120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$settings.coverage" NAME="settings Coverage Results" MODIFIED="1730485649269" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
     <SUITE FILE_PATH="coverage/AFS_Group1$urls.coverage" NAME="urls Coverage Results" MODIFIED="1730485652573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$get_features.coverage" NAME="get_features Coverage Results" MODIFIED="1732218803941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
-    <SUITE FILE_PATH="coverage/AFS_Group1$request_waterlevels.coverage" NAME="request_waterlevels Coverage Results" MODIFIED="1732209741693" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
     <SUITE FILE_PATH="coverage/AFS_Group1$asgi.coverage" NAME="asgi Coverage Results" MODIFIED="1730485644661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$get_capabilities.coverage" NAME="get_capabilities Coverage Results" MODIFIED="1732208505835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$wsgi.coverage" NAME="wsgi Coverage Results" MODIFIED="1730485634120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/AFS_Group1" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$available_features.coverage" NAME="available_features Coverage Results" MODIFIED="1732136605205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$manage.coverage" NAME="manage Coverage Results" MODIFIED="1730485616409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$request_waterlevels.coverage" NAME="request_waterlevels Coverage Results" MODIFIED="1732209741693" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
+    <SUITE FILE_PATH="coverage/AFS_Group1$get_features.coverage" NAME="get_features Coverage Results" MODIFIED="1732218803941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
   </component>
 </project>
