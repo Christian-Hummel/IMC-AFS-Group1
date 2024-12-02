@@ -191,9 +191,8 @@ function fetchReportData(reportCluster, autmap) {
                 if (marker) {
                         var infoContent = `
                             <strong>Title:</strong> ${report.fields.title || "N/A"} <br>
-                            <strong>Description:</strong> ${report.fields.description || "N/A"} <br>
-                            <strong>User_id:</strong> ${report.fields.user_id || "N/A"} <br>
-                            <strong>Date:</strong> ${report.fields.date || "N/A"} <br>
+                            <p>Click below to view full report details:</p>
+                            <a href="/report/${report.pk}" target="_blank" class="btn btn-primary">View Details</a>
                         `;
                         marker.bindPopup(infoContent);
                     }
