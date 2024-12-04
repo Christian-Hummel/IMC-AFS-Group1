@@ -4,7 +4,6 @@
 // To see the console output, open the browser's developer tools (F12) and go to the console tab.
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("DOM is fully loaded");
 
     // Initialize the map
     const autmap = initializeMap();
@@ -87,30 +86,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // ... more cluster groups to be added for other data types (HQ100?,..)
-
-
 
     // Fetch the water level data from the backend and add it to the map
     fetchWaterLevelData(waterLevelCluster, autmap);
-
     // Fetch and display report data
     fetchReportData(reportCluster);
 
-    // console.log("reportCluster", reportCluster)
-
-
-
-    // ... more to be added (HQ100, ...)
-
-
-
-    // Add event listener for the checkbox to toggle water level layer visibility
-    //setupCheckboxToggle(waterLevelCluster, autmap);
+    /// Initialize the HQ30 WMS layer
+    const hq30Layer = handleHQ30Layer(autmap);
+    // Initialize the HQ100 WMS layer
+    const hq100Layer = handleHQ100Layer(autmap);
 
     // Add event listeners for toggling layers
     setupCheckboxToggle('toggleWaterLevels', waterLevelCluster, autmap);
     setupCheckboxToggle('toggleReports', reportCluster, autmap);
+    setupCheckboxToggle('toggleHQ30', hq30Layer, autmap);
+    setupCheckboxToggle('toggleHQ100', hq100Layer, autmap);
 });
 
 
@@ -224,6 +215,27 @@ function fetchReportData(reportCluster) {
 }
 
 
+function handleHQ30Layer(map) {
+    // Create the WMS layer
+    const hq30Layer = L.tileLayer.wms('https://inspire.lfrz.gv.at/000801/wms', {
+        layers: 'Hochwasserueberflutungsflaechen HQ30', // Layer name
+        format: 'image/png',
+        transparent: true, // Make the layer transparent
+        attribution: '© Umweltbundesamt', // Add attribution
+    });
+    return hq30Layer; // Return the WMS layer object
+}
+
+function handleHQ100Layer(map) {
+    // Create the WMS layer
+    const hq100Layer = L.tileLayer.wms('https://inspire.lfrz.gv.at/000801/wms', {
+        layers: 'Hochwasserueberflutungsflaechen HQ100', // Layer name
+        format: 'image/png',
+        transparent: true,
+        attribution: '© Umweltbundesamt',
+    });
+    return hq100Layer; // Return the WMS layer object
+}
 
 
 // Sidebar toggle
@@ -240,3 +252,4 @@ function setupCheckboxToggle(checkboxId, clusterGroup, map) {
         }
     });
 }
+
