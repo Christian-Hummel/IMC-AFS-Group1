@@ -5,6 +5,9 @@ from .models import Report
 import requests
 import json
 
+from plotly.offline import plot
+from plotly.graph_objs import Scatter
+
 # Create your views here.
 
 def report(request):
@@ -61,4 +64,28 @@ def report_data(request):
     reports = serializers.serialize('json', Report.objects.all())
     reports = json.loads(reports)
     return JsonResponse(reports,safe=False, status=200)
+
+
+# current water level value is still missing
+def prev_water_levels(request, hzb):
+
+    with open(r"floodproject/historical_data/historical.json","r") as file:
+        plot_data = json.load(file)
+
+    hzb = str(hzb)
+
+    print(plot_data)
+
+    x_data = plot_data[hzb]["years"]
+    y_data = plot_data[hzb]["values"]
+    plot_div = plot([Scatter(x=x_data, y=y_data,
+                             mode='lines', name='test',
+                             opacity=0.8, marker_color='green')],
+                    output_type='div')
+
+    plot_data[hzb]["plot"] = plot_div
+
+
+    return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
+
 
