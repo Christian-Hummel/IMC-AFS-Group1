@@ -153,6 +153,7 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                             <strong>Amount:</strong> ${feature.properties.wert || "N/A"} ${feature.properties.einheit} <br>
                             <strong>Time:</strong> ${feature.properties.zeitpunkt || "N/A"} <br>
                             <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a>
+                            <strong></strong> <a href="/water-levels/${feature.properties.hzbnr}">previous levels</a>
                         `;
                         layer.bindPopup(infoContent);
                     }
