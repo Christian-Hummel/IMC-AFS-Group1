@@ -44,7 +44,8 @@ def login(request):
     return render(request, "login.html")
 
 
-def water_level_data(request):
+
+def load_water_level_data():
     # URL to fetch the water levels in GeoJSON format
     wfs_url = (
         "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
@@ -54,6 +55,11 @@ def water_level_data(request):
     response = requests.get(wfs_url)
     data = response.json()  # GeoJSON data
 
+    return data
+
+def water_level_data(request):
+
+    data = load_water_level_data()
 
     ################## Space for optional Data processing before sending it to frontend ##################
 
@@ -66,15 +72,27 @@ def report_data(request):
     return JsonResponse(reports,safe=False, status=200)
 
 
-# current water level value is still missing
+
 def prev_water_levels(request, hzb):
+
+    current_data = load_water_level_data()
+
+    #print(current_data)
 
     with open(r"floodproject/historical_data/historical.json","r") as file:
         plot_data = json.load(file)
 
     hzb = str(hzb)
 
-    print(plot_data)
+    # extract current water levels from json request data
+
+    for dict in current_data["features"]:
+        #print(f"first level {dict['properties']}")
+        if str(dict["properties"]["hzbnr"]) == hzb:
+            plot_data[hzb]["current_value"] = dict["properties"]["wert"]
+            plot_data[hzb]["current_unit"] = dict["properties"]["einheit"]
+
+    # print(plot_data)
 
     x_data = plot_data[hzb]["years"]
     y_data = plot_data[hzb]["values"]
