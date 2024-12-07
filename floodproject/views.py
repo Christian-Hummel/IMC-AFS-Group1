@@ -96,12 +96,26 @@ def prev_water_levels(request, hzb):
 
     x_data = plot_data[hzb]["years"]
     y_data = plot_data[hzb]["values"]
-    plot_div = plot([Scatter(x=x_data, y=y_data,
-                             mode='lines', name='test',
-                             opacity=0.8, marker_color='green')],
-                    output_type='div')
 
-    plot_data[hzb]["plot"] = plot_div
+    # Alternative way but with less options
+
+    # plot_div = plot([Scatter(x=x_data, y=y_data,
+    #
+    #                          mode='lines', name='historic_water_data',
+    #                          opacity=0.8, marker_color='green')],
+    #                 output_type='div')
+
+    # plot_data[hzb]["plot"] = plot_div
+
+    fig = px.line(x=x_data, y=y_data,
+                     title="Previous water levels",
+                )
+
+    fig.update_layout(xaxis_title="years",
+                      yaxis_title="values",
+                      modebar_remove=['pan','zoom'])
+
+    plot_data[hzb]["plot"] = plot(fig, output_type='div')
 
 
     return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
