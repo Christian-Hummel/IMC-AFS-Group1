@@ -2,16 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ plot_data.messstelle }} Historical Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {% load static %} <!-- necessary to connect to CSS in django -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-<p>Messstelle:<strong>{{ plot_data.messstelle }}</strong></p>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'main' %}">Home</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+    <div class="blue-line"></div>
+
+    <p>Messstelle:<strong>{{ plot_data.messstelle }}</strong></p>
+
+    <p>Minimum Value of the year {{ plot_data.minimum_year }}:  <strong>{{ plot_data.minimum }} {{ plot_data.einheit }}</strong></p>
+    <p>Median Value:    <strong>{{ plot_data.median }} {{ plot_data.einheit }}</strong></p>
+    <p>All-Time high Value of the year {{ plot_data.maximum_year }}:  <strong>{{ plot_data.maximum }} {{ plot_data.einheit }}</strong></p>
+    <p>Current Water level: <strong>{{ plot_data.current_value }} {{ plot_data.current_unit }}</strong></p>
+
   {% autoescape off %}
   {{ plot_data.plot }}
   {% endautoescape %}
-<p>Minimum Value of the year {{ plot_data.minimum_year }}:  <strong>{{ plot_data.minimum }} {{ plot_data.einheit }}</strong></p>
-<p>Median Value:    <strong>{{ plot_data.median }} {{ plot_data.einheit }}</strong></p>
-<p>All-Time high Value of the year {{ plot_data.maximum_year }}:  <strong>{{ plot_data.maximum }} {{ plot_data.einheit }}</strong></p>
-<p>Current Water level: <strong>{{ plot_data.current_value }} {{ plot_data.current_unit }}</strong></p>
+
 </body>
 </html>
