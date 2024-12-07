@@ -6,7 +6,9 @@ import requests
 import json
 
 from plotly.offline import plot
-from plotly.graph_objs import Scatter
+import plotly.express as px
+
+#from plotly.graph_objs import Scatter
 
 # Create your views here.
 
