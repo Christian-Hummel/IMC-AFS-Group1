@@ -126,19 +126,28 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
     fetch('/water-levels/')
         .then(response => response.json())
         .then(data => {
-            console.log("Water level data fetched:", data);
-
-
 
             // Create GeoJSON layer and add markers to the cluster
             L.geoJSON(data, {
                 pointToLayer: function (feature, latlng) {
+                    // color-coding for water levels markers
+                    let gesamtcode = feature.properties.gesamtcode;
+                    let color = getColor(gesamtcode); // Get color based on the gesamtcodes first digit
+
                     // Parse the lon and lat from the feature properties
                     let lon = parseFloat(feature.properties.lon.replace(",", "."));
                     let lat = parseFloat(feature.properties.lat.replace(",", "."));
 
+
                     if (!isNaN(lon) && !isNaN(lat)) { // Check if coordinates are valid
-                        return L.marker([lat, lon]); // Use the parsed coordinates
+                        return L.circleMarker([lat, lon], { // using circle markers because hex colors are not supported in leaflet
+                            radius: 8,
+                            fillColor: color,
+                            color: '#000', // Optional border color
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }); // Return a new marker
                     } else {
                         console.warn("Invalid coordinates for feature:", feature);
                         return null; // Skip invalid markers
@@ -253,4 +262,38 @@ function setupCheckboxToggle(checkboxId, clusterGroup, map) {
         }
     });
 }
+
+
+
+
+// gesamtcode (INTEGER): Gibt den Code für die korrekte Kategorisierung lt. https://ehyd.gv.at an.
+// 1. Ziffer: 1...Niederwasser, 2...Mittelwasser, 3...erhöhte Wasserführung, 4...Hochwasser Stufe 1, 5...Hochwasser Stufe 2, 6...Hochwasser Stufe 3, 9...keine Daten;
+// 2. Ziffer: 0...gleichbleibend, 1...steigend, 2...sinkend, 3...normal;
+// 3. Ziffer: 0...normal, 1...Werte älter als 24h
+
+// color-coding for water levels marker function
+function getColor(gesamtcode) {
+    if (gesamtcode == null) {
+        return '#eff4f7'; // Default color for no data
+    }
+
+    gesamtcode = gesamtcode.toString().split('').map(Number); // Convert to array of digits
+    if (gesamtcode[0] === 1) {
+        return '#3bacbe'; // Niederwasser (Low water)
+    } else if (gesamtcode[0] === 2) {
+        return '#4e8fcc'; // Mittelwasser (Medium water)
+    } else if (gesamtcode[0] === 3) {
+        return '#003d84'; // erhöhte Wasserführung (Increased water flow)
+    } else if (gesamtcode[0] === 4) {
+        return '#ffd400'; // Hochwasser Stufe 1 (Flood level 1)
+    } else if (gesamtcode[0] === 5) {
+        return '#f59c00'; // Hochwasser Stufe 2 (Flood level 2)
+    } else if (gesamtcode[0] === 6) {
+        return '#e6320f'; // Hochwasser Stufe 3 (Flood level 3)
+    } else {
+        return '#eff4f7'; // no data (gesamtcode[0] == 9)
+    }
+}
+
+
 

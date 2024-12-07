@@ -9,6 +9,7 @@
     {% load static %} <!-- necessary to connect to CSS in django -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/map.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'css/leaflet.extra-markers.min.css' %}"> <!-- additional icons -->
 </head>
 
@@ -78,8 +79,41 @@
                 </label>
                 <br>
 
+                  <!-- Legend Section -->
+                <div id="legend" class="legend">
+                    <h5>Legend: Water Levels</h5>
+                    <ul>
+                        <li>
+                            <span class="legend-color low-water"></span>
+                            Low Water Levels
+                        </li>
+                        <li>
+                            <span class="legend-color medium-water"></span>
+                            Medium Water Levels
+                        </li>
+                        <li>
+                            <span class="legend-color increased-water"></span>
+                            Increased Water Flow
+                        </li>
+                        <li>
+                            <span class="legend-color flood-level1"></span>
+                            Flood Level 1
+                        </li>
+                        <li>
+                            <span class="legend-color flood-level2"></span>
+                            Flood Level 2
+                        </li>
+                        <li>
+                            <span class="legend-color flood-level3"></span>
+                            Flood Level 3
+                        </li>
+                        <li>
+                            <span class="legend-color no-data"></span>
+                            No Data
+                        </li>
+                    </ul>
+                </div>
             </div>
-
             <!-- Main Content Section -->
             <div class="col-md-9" id="mapid">
                 <!-- Placeholder content for main section (map) -->
