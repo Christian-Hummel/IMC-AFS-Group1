@@ -266,10 +266,10 @@ function setupCheckboxToggle(checkboxId, clusterGroup, map) {
 
 
 
-// gesamtcode (INTEGER): Gibt den Code für die korrekte Kategorisierung lt. https://ehyd.gv.at an.
-// 1. Ziffer: 1...Niederwasser, 2...Mittelwasser, 3...erhöhte Wasserführung, 4...Hochwasser Stufe 1, 5...Hochwasser Stufe 2, 6...Hochwasser Stufe 3, 9...keine Daten;
-// 2. Ziffer: 0...gleichbleibend, 1...steigend, 2...sinkend, 3...normal;
-// 3. Ziffer: 0...normal, 1...Werte älter als 24h
+// gesamtcode (INTEGER): Categorization from https://ehyd.gv.at an.
+// 1. digit: 1...Niederwasser, 2...Mittelwasser, 3...erhöhte Wasserführung, 4...Hochwasser Stufe 1, 5...Hochwasser Stufe 2, 6...Hochwasser Stufe 3, 9...keine Daten;
+// 2. digit: 0...gleichbleibend, 1...steigend, 2...sinkend, 3...normal;
+// 3. digit: 0...normal, 1... older than 24 hours
 
 // color-coding for water levels marker function
 function getColor(gesamtcode) {

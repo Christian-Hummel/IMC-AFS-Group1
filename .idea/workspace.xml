@@ -5,24 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="updated requirements.txt">
-      <change afterPath="$PROJECT_DIR$/floodproject/static/css/sidebar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/AFS_Group1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AFS_Group1.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/815f161f-16b5-4095-ba82-2a89df5e6d6a.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/815f161f-16b5-4095-ba82-2a89df5e6d6a.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_29_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_29__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_33_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_33__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_52_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_52__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_54_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_12_54__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_14_24_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_23_11_2024_14_24__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/floodproject/static/css/map.css" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/static/css/map.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/floodproject/static/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/static/js/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,7 +150,7 @@
       <workItem from="1732718799675" duration="1026000" />
       <workItem from="1732738181931" duration="245000" />
       <workItem from="1733390046006" duration="3762000" />
-      <workItem from="1733485517096" duration="8786000" />
+      <workItem from="1733485517096" duration="9487000" />
     </task>
     <task id="LOCAL-00001" summary="Created Documentation.md">
       <option name="closed" value="true" />
