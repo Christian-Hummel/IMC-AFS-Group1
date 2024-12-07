@@ -62,21 +62,29 @@
 
             <!-- Sidebar Section -->
             <div class="col-md-3" id="sidebar">
+                <h1>Map Controls</h1>
                 <label>
-                    <input type="checkbox" id="toggleWaterLevels" checked/> Show Current Water Levels
+                    <input type="checkbox" id="toggleWaterLevels" checked/> Current Water Levels
                 </label>
                 <br>
                 <label>
-                    <input type="checkbox" id="toggleReports"/> Show Reports
+                    <input type="checkbox" id="toggleReports"/> Reports
                 </label>
                 <br>
+                <br>
+                <h1>Critical Areas</h1>
                 <label>
-                    <input type="checkbox" id="toggleHQ30"/> Show HQ30 Flood Zones
+                    <input type="checkbox" id="toggleHQ30"/> HQ30 Flood Zones
+                    <span class="legend-square hq30"></span>
                 </label>
+
                 <br>
                 <label>
-                    <input type="checkbox" id="toggleHQ100"/> Show HQ100 Flood Zones
+                    <input type="checkbox" id="toggleHQ100"/> HQ100 Flood Zones
+                    <span class="legend-square hq100"></span>
                 </label>
+                <br>
+                <p> Note: Zoom in to display flood zones </p>
                 <br>
 
                   <!-- Legend Section -->
@@ -84,31 +92,31 @@
                     <h5>Legend: Water Levels</h5>
                     <ul>
                         <li>
-                            <span class="legend-color low-water"></span>
+                            <span class="legend-circle low-water"></span>
                             Low Water Levels
                         </li>
                         <li>
-                            <span class="legend-color medium-water"></span>
+                            <span class="legend-circle medium-water"></span>
                             Medium Water Levels
                         </li>
                         <li>
-                            <span class="legend-color increased-water"></span>
+                            <span class="legend-circle increased-water"></span>
                             Increased Water Flow
                         </li>
                         <li>
-                            <span class="legend-color flood-level1"></span>
+                            <span class="legend-circle flood-level1"></span>
                             Flood Level 1
                         </li>
                         <li>
-                            <span class="legend-color flood-level2"></span>
+                            <span class="legend-circle flood-level2"></span>
                             Flood Level 2
                         </li>
                         <li>
-                            <span class="legend-color flood-level3"></span>
+                            <span class="legend-circle flood-level3"></span>
                             Flood Level 3
                         </li>
                         <li>
-                            <span class="legend-color no-data"></span>
+                            <span class="legend-circle no-data"></span>
                             No Data
                         </li>
                     </ul>
