@@ -4,6 +4,7 @@ from django.core import serializers
 from .models import Report
 import requests
 import json
+import pandas as pd
 
 from plotly.offline import plot
 import plotly.express as px
@@ -96,20 +97,14 @@ def prev_water_levels(request, hzb):
 
     # print(plot_data)
 
-    x_data = plot_data[hzb]["years"]
-    y_data = plot_data[hzb]["values"]
+    df = pd.DataFrame({
+        'year': plot_data[hzb]["years"],
+        'value': plot_data[hzb]["values"]
+    })
 
-    # Alternative way but with less options
 
-    # plot_div = plot([Scatter(x=x_data, y=y_data,
-    #
-    #                          mode='lines', name='historic_water_data',
-    #                          opacity=0.8, marker_color='green')],
-    #                 output_type='div')
 
-    # plot_data[hzb]["plot"] = plot_div
-
-    fig = px.line(x=x_data, y=y_data,
+    fig = px.line(df, x='year', y='value',
                      title="Previous water levels",
                 )
 
@@ -118,6 +113,20 @@ def prev_water_levels(request, hzb):
                       modebar_remove=['pan','zoom'])
 
     plot_data[hzb]["plot"] = plot(fig, output_type='div')
+
+
+    # Alternative way but with less options
+
+    # x_data = plot_data[hzb]["years"]
+    # y_data = plot_data[hzb]["values"]
+
+    # plot_div = plot([Scatter(x=x_data, y=y_data,
+    #
+    #                          mode='lines', name='historic_water_data',
+    #                          opacity=0.8, marker_color='green')],
+    #                 output_type='div')
+
+    # plot_data[hzb]["plot"] = plot_div
 
 
     return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
