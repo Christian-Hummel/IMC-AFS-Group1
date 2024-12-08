@@ -60,6 +60,25 @@ def load_water_level_data():
 
     return data
 
+def build_code_response(code_nr):
+
+    first_digit = [int(num) for num in str(code_nr)][0]
+
+    if first_digit == 1:
+        return "Low Water"
+    elif first_digit == 2:
+        return "Medium Water"
+    elif first_digit == 3:
+        return "Increased Water Flow"
+    elif first_digit == 4:
+        return "Flood Level 1"
+    elif first_digit == 5:
+        return "Flood Level 2"
+    elif first_digit == 6:
+        return "Flood Level 3"
+    else:
+        return "No Data"
+
 def water_level_data(request):
 
     data = load_water_level_data()
@@ -88,47 +107,60 @@ def prev_water_levels(request, hzb):
     hzb = str(hzb)
     current_unit = ""
 
+
     # extract current water levels from json request data
+    try:
 
-    for dict in current_data["features"]:
-        #print(f"first level {dict['properties']}")
-        if str(dict["properties"]["hzbnr"]) == hzb:
-            plot_data[hzb]["current_value"] = dict["properties"]["wert"]
-            plot_data[hzb]["current_unit"] = dict["properties"]["einheit"]
-            current_unit = plot_data[hzb]["current_unit"]
-
-    # print(plot_data)
-
-    df = pd.DataFrame({
-        'year': plot_data[hzb]["years"],
-        'value': plot_data[hzb]["values"]
-    })
+        for dict in current_data["features"]:
+            #print(f"first level {dict['properties']}")
+            if str(dict["properties"]["hzbnr"]) == hzb:
+                gesamtcode = dict["properties"]["gesamtcode"]
+                plot_data[hzb]["danger_level"] = build_code_response(gesamtcode)
+                plot_data[hzb]["current_value"] = dict["properties"]["wert"]
+                plot_data[hzb]["current_unit"] = dict["properties"]["einheit"]
+                current_unit = plot_data[hzb]["current_unit"]
 
 
 
-    fig = px.line(df, x='year', y='value')
+                # print(plot_data)
 
-    fig.update_layout(xaxis_title="years",
-                      yaxis_title=f"level in {current_unit}",
-                      modebar_remove=['pan','zoom'])
-
-    plot_data[hzb]["plot"] = plot(fig, output_type='div')
-
-
-    # Alternative way but with less options
-
-    # x_data = plot_data[hzb]["years"]
-    # y_data = plot_data[hzb]["values"]
-
-    # plot_div = plot([Scatter(x=x_data, y=y_data,
-    #
-    #                          mode='lines', name='historic_water_data',
-    #                          opacity=0.8, marker_color='green')],
-    #                 output_type='div')
-
-    # plot_data[hzb]["plot"] = plot_div
+                df = pd.DataFrame({
+                    'year': plot_data[hzb]["years"],
+                    'value': plot_data[hzb]["values"]
+                })
 
 
-    return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
+
+                fig = px.line(df, x='year', y='value')
+
+                fig.update_layout(xaxis_title="years",
+                                  yaxis_title=f"level in {current_unit}",
+                                  modebar_remove=['pan','zoom'])
+
+                plot_data[hzb]["plot"] = plot(fig, output_type='div')
+
+
+                # Alternative way but with less options
+
+                # x_data = plot_data[hzb]["years"]
+                # y_data = plot_data[hzb]["values"]
+
+                # plot_div = plot([Scatter(x=x_data, y=y_data,
+                #
+                #                          mode='lines', name='historic_water_data',
+                #                          opacity=0.8, marker_color='green')],
+                #                 output_type='div')
+
+                # plot_data[hzb]["plot"] = plot_div
+
+
+                return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
+
+    except:
+
+        return render(request, "watererror.html")
+
+
+
 
 
