@@ -12,6 +12,7 @@ urlpatterns = [
     path('report-entry/',views.process_report_entry,name="process-report-entry"),
     path("water-levels/", views.water_level_data, name='water_level_data'), # GeoJSON data URL
     path("water-levels/<int:hzb>", views.prev_water_levels, name='prev_water_levels'), # Historic water Levels
+    path("water-levels/watererror", views.prev_water_levels, name='water_level_error'), # Error page for missing data
     path("reports/", views.report_data, name='report_data'),
 
 ]
