@@ -86,6 +86,7 @@ def prev_water_levels(request, hzb):
         plot_data = json.load(file)
 
     hzb = str(hzb)
+    current_unit = ""
 
     # extract current water levels from json request data
 
@@ -94,6 +95,7 @@ def prev_water_levels(request, hzb):
         if str(dict["properties"]["hzbnr"]) == hzb:
             plot_data[hzb]["current_value"] = dict["properties"]["wert"]
             plot_data[hzb]["current_unit"] = dict["properties"]["einheit"]
+            current_unit = plot_data[hzb]["current_unit"]
 
     # print(plot_data)
 
@@ -104,12 +106,10 @@ def prev_water_levels(request, hzb):
 
 
 
-    fig = px.line(df, x='year', y='value',
-                     title="Previous water levels",
-                )
+    fig = px.line(df, x='year', y='value')
 
     fig.update_layout(xaxis_title="years",
-                      yaxis_title="values",
+                      yaxis_title=f"level in {current_unit}",
                       modebar_remove=['pan','zoom'])
 
     plot_data[hzb]["plot"] = plot(fig, output_type='div')
