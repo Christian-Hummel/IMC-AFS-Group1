@@ -43,3 +43,17 @@ p {
     background-color: #0063a3;
     color: white;
 }
+
+/* Info box for historic water details */
+.water-container {
+
+    padding: 10px;
+
+
+}
+
+.water-info {
+    margin-top: 100px;
+    width: 100%;
+
+}
