@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+import random
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, zip_code=None, city=None, password=None, role = "user"):
@@ -12,6 +13,7 @@ class CustomUserManager(BaseUserManager):
         user = self.create_user(email = email, first_name = first_name, last_name = last_name, zip_code = zip_code, city = city, role = role)
         user.is_staff = True
         user.is_superuser = True
+        user.is_verified = True
         user.save(using=self._db)
         return user
 
@@ -26,11 +28,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
+    code = models.CharField(max_length=6, null=True, blank=True)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    def create_code(self):
+        self.code = random.randint(100000,999999)
 
     def __str__(self):
         return self.email

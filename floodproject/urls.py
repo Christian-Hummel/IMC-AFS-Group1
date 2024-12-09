@@ -16,6 +16,7 @@ urlpatterns = [
     path("water-levels/", views.water_level_data, name='water_level_data'), # GeoJSON data URL
     path("reports/", views.report_data, name='report_data'),
     path("logout/", LogoutView.as_view(next_page="main"), name="logout"),
+    path("verify/", views.verify, name="verify"),
 ]
 
 if settings.DEBUG:

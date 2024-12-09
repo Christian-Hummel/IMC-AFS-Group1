@@ -7,7 +7,9 @@ from .models import Report, WaterLevel, CustomUser
 import requests
 import json
 from geopy.geocoders import Nominatim
-
+from django.core.mail import send_mail
+from AFS_Group1 import settings
+import yagmail
 
 # Create your views here.
 
@@ -79,14 +81,38 @@ def register(request):
         )
 
         user.set_password(password)
+        user.create_code()
         user.save()
 
-        messages.success(request, 'Registration successful!')
-        return redirect('login')
+
+        # Send email with verification code using yagmail
+        yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+        subject = "Your Verification Code"
+        message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
+        yag.send(to=email, subject=subject, contents=message)
+
+        return redirect ("verify")
 
     else:
         return render(request, "register.html")
 
+def verify(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        code = request.POST.get("code")
+
+        #get specific user
+        user = CustomUser.objects.get(email = email)
+
+        if str(user.code) == code:
+            user.is_verified = True
+            user.save()
+            return redirect("login")
+        
+        else:
+            return render(request, "verify.html")
+
+    return render(request, "verify.html")
 
 def login(request):
     if request.method == "POST":
