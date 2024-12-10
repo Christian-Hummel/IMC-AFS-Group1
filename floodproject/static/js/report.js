@@ -52,24 +52,58 @@ function computeDistance(location) {
 
     console.log("distance in kilometers", dist)
 
-
-    // if condition to add html tags if the distance is lower than value x - 80 kilometers for this example
-    if (dist < 0.4) {
-
-        repdetails = document.getElementById("report-container")
-
-        repdetails.innerHTML += "<button>Submit Rating</button>"
-
-        console.log(repdetails)
-    }
-
+        // call for user id
     const user_id = JSON.parse(document.getElementById('user_id').textContent);
+
+    // call for role of a user if needed
+    const user_role = JSON.parse(document.getElementById('user_role').textContent);
 
 
     // extract user id
     if (user_id){
-       console.log("user_id", user_id)
+       console.log("user_id", user_id);
+       console.log("user_role", user_role);
     }
+
+    // if condition to add html tags if the distance is lower than value x - 80 kilometers for this example
+    if (dist < 25 && user_id) {
+
+        //repdetails = document.getElementById("report-container")
+
+
+        // access reportvote form
+        reportvote = document.getElementById("reportvote")
+
+        // access severity rating
+        severityselect = document.getElementById("severityselect")
+        // checkbox - for credibility
+        checkbox = document.getElementById("invcheck")
+        // label of checkbox
+        checklabel = document.getElementById("checklabel")
+        // submit button
+        vsubmit = document.getElementById("vsubmit")
+
+        if(severityselect){
+           severityselect.removeAttribute("hidden")
+           console.log("severity", severityselect)
+        }
+
+        if(checkbox){
+            checkbox.setAttribute("type", "checkbox")
+            checklabel.outerHTML += "Mark inappropriate"
+            vsubmit.removeAttribute("hidden")
+        }
+
+
+
+        // console.log("report details", repdetails)
+        console.log("reportvote", reportvote)
+
+
+
+    }
+
+
 
 
 
