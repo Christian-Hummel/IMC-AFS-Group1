@@ -22,6 +22,14 @@
                     <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'report' %}">
                         <i class="fas fa-plus me-2"></i> New Report
                     </a>
+                        {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="btn-logout" type="submit">logout</button>
+                        </form>
+                    </li>
+                        {% endif %}
                 </ul>
             </div>
         </div>
