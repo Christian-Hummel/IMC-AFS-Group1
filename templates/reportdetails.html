@@ -12,6 +12,10 @@
 
 
 <body>
+
+{#request id of current user#}
+{{ request.user.id|json_script:"user_id" }}
+
 <div class="report-container" id="report-container">
     <h1>{{ report.title }}</h1>
     <p><strong>Description:</strong> {{ report.description }}</p>
@@ -29,6 +33,9 @@
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
 
 </div>
+
+
+
 
 </body>
 </html>
