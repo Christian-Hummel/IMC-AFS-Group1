@@ -82,7 +82,8 @@
 
 {#{% if user.id in testlist %}#}
 
-{#        {% if user.id is 1 %}#}
+{#        {% if user.id is 2 and user.id is not report.user_id %}#}
+
         <form id="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
             {% csrf_token %}
             <select id="severityselect" name="severityselect" hidden="hidden">
