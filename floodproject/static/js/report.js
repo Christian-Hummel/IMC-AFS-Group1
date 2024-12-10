@@ -54,7 +54,7 @@ function computeDistance(location) {
 
 
     // if condition to add html tags if the distance is lower than value x - 80 kilometers for this example
-    if (dist < 80) {
+    if (dist < 0.4) {
 
         repdetails = document.getElementById("report-container")
 
@@ -62,6 +62,15 @@ function computeDistance(location) {
 
         console.log(repdetails)
     }
+
+    const user_id = JSON.parse(document.getElementById('user_id').textContent);
+
+
+    // extract user id
+    if (user_id){
+       console.log("user_id", user_id)
+    }
+
 
 
 
