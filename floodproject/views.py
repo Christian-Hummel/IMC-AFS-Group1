@@ -3,7 +3,7 @@ from django.contrib.auth.models import auth
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, WaterLevel, CustomUser
+from .models import Report, Vote, CustomUser
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -45,12 +45,28 @@ def process_report_entry(request):
             lat = getLoc.latitude
 
         rep = Report(title=title, description=description, lon=log, lat=lat, picture=picture,
-                     picture_description=picture_description, user_id=0)
+                     picture_description=picture_description, user_id=request.user.id)
         rep.save()
 
         return HttpResponse("Data sucessfully inserted!")
     else:
         return HttpResponse("Invalid request method!")
+
+def process_vote_entry(request,report_id):
+    if request.method == 'POST':
+        sev_rating = request.POST.get("severityselect")
+        validity = request.POST.get("invcheck")
+        if not validity:
+            validity = True
+        vote = Vote(report_id_id=report_id, user_id_id=request.user.id,rating=sev_rating, validity=validity)
+
+        vote.save()
+
+        return HttpResponse("Vote sucessfully inserted!")
+    else:
+        return HttpResponse("Invalid request method!")
+
+
 
 
 def index(request):
