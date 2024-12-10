@@ -19,6 +19,7 @@
 {{ request.user.id|json_script:"user_id" }}
 {{ request.user.role|json_script:"user_role" }}
 
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'main' %}">Home</a>
@@ -73,7 +74,28 @@
     {% endif %}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
 
+
 </div>
+
+<!-- if condition to check for certain values in a list or table contents -->
+<!-- try calling Vote objects in views.py, extract them into lists, add them as key, value pair to context -->
+
+    {% if user.id in testlist %}
+        <form id="reportvote" method="post" action="{% url 'process-report-entry' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <select id="severityselect" hidden="hidden">
+                    <option selected>-- Select Severity -- </option>
+                    <option value="1">Low Level</option>
+                    <option value="2">Moderate Level</option>
+                    <option value="3">Medium Level</option>
+                    <option value="4">High Level</option>
+                    <option value="4">Critical Level</option>
+            </select>
+            <label id="checklabel" class="checkbox"><input type="hidden" id="invcheck" name="invcheck" value="True"></label>
+            <p></p>
+            <button id="vsubmit" hidden="hidden">Submit Review</button>
+        </form>
+    {% endif %}
 
 
 
