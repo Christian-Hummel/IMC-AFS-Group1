@@ -65,7 +65,7 @@ function computeDistance(location) {
        console.log("user_role", user_role);
     }
 
-    // if condition to add html tags if the distance is lower than value x - 80 kilometers for this example
+    // if condition to add html tags if the distance is lower than value x - 25 kilometers for this example
     if (dist < 25 && user_id) {
 
         //repdetails = document.getElementById("report-container")
@@ -83,21 +83,19 @@ function computeDistance(location) {
         // submit button
         vsubmit = document.getElementById("vsubmit")
 
-        if(severityselect){
-           severityselect.removeAttribute("hidden")
-           console.log("severity", severityselect)
-        }
-
-        if(checkbox){
-            checkbox.setAttribute("type", "checkbox")
-            checklabel.outerHTML += "Mark inappropriate"
-            vsubmit.removeAttribute("hidden")
-        }
+        // change status of severity select tag
+        severityselect.removeAttribute("hidden")
+        // change status from checkbox - hidden input tag
+        checkbox.setAttribute("type", "checkbox")
+        // add text via javascript
+        checklabel.outerHTML += "Mark inappropriate"
+        // change status of submit button
+        vsubmit.removeAttribute("hidden")
 
 
 
         // console.log("report details", repdetails)
-        console.log("reportvote", reportvote)
+        // console.log("reportvote", reportvote)
 
 
 
