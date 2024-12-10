@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.validators import MinValueValidator, MaxValueValidator
 import random
 
 class CustomUserManager(BaseUserManager):
@@ -71,14 +72,20 @@ class Task(models.Model):
 class Vote(models.Model):
     report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    downvote = models.CharField(max_length=100)
-    upvote = models.CharField(max_length=100)
+    validity = models.BooleanField(default=True)
+    rating = models.IntegerField(
+        default=0,
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(1)
+        ]
+    )
 
     class Meta:
         unique_together = ('report_id','user_id')
 
     def __str__(self):
-        return f"{self.report_id} - {self.user_id} - {self.downvote} - {self.upvote}"
+        return f"{self.report_id} - {self.user_id} - {self.rating} - {self.validity}"
 
 class WaterLevel(models.Model):
     measuring_point = models.CharField(max_length=256)
