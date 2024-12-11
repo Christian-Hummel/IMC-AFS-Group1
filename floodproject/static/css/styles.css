@@ -1,11 +1,6 @@
-
-
 body {
     letter-spacing: .011rem;
     word-break: break-word;
-}
-
-body {
     margin: 0;
     font-family: "Source Sans Pro", Arial, sans-serif;
     font-size: 1.0625rem;
@@ -46,6 +41,7 @@ p {
     background-color: #0063a3;
     color: white;
 }
+
 
 .btn-logout {
     padding-top: 10px;
@@ -93,3 +89,18 @@ p {
         margin-top: 100px;
     }
 }
+
+/* Info box for historic water details */
+.water-container {
+
+    padding: 10px;
+
+
+}
+
+.water-info {
+    margin-top: 100px;
+    width: 100%;
+
+}
+

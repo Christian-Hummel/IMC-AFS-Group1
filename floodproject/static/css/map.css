@@ -5,11 +5,10 @@
 }
 
 
-#sidebar {
-    background-color: #eff4f7;
-    border-right: 2px solid #ddd;
-    padding: 15px;
+.cluster-icon:hover {
+    transform: scale(1.1); /* Slightly increase the size */
 }
+
 
 /* Responsive styles for devices with a width of 600px or less */
 @media (max-width: 600px) {
@@ -31,3 +30,4 @@
         height: 25px;
     }
 }
+

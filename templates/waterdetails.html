@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Data {{ plot_data.messstelle }} </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {% load static %} <!-- necessary to connect to CSS in django -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'main' %}">Home</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+    <div class="blue-line"></div>
+    <p></p>
+
+
+    <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="water-container">
+
+                        <p>Messstelle:</p>
+
+                        <strong>{{ plot_data.messstelle }}</strong>
+
+                        <div class="water-info">
+
+
+
+                            <p>Minimum Value of the year {{ plot_data.minimum_year }}:  <strong>{{ plot_data.minimum }} {{ plot_data.einheit }}</strong></p>
+                            <p>Median Value:    <strong>{{ plot_data.median }} {{ plot_data.einheit }}</strong></p>
+                            <p>All-Time high Value of the year {{ plot_data.maximum_year }}:  <strong>{{ plot_data.maximum }} {{ plot_data.einheit }}</strong></p>
+                            <p>Current Water level: <strong>{{ plot_data.current_value }} {{ plot_data.current_unit }}</strong> - <strong>{{ plot_data.danger_level }}</strong></p>
+
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-md-8">
+
+
+                        {% autoescape off %}
+                        {{ plot_data.plot }}
+                        {% endautoescape %}
+
+                </div>
+            </div>
+    </div>
+
+
+
+
+
+</body>
+</html>
