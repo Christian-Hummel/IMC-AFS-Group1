@@ -5,6 +5,16 @@ if (!navigator.geolocation) {
     throw new Error("No geolocation available");
 }
 
+// function to toggle stats for manager
+function showVotestats(){
+    var x = document.getElementById("votestats")
+    if (x.style.display === "none"){
+        x.style.display = "block";
+    } else {
+        x.style.display = "none"
+    }
+}
+
 
 // function to calculate distance between two coordinates - straight line
 function distance(lst1, lst2){
@@ -66,7 +76,7 @@ function computeDistance(location) {
     }
 
     // if condition to add html tags if the distance is lower than value x - 25 kilometers for this example
-    if (dist < 25 && user_id) {
+    if (dist < 98 && user_id) {
 
         //repdetails = document.getElementById("report-container")
 
