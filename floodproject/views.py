@@ -150,9 +150,32 @@ def register(request):
         password_repeat = request.POST["password_repeat"]
         email = request.POST["email"]
 
+
+
         if CustomUser.objects.filter(email=email).exists():
-            messages.error(request, 'Email already exists.')
-            return redirect('register')
+            user = CustomUser.objects.get(email=email)
+
+            # overwrite user if email is not verified
+            if not user.is_verified:
+                user.first_name = first_name
+                user.last_name = last_name
+                user.password = password
+                user.set_password(password)
+                user.create_code()
+                user.save()
+
+                # Send email with verification code using yagmail
+                yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+                subject = "Your Verification Code"
+                message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
+                yag.send(to=email, subject=subject, contents=message)
+
+                request.session["user_code"] = str(user.code)
+                return redirect("verify")
+
+            else:
+                messages.error(request, 'Email already exists.')
+                return redirect('register')
 
         elif password != password_repeat:
             messages.info(request, "Passwords do not match!")
