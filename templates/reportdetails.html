@@ -124,7 +124,7 @@
         <p></p>
         {#{%  if user.role is "manager" %}#}
         <button id="showstats" onclick="showVotestats()">Show rating statistics</button>
-        <div id="votestats" class="votestats">
+        <div id="votestats" class="votestats" style="display: none">
         Number of Reviews:<strong> {{ votestats.num_ratings }}</strong>
         <br>Total severity rating:<strong> {{ votestats.total_rating }}</strong></br>
         Flagged by <strong>{{ votestats.flag_count }}</strong> Users
