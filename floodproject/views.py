@@ -212,7 +212,7 @@ def verify(request):
         #get specific user
         user = CustomUser.objects.get(email = email)
 
-        if request.session["user_code"]:
+        if "user_code" in request.session:
             user.code = request.session["user_code"]
 
         if user.code == code:
