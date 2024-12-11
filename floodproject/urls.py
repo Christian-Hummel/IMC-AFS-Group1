@@ -14,6 +14,7 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path('report-entry/',views.process_report_entry,name="process-report-entry"),
     path('vote-entry/<int:report_id>', views.process_vote_entry, name="process-vote-entry"),
+    path('edit-vote/<int:report_id>', views.edit_vote, name="edit_vote"),
     path("water-levels/", views.water_level_data, name='water_level_data'), # GeoJSON data URL
     path("reports/", views.report_data, name='report_data'),
     path("logout/", LogoutView.as_view(next_page="main"), name="logout"),
