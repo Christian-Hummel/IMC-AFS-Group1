@@ -5,9 +5,9 @@
 }
 
 
-#sidebar {
-    background-color: #eff4f7;
-    border-right: 2px solid #ddd;
-    padding: 15px;
+.cluster-icon:hover {
+    transform: scale(1.1); /* Slightly increase the size */
 }
+
+
 

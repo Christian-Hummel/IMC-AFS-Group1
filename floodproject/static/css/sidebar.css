@@ -1,0 +1,78 @@
+
+#sidebar {
+    background-color: #eff4f7;
+    border-right: 2px solid #ddd;
+    padding: 15px;
+}
+
+/* Styling for the legend section */
+.legend {
+    margin-top: 20px;
+    font-size: 13px;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+/* Remove default list styling */
+.legend ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Styling for each color indicator in the legend */
+.legend-circle {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+/* Specific colors for water levels */
+.low-water {
+    background-color: #3bacbe;
+}
+
+.medium-water {
+    background-color: #4e8fcc;
+}
+
+.increased-water {
+    background-color: #003d84;
+}
+
+.flood-level1 {
+    background-color: #ffd400;
+}
+
+.flood-level2 {
+    background-color: #f59c00;
+}
+
+.flood-level3 {
+    background-color: #e6320f;
+}
+
+.no-data {
+    background-color: #eff4f7;
+}
+
+/* Styling for the HQ legend */
+.legend-square {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+    border: 1px solid black;
+}
+
+/* Specific colors for HQ zones */
+.hq30 {
+    background-color: #003d84; /* Dark blue for HQ30 */
+}
+
+.hq100 {
+    background-color: #4e8fcc; /* Light blue for HQ100 */
+}

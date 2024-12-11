@@ -9,6 +9,7 @@
     {% load static %} <!-- necessary to connect to CSS in django -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/map.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'css/leaflet.extra-markers.min.css' %}"> <!-- additional icons -->
 </head>
 
@@ -78,31 +79,66 @@
 
             <!-- Sidebar Section -->
             <div class="col-md-3" id="sidebar">
+                <h1>Map Controls</h1>
                 <label>
-                    <input type="checkbox" id="toggleWaterLevels" checked/> Show Current Water Levels
+                    <input type="checkbox" id="toggleWaterLevels" checked/> Current Water Levels
                 </label>
                 <br>
                 <label>
-                    <input type="checkbox" id="toggleReports"/> Show Reports
+                    <input type="checkbox" id="toggleReports"/> Reports
                 </label>
                 <br>
+                <br>
+                <h1>Critical Areas</h1>
                 <label>
-                    <input type="checkbox" id="toggleHQ300"/> Show HQ300
+                    <input type="checkbox" id="toggleHQ30"/> HQ30 Flood Zones
+                    <span class="legend-square hq30"></span>
                 </label>
+
                 <br>
                 <label>
-                    <input type="checkbox" id="toggleHQ100"/> Show HQ100
+                    <input type="checkbox" id="toggleHQ100"/> HQ100 Flood Zones
+                    <span class="legend-square hq100"></span>
                 </label>
                 <br>
-                <label>
-                    <input type="checkbox" id="toggleAllTimeHighs"/> Show All Time Highs
-                </label>
+                <p> Note: Zoom in to display flood zones </p>
                 <br>
 
-
-
+                  <!-- Legend Section -->
+                <div id="legend" class="legend">
+                    <h5>Legend: Water Levels</h5>
+                    <ul>
+                        <li>
+                            <span class="legend-circle low-water"></span>
+                            Low Water Levels
+                        </li>
+                        <li>
+                            <span class="legend-circle medium-water"></span>
+                            Medium Water Levels
+                        </li>
+                        <li>
+                            <span class="legend-circle increased-water"></span>
+                            Increased Water Flow
+                        </li>
+                        <li>
+                            <span class="legend-circle flood-level1"></span>
+                            Flood Level 1
+                        </li>
+                        <li>
+                            <span class="legend-circle flood-level2"></span>
+                            Flood Level 2
+                        </li>
+                        <li>
+                            <span class="legend-circle flood-level3"></span>
+                            Flood Level 3
+                        </li>
+                        <li>
+                            <span class="legend-circle no-data"></span>
+                            No Data
+                        </li>
+                    </ul>
+                </div>
             </div>
-
             <!-- Main Content Section -->
             <div class="col-md-9" id="mapid">
                 <!-- Placeholder content for main section (map) -->

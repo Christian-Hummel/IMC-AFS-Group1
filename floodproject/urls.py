@@ -9,13 +9,15 @@ from . import views
 urlpatterns = [
     path("", views.index, name="main"),
     path("report/", views.report, name="report"),
-    path("report/<int:id>", views.report_details, name="report-details"),
+    path("report/<int:id>", views.report_details, name="report-details"), # Report details
     path("login/", views.login, name="login"),
     path("register/", views.register, name="register"),
     path('report-entry/',views.process_report_entry,name="process-report-entry"),
     path('vote-entry/<int:report_id>', views.process_vote_entry, name="process-vote-entry"),
     path('edit-vote/<int:report_id>', views.edit_vote, name="edit_vote"),
     path("water-levels/", views.water_level_data, name='water_level_data'), # GeoJSON data URL
+    path("water-levels/<int:hzb>", views.prev_water_levels, name='prev_water_levels'), # Historic water Levels
+    path("water-levels/watererror", views.prev_water_levels, name='water_level_error'), # Error page for missing data
     path("reports/", views.report_data, name='report_data'),
     path("logout/", LogoutView.as_view(next_page="main"), name="logout"),
     path("verify/", views.verify, name="verify"),

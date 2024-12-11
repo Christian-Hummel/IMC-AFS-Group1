@@ -3,9 +3,6 @@
 body {
     letter-spacing: .011rem;
     word-break: break-word;
-}
-
-body {
     margin: 0;
     font-family: "Source Sans Pro", Arial, sans-serif;
     font-size: 1.0625rem;
@@ -66,4 +63,18 @@ p {
     display: block;
     width: 100%;
     max-width: 800px;
+}
+
+/* Info box for historic water details */
+.water-container {
+
+    padding: 10px;
+
+
+}
+
+.water-info {
+    margin-top: 100px;
+    width: 100%;
+
 }

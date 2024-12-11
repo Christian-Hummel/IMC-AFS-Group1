@@ -4,7 +4,6 @@
 // To see the console output, open the browser's developer tools (F12) and go to the console tab.
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("DOM is fully loaded");
 
     // Initialize the map
     const autmap = initializeMap();
@@ -87,30 +86,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
-    // ... more cluster groups to be added for other data types (HQ100?,..)
-
-
 
     // Fetch the water level data from the backend and add it to the map
     fetchWaterLevelData(waterLevelCluster, autmap);
-
     // Fetch and display report data
     fetchReportData(reportCluster);
 
-    // console.log("reportCluster", reportCluster)
-
-
-
-    // ... more to be added (HQ100, ...)
-
-
-
-    // Add event listener for the checkbox to toggle water level layer visibility
-    //setupCheckboxToggle(waterLevelCluster, autmap);
+    /// Initialize the HQ30 WMS layer
+    const hq30Layer = handleHQ30Layer(autmap);
+    // Initialize the HQ100 WMS layer
+    const hq100Layer = handleHQ100Layer(autmap);
 
     // Add event listeners for toggling layers
     setupCheckboxToggle('toggleWaterLevels', waterLevelCluster, autmap);
     setupCheckboxToggle('toggleReports', reportCluster, autmap);
+    setupCheckboxToggle('toggleHQ30', hq30Layer, autmap);
+    setupCheckboxToggle('toggleHQ100', hq100Layer, autmap);
 });
 
 
@@ -135,19 +126,28 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
     fetch('/water-levels/')
         .then(response => response.json())
         .then(data => {
-            console.log("Water level data fetched:", data);
-
-
 
             // Create GeoJSON layer and add markers to the cluster
             L.geoJSON(data, {
                 pointToLayer: function (feature, latlng) {
+                    // color-coding for water levels markers
+                    let gesamtcode = feature.properties.gesamtcode;
+                    let color = getColor(gesamtcode); // Get color based on the gesamtcodes first digit
+
                     // Parse the lon and lat from the feature properties
                     let lon = parseFloat(feature.properties.lon.replace(",", "."));
                     let lat = parseFloat(feature.properties.lat.replace(",", "."));
 
+
                     if (!isNaN(lon) && !isNaN(lat)) { // Check if coordinates are valid
-                        return L.marker([lat, lon]); // Use the parsed coordinates
+                        return L.circleMarker([lat, lon], { // using circle markers because hex colors are not supported in leaflet
+                            radius: 8,
+                            fillColor: color,
+                            color: '#000', // Optional border color
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }); // Return a new marker
                     } else {
                         console.warn("Invalid coordinates for feature:", feature);
                         return null; // Skip invalid markers
@@ -162,6 +162,7 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                             <strong>Amount:</strong> ${feature.properties.wert || "N/A"} ${feature.properties.einheit} <br>
                             <strong>Time:</strong> ${feature.properties.zeitpunkt || "N/A"} <br>
                             <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a>
+                            <strong></strong> <a href="/water-levels/${feature.properties.hzbnr}">previous levels</a>
                         `;
                         layer.bindPopup(infoContent);
                     }
@@ -224,6 +225,27 @@ function fetchReportData(reportCluster) {
 }
 
 
+function handleHQ30Layer(map) {
+    // Create the WMS layer
+    const hq30Layer = L.tileLayer.wms('https://inspire.lfrz.gv.at/000801/wms', {
+        layers: 'Hochwasserueberflutungsflaechen HQ30', // Layer name
+        format: 'image/png',
+        transparent: true, // Make the layer transparent
+        attribution: '© Umweltbundesamt', // Add attribution
+    });
+    return hq30Layer; // Return the WMS layer object
+}
+
+function handleHQ100Layer(map) {
+    // Create the WMS layer
+    const hq100Layer = L.tileLayer.wms('https://inspire.lfrz.gv.at/000801/wms', {
+        layers: 'Hochwasserueberflutungsflaechen HQ100', // Layer name
+        format: 'image/png',
+        transparent: true,
+        attribution: '© Umweltbundesamt',
+    });
+    return hq100Layer; // Return the WMS layer object
+}
 
 
 // Sidebar toggle
@@ -240,3 +262,38 @@ function setupCheckboxToggle(checkboxId, clusterGroup, map) {
         }
     });
 }
+
+
+
+
+// gesamtcode (INTEGER): Categorization from https://ehyd.gv.at an.
+// 1. digit: 1...Niederwasser, 2...Mittelwasser, 3...erhöhte Wasserführung, 4...Hochwasser Stufe 1, 5...Hochwasser Stufe 2, 6...Hochwasser Stufe 3, 9...keine Daten;
+// 2. digit: 0...gleichbleibend, 1...steigend, 2...sinkend, 3...normal;
+// 3. digit: 0...normal, 1... older than 24 hours
+
+// color-coding for water levels marker function
+function getColor(gesamtcode) {
+    if (gesamtcode == null) {
+        return '#eff4f7'; // Default color for no data
+    }
+
+    gesamtcode = gesamtcode.toString().split('').map(Number); // Convert to array of digits
+    if (gesamtcode[0] === 1) {
+        return '#3bacbe'; // Niederwasser (Low water)
+    } else if (gesamtcode[0] === 2) {
+        return '#4e8fcc'; // Mittelwasser (Medium water)
+    } else if (gesamtcode[0] === 3) {
+        return '#003d84'; // erhöhte Wasserführung (Increased water flow)
+    } else if (gesamtcode[0] === 4) {
+        return '#ffd400'; // Hochwasser Stufe 1 (Flood level 1)
+    } else if (gesamtcode[0] === 5) {
+        return '#f59c00'; // Hochwasser Stufe 2 (Flood level 2)
+    } else if (gesamtcode[0] === 6) {
+        return '#e6320f'; // Hochwasser Stufe 3 (Flood level 3)
+    } else {
+        return '#eff4f7'; // no data (gesamtcode[0] == 9)
+    }
+}
+
+
+
