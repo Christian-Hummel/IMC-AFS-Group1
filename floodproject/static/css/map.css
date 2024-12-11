@@ -10,4 +10,24 @@
 }
 
 
+/* Responsive styles for devices with a width of 600px or less */
+@media (max-width: 600px) {
+    #mapid {
+        height: 300px;
+    }
+}
+
+/* Custom styles for leaflet extra markers */
+.extra-marker {
+    width: 35px;
+    height: 45px;
+}
+
+/* Responsive styles for devices with a width of 600px or less */
+@media (max-width: 600px) {
+    .extra-marker {
+        width: 20px;
+        height: 25px;
+    }
+}
 

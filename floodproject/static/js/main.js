@@ -11,80 +11,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // Create a cluster groups (for aggregating markers) for each data type
+
     var waterLevelCluster = L.markerClusterGroup({
-        maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
-        iconCreateFunction: function (cluster) {
-            // Count the number of markers in the cluster
-            var childCount = cluster.getChildCount();
+    maxClusterRadius: 40,
+    iconCreateFunction: function (cluster) {
+        var childCount = cluster.getChildCount();
+        var size = Math.min(30 + childCount * 2, 150);
+        var color = childCount < 10 ? '#ffd400' : '#4d9553';
 
-            // Define a base size and scale it based on the child count
-            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
+        return L.divIcon({
+            html: `<div style="background-color: ${color};
+                border-radius: 50%;
+                height: ${size}px;
+                width: ${size}px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                font-size: ${size / 4}px;">
+                    ${childCount}
+                </div>`,
+            className: 'cluster-cluster-icon',
+            iconSize: [size, size]
+        });
+    }
+});
 
+var reportCluster = L.markerClusterGroup({
+    maxClusterRadius: 40,
+    iconCreateFunction: function (cluster) {
+        var childCount = cluster.getChildCount();
+        var size = Math.min(30 + childCount * 2, 150);
+        var color = childCount < 10 ? '#f59c00' : '#ca0237';
 
-            // Define a base size and scale it based on the child count
-            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
-
-            // Define color based on the number of markers in the cluster
-            var color = '#4d9553'; // Default color
-            if (childCount < 10) {
-                color = '#ffd400';
-            }
-
-            // Return a custom icon for the cluster
-            return L.divIcon({
-                html: `<div style="background-color: ${color}; 
-                    border-radius: 50%; 
-                    height: ${size}px; 
-                    width: ${size}px; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    color: white; 
-                    font-weight: bold;
-                    font-size: ${size / 4}px;">
-                        ${childCount}
-                    </div>`,
-                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
-                iconSize: [size, size]
-            });
-        }
-    });
-
-    var reportCluster = L.markerClusterGroup({
-        maxClusterRadius: 40,      // Smaller radius (more clusters) for better visibility
-        iconCreateFunction: function (cluster) {
-            // Count the number of markers in the cluster
-            var childCount = cluster.getChildCount();
-
-            // Define a base size and scale it based on the child count
-            var size = Math.min(30 + childCount * 2, 150); // Base size of 30px, scales up to a max of 150px
-
-            // Define color based on the number of markers in the cluster
-            var color = '#ca0237'; // Default color
-            if (childCount < 10) {
-                color = '#f59c00';
-            }
-
-            // Return a custom icon for the cluster
-            return L.divIcon({
-                html: `<div style="background-color: ${color}; 
-                    border-radius: 50%; 
-                    height: ${size}px; 
-                    width: ${size}px; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    color: white; 
-                    font-weight: bold;
-                    font-size: ${size / 4}px;">
-                        ${childCount}
-                    </div>`,
-                className: 'cluster-cluster-icon', // can also be used for more styling in CSS
-                iconSize: [size, size]
-            });
-        }
-
-    });
+        return L.divIcon({
+            html: `<div style="background-color: ${color};
+                border-radius: 50%;
+                height: ${size}px;
+                width: ${size}px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                font-size: ${size / 4}px;">
+                    ${childCount}
+                </div>`,
+            className: 'cluster-cluster-icon',
+            iconSize: [size, size]
+        });
+    }
+});
 
 
     // Fetch the water level data from the backend and add it to the map
@@ -102,8 +80,15 @@ document.addEventListener("DOMContentLoaded", function () {
     setupCheckboxToggle('toggleReports', reportCluster, autmap);
     setupCheckboxToggle('toggleHQ30', hq30Layer, autmap);
     setupCheckboxToggle('toggleHQ100', hq100Layer, autmap);
-});
 
+
+    // Ensuring the map resizes correctly on window resize (thought for mobile devices)
+
+    window.addEventListener('resize', function () {
+        autmap.invalidateSize();
+    });
+
+});
 
 function initializeMap() {
     const map = L.map('mapid', {

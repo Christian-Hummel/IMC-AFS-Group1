@@ -6,6 +6,7 @@ from django.core import serializers
 from .models import Report, Vote, CustomUser
 import requests
 import json
+import geopy
 import pandas as pd
 
 from plotly.offline import plot
@@ -21,7 +22,7 @@ import yagmail
 # Create your views here.
 
 def report(request):
-    return render(request, "report.html")
+    return render(request,"report.html")
 
 def get_severity_score(num):
 
@@ -305,7 +306,7 @@ def water_level_data(request):
 def report_data(request):
     reports = serializers.serialize('json', Report.objects.all())
     reports = json.loads(reports)
-    return JsonResponse(reports, safe=False, status=200)
+    return JsonResponse(reports,safe=False, status=200)
 
 
 

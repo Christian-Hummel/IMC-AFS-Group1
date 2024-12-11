@@ -1,5 +1,3 @@
-
-
 body {
     letter-spacing: .011rem;
     word-break: break-word;
@@ -44,6 +42,7 @@ p {
     color: white;
 }
 
+
 .btn-logout {
     padding-top: 10px;
     background-color: #0063a3;
@@ -65,6 +64,40 @@ p {
     max-width: 800px;
 }
 
+}
+
+/* Responsive styles for devices with a width of 600px or less */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    p {
+        font-size: 14px;
+    }
+
+    .report-container {
+        width: 90%;
+        margin-top: 50px;
+    }
+}
+
+/* Responsive styles for devices with a width of 601px or more */
+@media (min-width: 601px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    p {
+        font-size: 16px;
+    }
+
+    .report-container {
+        width: 50%;
+        margin-top: 100px;
+    }
+}
+
 /* Info box for historic water details */
 .water-container {
 
@@ -78,3 +111,4 @@ p {
     width: 100%;
 
 }
+
