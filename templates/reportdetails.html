@@ -58,7 +58,15 @@
     </nav>
     <div class="blue-line"></div>
 
+
+
+
 <div class="report-container" id="report-container">
+
+    <div class="row">
+        <div class="col-md-8">
+
+
     <h1>{{ report.title }}</h1>
     <p><strong>Description:</strong> {{ report.description }}</p>
     <div id="location">
@@ -74,17 +82,14 @@
     {% endif %}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
 
+        </div>
 
-</div>
+        <div class="col-md-4">
 
-<!-- if condition to check for certain values in a list or table contents -->
-<!-- try calling Vote objects in views.py, extract them into lists, add them as key, value pair to context -->
 
-{#{% if user.id in testlist %}#}
-
-{#        {% if user.id is 2 and user.id is not report.user_id %}#}
-
-        <form id="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
+<!-- if condition for peer review functionality -->
+  {% if not user.id in users %}
+        <form id="reportvote" class="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
             {% csrf_token %}
             <select id="severityselect" name="severityselect" hidden="hidden">
                     <option selected>-- Select Severity -- </option>
@@ -98,7 +103,49 @@
             <p></p>
             <button id="vsubmit" hidden="hidden">Submit Review</button>
         </form>
-{#    {% endif %}#}
+    {% elif user.id in users %}
+        <p>Severity score previously issued: <strong>{{ current_severity }}</strong></p>
+        <p>Marked as inappropriate: <strong>{{ flag }}</strong></p>
+        <form id="reportedit" method="post" action="{% url 'edit_vote' report.id%}">
+            {% csrf_token %}
+            <select id="severityselect" name="severityselect" hidden="hidden">
+                    <option selected>-- Select Severity -- </option>
+                    <option value="1">Low Level</option>
+                    <option value="2">Moderate Level</option>
+                    <option value="3">Medium Level</option>
+                    <option value="4">High Level</option>
+                    <option value="4">Critical Level</option>
+            </select>
+            <label id="checklabel" class="checkbox"><input type="hidden" id="invcheck" name="invcheck" value="False"></label>
+            <p></p>
+            <button id="vsubmit" hidden="hidden">Edit Review</button>
+        </form>
+
+    {% endif %}
+        <p></p>
+        {#{%  if user.role is "manager" %}#}
+        <button id="showstats" onclick="showVotestats()">Show rating statistics</button>
+        <div id="votestats" class="votestats">
+        Number of Reviews:<strong> {{ votestats.num_ratings }}</strong>
+        <br>Total severity rating:<strong> {{ votestats.total_rating }}</strong></br>
+        Flagged by <strong>{{ votestats.flag_count }}</strong> Users
+        </div>
+{#{% endif %}#}
+
+    </div>
+
+</div>
+</div>
+
+<!-- if condition to check for certain values in a list or table contents -->
+<!-- try calling Vote objects in views.py, extract them into lists, add them as key, value pair to context -->
+
+
+
+
+
+
+
 
 
 
