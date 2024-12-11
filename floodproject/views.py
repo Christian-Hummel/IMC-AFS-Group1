@@ -16,11 +16,41 @@ import yagmail
 def report(request):
     return render(request, "report.html")
 
+def get_severity_score(num):
+
+    if num == 1:
+        return "Low Level"
+    elif num == 2:
+        return "Moderate Level"
+    elif num == 3:
+        return "Medium Level"
+    elif num == 4:
+        return "High Level"
+    else:
+        return "Critical Level"
+
 def report_details(request, id):
 
     report = Report.objects.get(id=id)
     context = {}
+
+    all_report_votes = Vote.objects.filter(report_id_id=id)
+    users = [review.user_id_id for review in all_report_votes]
+
+    current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id_id][0]
+    flag = ["yes" if request.user.id == review.user_id_id and review.validity == False else "no" for review in all_report_votes][0]
+
+    votestats = {}
+
+    votestats["num_ratings"] = len([review for review in all_report_votes])
+    votestats["total_rating"] = sum([int(review.rating) for review in all_report_votes])
+    votestats["flag_count"] = len([review.validity for review in all_report_votes if review.validity == False])
+
     context["report"] = report
+    context["users"] = users
+    context["votestats"] = votestats
+    context["current_severity"] = current_severity
+    context["flag"] = flag
     return render(request, "reportdetails.html", context)
 
 def process_report_entry(request):
@@ -66,6 +96,36 @@ def process_vote_entry(request,report_id):
     else:
         return HttpResponse("Invalid request method!")
 
+
+def edit_vote(request, report_id):
+
+
+    if request.method == 'POST':
+
+        current_vote_query = Vote.objects.filter(user_id_id=request.user.id, report_id_id=report_id)
+        vote_id = current_vote_query.values('id')[0]["id"]
+
+        current_vote = Vote.objects.get(id=vote_id)
+
+        print(current_vote)
+
+        current_rating = current_vote.rating
+        current_validity = current_vote.validity
+
+        new_rating = request.POST.get("severityselect")
+        new_validity = request.POST.get("invcheck")
+
+        if not new_validity:
+            new_validity = True
+
+
+        current_vote.rating = new_rating
+        current_vote.validity = new_validity
+        current_vote.save()
+
+        return HttpResponse("Vote sucessfully edited")
+    else:
+        return HttpResponse("No changes to previous rating detected")
 
 
 
