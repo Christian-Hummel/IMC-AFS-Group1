@@ -189,10 +189,14 @@ def verify(request):
         #get specific user
         user = CustomUser.objects.get(email = email)
 
+        if request.session["user_code"]:
+            user.code = request.session["user_code"]
+
         if user.code == code:
             user.is_verified = True
             user.save()
-            return redirect("login")
+            auth.login(request, user)
+            return redirect("main")
         
         else:
             return render(request, "verify.html")
@@ -211,7 +215,13 @@ def login(request):
             return redirect("main")
 
         elif user and not user.is_verified:
-            return HttpResponse("Not verified")
+            user.create_code()
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+            subject = "Your Verification Code"
+            message = f"Hello {user.first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
+            yag.send(to=email, subject=subject, contents=message)
+            request.session["user_code"] = str(user.code)
+            return redirect("verify")
 
         else:
             messages.info(request, "Invalid Email or Password")
