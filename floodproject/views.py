@@ -30,27 +30,33 @@ def get_severity_score(num):
         return "Critical Level"
 
 def report_details(request, id):
-
-    report = Report.objects.get(id=id)
     context = {}
-
-    all_report_votes = Vote.objects.filter(report_id_id=id)
-    users = [review.user_id_id for review in all_report_votes]
-
-    current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id_id][0]
-    flag = ["yes" if request.user.id == review.user_id_id and review.validity == False else "no" for review in all_report_votes][0]
-
-    votestats = {}
-
-    votestats["num_ratings"] = len([review for review in all_report_votes])
-    votestats["total_rating"] = sum([int(review.rating) for review in all_report_votes])
-    votestats["flag_count"] = len([review.validity for review in all_report_votes if review.validity == False])
-
+    report = Report.objects.get(id=id)
     context["report"] = report
-    context["users"] = users
-    context["votestats"] = votestats
-    context["current_severity"] = current_severity
-    context["flag"] = flag
+    if request.user.id:
+
+
+
+
+        all_report_votes = Vote.objects.filter(report_id_id=id)
+        users = [review.user_id_id for review in all_report_votes]
+
+        current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id_id][0]
+        flag = ["yes" if request.user.id == review.user_id_id and review.validity == False else "no" for review in all_report_votes][0]
+
+        votestats = {}
+
+        votestats["num_ratings"] = len([review for review in all_report_votes])
+        votestats["total_rating"] = sum([int(review.rating) for review in all_report_votes])
+        votestats["flag_count"] = len([review.validity for review in all_report_votes if review.validity == False])
+
+
+        context["users"] = users
+        context["votestats"] = votestats
+        context["current_severity"] = current_severity
+        context["flag"] = flag
+
+
     return render(request, "reportdetails.html", context)
 
 def process_report_entry(request):
