@@ -188,17 +188,9 @@ def verify(request):
 
         #get specific user
         user = CustomUser.objects.get(email = email)
-        print(type(user.code))
-        print(type(code))
-        print(type(user))
-        print(f"user.is_verified call outside: {user.is_verified}")
-        print(user.code)
-        print(code)
 
         if user.code == code:
-            print(f"user.is_verified call inside: {user.is_verified}")
             user.is_verified = True
-            print(user.is_verified)
             user.save()
             return redirect("login")
         
