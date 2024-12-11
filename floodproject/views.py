@@ -188,9 +188,17 @@ def verify(request):
 
         #get specific user
         user = CustomUser.objects.get(email = email)
+        print(type(user.code))
+        print(type(code))
+        print(type(user))
+        print(f"user.is_verified call outside: {user.is_verified}")
+        print(user.code)
+        print(code)
 
-        if str(user.code) == code:
+        if user.code == code:
+            print(f"user.is_verified call inside: {user.is_verified}")
             user.is_verified = True
+            print(user.is_verified)
             user.save()
             return redirect("login")
         
@@ -206,9 +214,12 @@ def login(request):
 
         user = auth.authenticate(request, email=email, password=password)
 
-        if user:
+        if user and user.is_verified:
             auth.login(request, user)
             return redirect("main")
+
+        elif user and not user.is_verified:
+            return HttpResponse("Not verified")
 
         else:
             messages.info(request, "Invalid Email or Password")
