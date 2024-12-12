@@ -87,7 +87,7 @@
 
 
 <!-- if condition for peer review functionality -->
-  {% if not user.id in users %}
+  {% if not user.id in users and not report.user_id is user.id %}
         <form id="reportvote" class="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
             {% csrf_token %}
             <select id="severityselect" name="severityselect" hidden="hidden">
