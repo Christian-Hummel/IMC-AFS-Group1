@@ -59,9 +59,13 @@
     <div class="blue-line"></div>
 
 
+<button id="detailsbutton" onclick="showDetails()">Details</button>
+<button id="commentsbutton" onclick="showComments()">Comments</button>
+
 
 
 <div class="report-container" id="report-container">
+<div id="details" class="details" style="display: block">
 
     <div class="row">
         <div class="col-md-8">
@@ -135,6 +139,11 @@
 
 </div>
 </div>
+<div id="comments" class="comments" style="display: none">
+    Sample Text
+</div>
+</div>
+
 
 <!-- if condition to check for certain values in a list or table contents -->
 <!-- try calling Vote objects in views.py, extract them into lists, add them as key, value pair to context -->
