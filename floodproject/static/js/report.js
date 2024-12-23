@@ -15,6 +15,24 @@ function showVotestats(){
     }
 }
 
+function showDetails(){
+    var details = document.getElementById("details")
+    var comments = document.getElementById("comments")
+    if (details.style.display === "none"){
+        details.style.display = "block";
+        comments.style.display = "none";
+    }
+}
+
+function showComments(){
+    var comments = document.getElementById("comments")
+    var details = document.getElementById("details")
+    if (comments.style.display === "none"){
+        comments.style.display = "block";
+        details.style.display = "none";
+    }
+}
+
 
 // function to calculate distance between two coordinates - straight line
 function distance(lst1, lst2){
