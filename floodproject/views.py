@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.models import auth
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, Vote, CustomUser
+from .models import Report, Vote, CustomUser, Comment
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -35,11 +35,12 @@ def report_details(request, id):
     context["report"] = report
     if request.user.id:
 
-
-
-
+        # fetch Vote model from database
         all_report_votes = Vote.objects.filter(report_id_id=id)
+        # fetch user ids and pass it to context as a list
         users = [review.user_id_id for review in all_report_votes]
+        # fetch Comment model from database
+        all_comments = Comment.objects.filter(report_id_id=id)
 
         votestats = {}
 
@@ -58,6 +59,7 @@ def report_details(request, id):
 
         context["users"] = users
         context["votestats"] = votestats
+        context["comments"] = all_comments
 
 
     return render(request, "reportdetails.html", context)
@@ -115,11 +117,6 @@ def edit_vote(request, report_id):
         vote_id = current_vote_query.values('id')[0]["id"]
 
         current_vote = Vote.objects.get(id=vote_id)
-
-        print(current_vote)
-
-        current_rating = current_vote.rating
-        current_validity = current_vote.validity
 
         new_rating = request.POST.get("severityselect")
         new_validity = request.POST.get("invcheck")
@@ -274,3 +271,18 @@ def report_data(request):
     reports = json.loads(reports)
     return JsonResponse(reports, safe=False, status=200)
 
+
+def submit_comment(request, report_id):
+    if request.method == "POST":
+
+        text = request.POST.get("textcomment")
+
+        username = " ".join([request.user.first_name, request.user.last_name])
+
+        comment = Comment.objects.create(comment=text, report_id_id=report_id,user_id_id=request.user.id, username=username)
+
+        comment.save()
+
+        return redirect(request.META['HTTP_REFERER'])
+    else:
+        return HttpResponse("Invalid request method!")
