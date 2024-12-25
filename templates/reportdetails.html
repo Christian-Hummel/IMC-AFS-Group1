@@ -10,10 +10,15 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 
-<script src={% static 'js/report.js' %}></script>
-
 
 <body>
+
+<script src={% static 'js/report.js' %}></script>
+
+<!-- jquery -needed for asynchronous calls (update thread comments) -->
+
+<script src={% static 'js/jquery-3.7.1.min.js' %}></script>
+
 
 <!-- request id and role of current user -->
 {{ request.user.id|json_script:"user_id" }}
@@ -65,6 +70,7 @@
 
 
 <div class="report-container" id="report-container">
+<!-- Tab for report details -->
 <div id="details" class="details" style="display: block">
 
     <div class="row">
@@ -91,7 +97,7 @@
 
 
 <!-- if condition for peer review functionality -->
-  {% if not user.id in users %}
+  {% if not user.id in users and not report.user_id is user.id%}
         <form id="reportvote" class="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
             {% csrf_token %}
             <select id="severityselect" name="severityselect" hidden="hidden">
@@ -126,35 +132,54 @@
 
     {% endif %}
         <p></p>
-        {#{%  if user.role is "manager" %}#}
+        {%  if user.role is "manager" %}
         <button id="showstats" onclick="showVotestats()">Show rating statistics</button>
         <div id="votestats" class="votestats" style="display: none">
         Number of Reviews:<strong> {{ votestats.num_ratings }}</strong>
         <br>Total severity rating:<strong> {{ votestats.total_rating }}</strong></br>
         Flagged by <strong>{{ votestats.flag_count }}</strong> Users
         </div>
-{#{% endif %}#}
+        {% endif %}
 
     </div>
 
 </div>
 </div>
+
+<!-- Tab for report comments -->
 <div id="comments" class="comments" style="display: none">
-    Sample Text
+{% if user.id %}
+    {% if not comments %}
+        <p>No comments yet</p>
+    {% else %}
+    <!-- Display comments with header -->
+    {% for comment in comments %}
+    <div class="comment">
+    <div class="comment-header">
+        <span class="font-weight-bold">{{ comment.username }}</span> &middot;
+ 		<span class="text-muted">{{ comment.date }}</span>
+    </div>
+    <div class="comment-body">
+        {{ comment.comment }}
+    </div>
+    </div>
+        <br>
+    {% endfor %}
+    {% endif %}
+
+    <!-- option for creating a comment-->
+    <form id="threadcomment" method="post" action="{% url 'submit_comment' report.id %}">
+        {% csrf_token %}
+        <label for="textcomment" class="form-label"></label>
+        <textarea id="textcomment" name="textcomment" rows="4" cols="50" placeholder="Enter your Comment"></textarea>
+        <br>
+        <button type="submit">submit</button>
+    </form>
 </div>
+{% else %}
+<p>Please log in to write a comment</p>
+{% endif %}
 </div>
-
-
-<!-- if condition to check for certain values in a list or table contents -->
-<!-- try calling Vote objects in views.py, extract them into lists, add them as key, value pair to context -->
-
-
-
-
-
-
-
-
 
 
 
