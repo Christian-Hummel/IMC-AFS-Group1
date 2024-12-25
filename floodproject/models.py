@@ -87,12 +87,10 @@ class Vote(models.Model):
     def __str__(self):
         return f"{self.report_id} - {self.user_id} - {self.rating} - {self.validity}"
 
-class WaterLevel(models.Model):
-    measuring_point = models.CharField(max_length=256)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    value = models.FloatField()
-    unit = models.CharField(max_length=256)
 
-    def __str__self(self):
-        return self.measuring_point
+class Comment(models.Model):
+    comment = models.TextField()
+    report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    username = models.CharField(max_length=256, default="")
+    date = models.DateTimeField(auto_now=True)
