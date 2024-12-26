@@ -146,11 +146,23 @@
 </div>
 </div>
 
+
+
 <!-- Tab for report comments -->
 <div id="comments" class="comments" style="display: none">
-{% if user.id %}
+
+    <!-- option for creating a comment-->
+    <form id="submitcomment" method="post">
+        {% csrf_token %}
+        <label for="textcomment" class="form-label"></label>
+        <textarea id="textcomment" name="textcomment" rows="4" cols="50" placeholder="Enter your Comment"></textarea>
+        <br>
+        <input type="submit" name="submit" value="submit">
+    </form>
+
+    {% if user.id %}
     {% if not comments %}
-        <p>No comments yet</p>
+        <p id="comment-error">No comments yet</p>
     {% else %}
     <!-- Display comments with header -->
     {% for comment in comments %}
@@ -166,20 +178,41 @@
         <br>
     {% endfor %}
     {% endif %}
-
-    <!-- option for creating a comment-->
-    <form id="threadcomment" method="post" action="{% url 'submit_comment' report.id %}">
-        {% csrf_token %}
-        <label for="textcomment" class="form-label"></label>
-        <textarea id="textcomment" name="textcomment" rows="4" cols="50" placeholder="Enter your Comment"></textarea>
-        <br>
-        <button type="submit">submit</button>
-    </form>
+        
 </div>
 {% else %}
 <p>Please log in to write a comment</p>
 {% endif %}
 </div>
+
+<script>
+    var commentcount = 0
+    $(document).on('submit', '#submitcomment', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'submit_comment' report.id%}',
+            data: {
+                textcomment: $('#textcomment').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (data) {
+                console.log(commentcount)
+                if (commentcount === 0){
+                    $('.comments').append(data)
+                    commentcount += 1
+                    var commenterror = document.getElementById("comment-error")
+                    commenterror.style.display = "none"
+                } else {
+                    $('.comments').find('.comment').first().prepend(data);
+                    commentcount += 1
+                }
+            }
+        })
+    })
+</script>
+
+
 
 
 
