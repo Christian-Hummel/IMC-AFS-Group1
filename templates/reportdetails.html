@@ -159,9 +159,13 @@
         <br>
         <input type="submit" name="submit" value="submit">
     </form>
+    <!-- hidden input with number of comments as value -->
+    <input id="ccount" name="ccount" value="{{ comments | length }}" hidden="hidden">
 
     {% if user.id %}
     {% if not comments %}
+
+        
         <p id="comment-error">No comments yet</p>
     {% else %}
     <!-- Display comments with header -->
@@ -178,7 +182,7 @@
         <br>
     {% endfor %}
     {% endif %}
-        
+
 </div>
 {% else %}
 <p>Please log in to write a comment</p>
@@ -186,7 +190,6 @@
 </div>
 
 <script>
-    var commentcount = 0
     $(document).on('submit', '#submitcomment', function(e){
         e.preventDefault();
         $.ajax({
@@ -197,15 +200,27 @@
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
             },
             success: function (data) {
-                console.log(commentcount)
-                if (commentcount === 0){
-                    $('.comments').append(data)
-                    commentcount += 1
+                // extract raw value from hidden input field - comments.val() to extract value as string
+                var comments = $("#ccount");
+                
+                // if there are no comments yet
+                if (Number(comments.val()) === 0){
+                    // add comment to the end of div with id comments
+                    $('.comments').append(data);
+                    
+                    //increment value -> +1
+                    
+                    comments.val( parseInt(comments.val()+1));
+                    
+                    // remove error message from the document
                     var commenterror = document.getElementById("comment-error")
                     commenterror.style.display = "none"
+                    
+                    // if there are already comments, increment hidden input value and add comment as first element
                 } else {
                     $('.comments').find('.comment').first().prepend(data);
-                    commentcount += 1
+                    comments.val( parseInt(comments.val())+1);
+                    console.log("new commentcount", comments.val());
                 }
             }
         })
