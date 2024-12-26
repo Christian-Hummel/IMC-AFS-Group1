@@ -40,7 +40,7 @@ def report_details(request, id):
         # fetch user ids and pass it to context as a list
         users = [review.user_id_id for review in all_report_votes]
         # fetch Comment model from database
-        all_comments = Comment.objects.filter(report_id_id=id)
+        all_comments = Comment.objects.filter(report_id_id=id).order_by("-date")
 
         votestats = {}
 
@@ -275,7 +275,10 @@ def report_data(request):
 def submit_comment(request, report_id):
     if request.method == "POST":
 
+        context = {}
+
         text = request.POST.get("textcomment")
+
 
         username = " ".join([request.user.first_name, request.user.last_name])
 
@@ -283,6 +286,8 @@ def submit_comment(request, report_id):
 
         comment.save()
 
-        return redirect(request.META['HTTP_REFERER'])
+        context["comment"] = comment
+
+        return render(request, 'singlecomment.html', context)
     else:
         return HttpResponse("Invalid request method!")
