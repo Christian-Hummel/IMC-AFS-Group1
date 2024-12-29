@@ -13,11 +13,18 @@
 
 <body>
 
-<script src={% static 'js/report.js' %}></script>
+<script src={% static 'js/jquery-3.7.1.min.js' %}></script>
 
 <!-- jquery -needed for asynchronous calls (update thread comments) -->
 
-<script src={% static 'js/jquery-3.7.1.min.js' %}></script>
+
+<script src={% static 'js/report.js' %}></script>
+
+<!-- url of current report passed to javascript file -->
+
+<script>
+    var url = '{% url 'submit_comment' report.id%}'
+</script>
 
 
 <!-- request id and role of current user -->
@@ -63,6 +70,12 @@
     </nav>
     <div class="blue-line"></div>
 
+
+{% if user.id %}
+<button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
+{% endif %}
+
+<button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
 
 <button id="detailsbutton" onclick="showDetails()">Details</button>
 <button id="commentsbutton" onclick="showComments()">Comments</button>
@@ -189,43 +202,9 @@
 {% endif %}
 </div>
 
-<script>
-    $(document).on('submit', '#submitcomment', function(e){
-        e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: '{% url 'submit_comment' report.id%}',
-            data: {
-                textcomment: $('#textcomment').val(),
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success: function (data) {
-                // extract raw value from hidden input field - comments.val() to extract value as string
-                var comments = $("#ccount");
-                
-                // if there are no comments yet
-                if (Number(comments.val()) === 0){
-                    // add comment to the end of div with id comments
-                    $('.comments').append(data);
-                    
-                    //increment value -> +1
-                    
-                    comments.val( parseInt(comments.val()+1));
-                    
-                    // remove error message from the document
-                    var commenterror = document.getElementById("comment-error")
-                    commenterror.style.display = "none"
-                    
-                    // if there are already comments, increment hidden input value and add comment as first element
-                } else {
-                    $('.comments').find('.comment').first().prepend(data);
-                    comments.val( parseInt(comments.val())+1);
-                    console.log("new commentcount", comments.val());
-                }
-            }
-        })
-    })
-</script>
+
+
+
 
 
 
