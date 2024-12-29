@@ -154,7 +154,7 @@ jQuery(document).on('submit', '#submitcomment', function(e){
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: url,
+            url: submitUrl,
             data: {
                 textcomment: $('#textcomment').val(),
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
