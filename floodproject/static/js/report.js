@@ -15,6 +15,19 @@ function showVotestats(){
     }
 }
 
+function toggleSubscribe(){
+    var subscribe = document.getElementById("subscribe")
+    var unsubscribe = document.getElementById("unsubscribe")
+
+    if (subscribe.style.display === "none"){
+        subscribe.style.display = "";
+        unsubscribe.style.display = "none";
+    } else {
+        subscribe.style.display = "none";
+        unsubscribe.style.display = "";
+    }
+}
+
 function showDetails(){
     var details = document.getElementById("details")
     var comments = document.getElementById("comments")
@@ -136,5 +149,41 @@ function computeDistance(location) {
 
 
 }
+
+jQuery(document).on('submit', '#submitcomment', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                textcomment: $('#textcomment').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (data) {
+                // extract raw value from hidden input field - comments.val() to extract value as string
+                var comments = $("#ccount");
+
+                // if there are no comments yet
+                if (Number(comments.val()) === 0){
+                    // add comment to the end of div with id comments
+                    $('.comments').append(data);
+
+                    //increment value -> +1
+
+                    comments.val( parseInt(comments.val()+1));
+
+                    // remove error message from the document
+                    var commenterror = document.getElementById("comment-error")
+                    commenterror.style.display = "none"
+
+                    // if there are already comments, increment hidden input value and add comment as first element
+                } else {
+                    $('.comments').find('.comment').first().prepend(data);
+                    comments.val( parseInt(comments.val())+1);
+                }
+            }
+        })
+})
+
 
 
