@@ -16,15 +16,33 @@ function showVotestats(){
 }
 
 function toggleSubscribe(){
-    var subscribe = document.getElementById("subscribe")
-    var unsubscribe = document.getElementById("unsubscribe")
+    var subscribe = document.getElementById("subscribe");
+    var unsubscribe = document.getElementById("unsubscribe");
+    var request = new XMLHttpRequest();
+
 
     if (subscribe.style.display === "none"){
+
+
+        request.open('GET', subscribeUrl);
+
+        request.send();
+
         subscribe.style.display = "";
         unsubscribe.style.display = "none";
-    } else {
+
+
+
+    } else if (subscribe.style.display === ""){
+
+        request.open('GET', subscribeUrl);
+
+        request.send();
+
         subscribe.style.display = "none";
         unsubscribe.style.display = "";
+
+
     }
 }
 
