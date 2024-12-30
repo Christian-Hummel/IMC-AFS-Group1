@@ -72,13 +72,6 @@
     <div class="blue-line"></div>
 
 
-{% if user.id and user.id not in subscriptions and not report.user_id is user.id %}
-    <button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
-    <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
-{% elif user.id in subscriptions and not report.user_id is user_id %}
-    <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
-    <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
-{% endif %}
 
 
 <button id="detailsbutton" onclick="showDetails()">Details</button>
@@ -108,11 +101,20 @@
     />
     {% endif %}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
-
+            
+        <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
+        <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
+        
+        {% if user.id and user.id not in subscriptions and not report.user_id is user.id %}
+        <button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
+        {% elif user.id in subscriptions and not report.user_id is user_id %}
+        <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
+        {% endif %}
+        
         </div>
         <div class="col-md-4">
-
-
+        
+        
 <!-- if condition for peer review functionality -->
   {% if not user.id in users and not report.user_id is user.id%}
         <form id="reportvote" class="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
@@ -180,7 +182,7 @@
     <!-- hidden input with number of comments as value -->
     <input id="ccount" name="ccount" value="{{ comments | length }}" hidden="hidden">
 
-    
+
     {% if not comments %}
         <p id="comment-error">No comments yet</p>
     {% else %}
@@ -200,8 +202,10 @@
     {% endif %}
 
 </div>
-    {% else %}
+    {% elif not user.id %}
     <p>Please log in to write a comment</p>
+    {% elif user.id not in subscriptions %}
+    <p>Please subscribe to view comments</p>
     {% endif %}
 </div>
 
