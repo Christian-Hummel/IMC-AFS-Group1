@@ -35,6 +35,7 @@ def report_details(request, id):
     subscriptions = [subscription.user_id_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
     context["report"] = report
     context["subscriptions"] = subscriptions
+    context["priority"] = ["manager", "superadmin"]
 
 
     if request.user.id:
@@ -282,7 +283,7 @@ def report_data(request):
     return JsonResponse(reports, safe=False, status=200)
 
 # function to extract references and pass them with bold html tags to view
-def check_reference(text):
+def check_reference(text, user_id):
     # iterating over the contents of the comment for references
 
     i = 0
@@ -297,10 +298,18 @@ def check_reference(text):
 
 
                 if CustomUser.objects.filter(first_name=firstname.capitalize(), last_name=lastname.capitalize()).exists():
-                    original = f"@{firstname} {lastname}"
-                    bold = f"<b>{firstname.capitalize()} {lastname.capitalize()}</b>"
 
-                    text = text.replace(original, bold)
+                    user = CustomUser.objects.filter(first_name=firstname.capitalize(), last_name=lastname.capitalize()).first()
+
+                    #author of a post should not be able to reference him or herself
+                    if user.id != user_id:
+
+                        #space to add notification functionality here
+
+                        original = f"@{firstname} {lastname}"
+                        bold = f"<b>{firstname.capitalize()} {lastname.capitalize()}</b>"
+
+                        text = text.replace(original, bold)
 
         i += 1
 
@@ -313,7 +322,7 @@ def submit_comment(request, report_id):
 
         context = {}
 
-        text = check_reference(request.POST.get("textcomment"))
+        text = check_reference(request.POST.get("textcomment"), request.user.id)
 
         username = " ".join([request.user.first_name, request.user.last_name])
 
