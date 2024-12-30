@@ -107,7 +107,7 @@
         
         {% if user.id and user.id not in subscriptions and not report.user_id is user.id %}
         <button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
-        {% elif user.id in subscriptions and not report.user_id is user_id %}
+        {% elif user.id in subscriptions and not report.user_id is user.id %}
         <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
         {% endif %}
         
