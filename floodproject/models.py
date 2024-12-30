@@ -94,3 +94,16 @@ class Comment(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     username = models.CharField(max_length=256, default="")
     date = models.DateTimeField(auto_now=True)
+
+
+class Subscription(models.Model):
+    report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+
+
+    class Meta:
+        unique_together = ('report_id','user_id')
+
+    def __str__(self):
+        return f"{self.report_id} - {self.user_id} - {self.active}"
