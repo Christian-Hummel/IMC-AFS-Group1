@@ -20,10 +20,11 @@
 
 <script src={% static 'js/report.js' %}></script>
 
-<!-- url of current report passed to javascript file -->
+<!-- url of current report with different paths passed to javascript file -->
 
 <script>
     var submitUrl = '{% url 'submit_comment' report.id%}'
+    var subscribeUrl = '{% url 'toggle_subscribe' report.id%}'
 </script>
 
 
@@ -71,11 +72,14 @@
     <div class="blue-line"></div>
 
 
-{% if user.id %}
-<button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
+{% if user.id and user.id not in subscriptions and not report.user_id is user.id %}
+    <button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
+    <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
+{% elif user.id in subscriptions and not report.user_id is user_id %}
+    <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
+    <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
 {% endif %}
 
-<button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
 
 <button id="detailsbutton" onclick="showDetails()">Details</button>
 <button id="commentsbutton" onclick="showComments()">Comments</button>
@@ -163,6 +167,7 @@
 
 <!-- Tab for report comments -->
 <div id="comments" class="comments" style="display: none">
+    {% if user.id in subscriptions or user.role is "manager" %}
 
     <!-- option for creating a comment-->
     <form id="submitcomment" method="post">
@@ -175,10 +180,8 @@
     <!-- hidden input with number of comments as value -->
     <input id="ccount" name="ccount" value="{{ comments | length }}" hidden="hidden">
 
-    {% if user.id %}
+    
     {% if not comments %}
-
-        
         <p id="comment-error">No comments yet</p>
     {% else %}
     <!-- Display comments with header -->
@@ -197,9 +200,9 @@
     {% endif %}
 
 </div>
-{% else %}
-<p>Please log in to write a comment</p>
-{% endif %}
+    {% else %}
+    <p>Please log in to write a comment</p>
+    {% endif %}
 </div>
 
 
