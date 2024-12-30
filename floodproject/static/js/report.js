@@ -1,5 +1,5 @@
 
-
+var tempflag = false
 // error if geolocation is not possible - does not check for denied permission, only the possibility
 if (!navigator.geolocation) {
     throw new Error("No geolocation available");
@@ -26,22 +26,15 @@ function toggleSubscribe(){
         window.location.reload();
     }, 10)
 
-
 }
 
-function showDetails(){
-    var details = document.getElementById("details")
-    var comments = document.getElementById("comments")
+function toggleTabs() {
+    const details = document.getElementById("details")
+    const comments = document.getElementById("comments")
     if (details.style.display === "none"){
         details.style.display = "block";
         comments.style.display = "none";
-    }
-}
-
-function showComments(){
-    var comments = document.getElementById("comments")
-    var details = document.getElementById("details")
-    if (comments.style.display === "none"){
+    } else if (comments.style.display === "none"){
         comments.style.display = "block";
         details.style.display = "none";
     }
@@ -134,13 +127,6 @@ function computeDistance(location) {
         // change status of submit button
         vsubmit.removeAttribute("hidden")
 
-
-
-        // console.log("report details", repdetails)
-        // console.log("reportvote", reportvote)
-
-
-
     }
 
 
@@ -164,6 +150,35 @@ jQuery(document).on('submit', '#submitcomment', function(e){
                 // extract raw value from hidden input field - comments.val() to extract value as string
                 var comments = $("#ccount");
 
+                var userId = JSON.parse(document.getElementById('user_id').textContent)
+                var subscriptions = JSON.parse(document.getElementById('subscriptions').textContent)
+
+                var unsubscribe = document.getElementById("unsubscribe")
+                var subscribe = document.getElementById("subscribe")
+
+                if (subscriptions.indexOf(userId) < 0 && tempflag === false){
+
+                    console.log("not subscribed")
+
+
+                    var request = new XMLHttpRequest();
+
+                    request.open('GET', subscribeUrl);
+
+                    request.send();
+
+                    unsubscribe.style.display = ""
+                    subscribe.style.display = "none"
+
+                    tempflag = true
+
+
+
+
+                } else {
+                    console.log("subscribed")
+                }
+
                 // if there are no comments yet
                 if (Number(comments.val()) === 0){
                     // add comment to the end of div with id comments
@@ -171,7 +186,7 @@ jQuery(document).on('submit', '#submitcomment', function(e){
 
                     //increment value -> +1
 
-                    comments.val( parseInt(comments.val()+1));
+                    comments.val(parseInt(comments.val()+1));
 
                     // remove error message from the document
                     var commenterror = document.getElementById("comment-error")
