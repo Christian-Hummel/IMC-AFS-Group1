@@ -152,8 +152,8 @@ def index(request):
 
 def register(request):
     if request.method == "POST":
-        first_name = request.POST["firstname"]
-        last_name = request.POST["lastname"]
+        first_name = request.POST["firstname"].strip()
+        last_name = request.POST["lastname"].strip()
         password = request.POST["password"]
         password_repeat = request.POST["password_repeat"]
         email = request.POST["email"]
