@@ -194,7 +194,7 @@
  		<span class="text-muted">{{ comment.date }}</span>
     </div>
     <div class="comment-body">
-        {{ comment.comment }}
+        {{ comment.comment | safe }}
     </div>
     </div>
         <br>
