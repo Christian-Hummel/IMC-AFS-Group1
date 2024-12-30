@@ -3,7 +3,7 @@ from django.contrib.auth.models import auth
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, Vote, CustomUser, Comment
+from .models import Report, Vote, CustomUser, Comment, Subscription
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -32,7 +32,11 @@ def get_severity_score(num):
 def report_details(request, id):
     context = {}
     report = Report.objects.get(id=id)
+    subscriptions = [subscription.user_id_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
     context["report"] = report
+    context["subscriptions"] = subscriptions
+
+
     if request.user.id:
 
         # fetch Vote model from database
@@ -88,6 +92,12 @@ def process_report_entry(request):
         rep = Report(title=title, description=description, lon=log, lat=lat, picture=picture,
                      picture_description=picture_description, user_id=request.user.id)
         rep.save()
+
+        # automatic first subscriber upon creation of a report
+
+        subscription = Subscription(report_id_id=rep.id, user_id_id=request.user.id)
+
+        subscription.save()
 
         return HttpResponse("Data sucessfully inserted!")
     else:
@@ -289,5 +299,37 @@ def submit_comment(request, report_id):
         context["comment"] = comment
 
         return render(request, 'singlecomment.html', context)
+    else:
+        return HttpResponse("Invalid request method!")
+
+
+# function to subscribe to a report
+def toggle_subscribe(request, report_id):
+    if request.method == "GET":
+
+        if Subscription.objects.filter(user_id_id=request.user.id, report_id_id=report_id):
+
+            subscription = Subscription.objects.get(user_id_id=request.user.id, report_id_id=report_id)
+
+            if subscription.active:
+
+                subscription.active = False
+                subscription.save()
+
+
+            else:
+
+                subscription.active = True
+                subscription.save()
+
+        else:
+
+
+            subscription = Subscription.objects.create(user_id_id=request.user.id, report_id_id=report_id)
+
+            subscription.save()
+
+
+        return HttpResponse("Subscription updated succesfullly")
     else:
         return HttpResponse("Invalid request method!")
