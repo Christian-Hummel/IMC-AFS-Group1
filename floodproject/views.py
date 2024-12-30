@@ -190,8 +190,8 @@ def register(request):
 
         user = CustomUser.objects.create_user(
             email=email,
-            first_name=first_name,
-            last_name=last_name,
+            first_name=first_name.capitalize(),
+            last_name=last_name.capitalize(),
             password=password,
         )
 
@@ -281,14 +281,39 @@ def report_data(request):
     reports = json.loads(reports)
     return JsonResponse(reports, safe=False, status=200)
 
+# function to extract references and pass them with bold html tags to view
+def check_reference(text):
+    # iterating over the contents of the comment for references
+
+    i = 0
+    while i < len(text):
+
+        if text[i] == "@":
+            fraction = text[i::].split(" ", maxsplit=2)
+
+            if len(fraction) > 1:
+                firstname = fraction[0][1::]
+                lastname = fraction[1]
+
+
+                if CustomUser.objects.filter(first_name=firstname.capitalize(), last_name=lastname.capitalize()).exists():
+                    original = f"@{firstname} {lastname}"
+                    bold = f"<b>{firstname.capitalize()} {lastname.capitalize()}</b>"
+
+                    text = text.replace(original, bold)
+
+        i += 1
+
+    return text
+
+
 
 def submit_comment(request, report_id):
     if request.method == "POST":
 
         context = {}
 
-        text = request.POST.get("textcomment")
-
+        text = check_reference(request.POST.get("textcomment"))
 
         username = " ".join([request.user.first_name, request.user.last_name])
 
