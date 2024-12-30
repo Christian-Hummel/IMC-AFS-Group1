@@ -30,7 +30,10 @@
 
 <!-- request id and role of current user -->
 {{ request.user.id|json_script:"user_id" }}
-{{ request.user.role|json_script:"user_role" }}
+{{ request.user.role|json_script:"user_role" }} 
+
+<!-- subscription list for manager check -->
+{{ subscriptions |json_script:"subscriptions" }}
 
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -74,8 +77,8 @@
 
 
 
-<button id="detailsbutton" onclick="showDetails()">Details</button>
-<button id="commentsbutton" onclick="showComments()">Comments</button>
+<button id="detailsbutton" onclick="toggleTabs()">Details</button>
+<button id="commentsbutton" onclick="toggleTabs()">Comments</button>
 
 
 
@@ -101,20 +104,22 @@
     />
     {% endif %}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
-            
-        <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
-        <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
+
         
-        {% if user.id and user.id not in subscriptions and not report.user_id is user.id %}
+        
+
+        {% if user.role in priority and not user.id in subscriptions and not report.user_id is user.id or user.id and user.id not in subscriptions and not report.user_id is user.id %}
         <button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
+        <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
         {% elif user.id in subscriptions and not report.user_id is user.id %}
         <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
+        <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>            
         {% endif %}
-        
+
         </div>
         <div class="col-md-4">
-        
-        
+
+
 <!-- if condition for peer review functionality -->
   {% if not user.id in users and not report.user_id is user.id%}
         <form id="reportvote" class="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
@@ -151,7 +156,7 @@
 
     {% endif %}
         <p></p>
-        {%  if user.role is "manager" %}
+        {% if user.role in priority %}
         <button id="showstats" onclick="showVotestats()">Show rating statistics</button>
         <div id="votestats" class="votestats" style="display: none">
         Number of Reviews:<strong> {{ votestats.num_ratings }}</strong>
@@ -169,7 +174,7 @@
 
 <!-- Tab for report comments -->
 <div id="comments" class="comments" style="display: none">
-    {% if user.id in subscriptions or user.role is "manager" %}
+    {% if user.id in subscriptions or user.role in priority %}
 
     <!-- option for creating a comment-->
     <form id="submitcomment" method="post">
@@ -208,12 +213,6 @@
     <p>Please subscribe to view comments</p>
     {% endif %}
 </div>
-
-
-
-
-
-
 
 
 
