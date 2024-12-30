@@ -197,7 +197,9 @@ jQuery(document).on('submit', '#submitcomment', function(e){
                     $('.comments').find('.comment').first().prepend(data);
                     comments.val( parseInt(comments.val())+1);
                 }
+                $("#textcomment").val('');
             }
+
         })
 })
 
