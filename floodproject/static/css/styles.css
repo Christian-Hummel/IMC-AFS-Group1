@@ -56,7 +56,6 @@ p {
 
 .report-container {
     margin: auto;
-    margin-top: 30px;
     width: 80%;
     border: 3px solid black;
     padding: 10px;
@@ -66,4 +65,21 @@ p {
     display: block;
     width: 100%;
     max-width: 800px;
+}
+
+.button-container{
+    margin: auto;
+    width: 80%;
+    margin-top: 30px;
+}
+
+.button-container button {
+    vertical-align: top;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+}
+
+button.active {
+    background-color: gray;
 }
