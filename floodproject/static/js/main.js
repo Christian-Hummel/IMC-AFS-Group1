@@ -101,7 +101,34 @@ function initializeMap() {
         attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
     }).addTo(map);
 
-    console.log("Map initialized");
+    // Custom zoom reminder control
+    const zoomReminder = L.control({position: 'bottomright'});
+
+    zoomReminder.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'zoom-reminder');
+        div.innerHTML = 'Zoom in to see flood zones';
+
+        /*div.style.display = 'none';  // Hidden by default*/
+        console.log("Zoom reminder created");
+        return div;
+    };
+    zoomReminder.addTo(map);
+
+     // Zoom level check
+     map.on('zoomend', function() {
+        const reminderDiv = document.querySelector('.zoom-reminder');
+        const currentZoom = map.getZoom();
+        console.log('Zoom level:', currentZoom);
+    
+        if (map.getZoom() < 11 && (document.getElementById('toggleHQ30').checked || document.getElementById('toggleHQ100').checked)) {
+            reminderDiv.style.display = 'block';
+            console.log('Should show reminder');
+
+        } else {
+            reminderDiv.style.display = 'none';
+            console.log('Should not show reminder');
+        }
+    });
 
     return map;
 }
@@ -240,9 +267,18 @@ function setupCheckboxToggle(checkboxId, clusterGroup, map) {
             if (!map.hasLayer(clusterGroup)) {
                 clusterGroup.addTo(map);
             }
+            // Show zoom reminder if HQ layers are toggled and zoom level is too low
+            if ((checkboxId === 'toggleHQ30' || checkboxId === 'toggleHQ100') && map.getZoom() < 11) {
+                document.querySelector('.zoom-reminder').style.display = 'block';
+            }
+
         } else {
             if (map.hasLayer(clusterGroup)) {
                 map.removeLayer(clusterGroup);
+            }
+            // Hide zoom reminder if HQ layers are not checked
+            if ((checkboxId === 'toggleHQ30' || checkboxId === 'toggleHQ100') && !document.getElementById('toggleHQ30').checked && !document.getElementById('toggleHQ100').checked) {
+                document.querySelector('.zoom-reminder').style.display = 'none';
             }
         }
     });

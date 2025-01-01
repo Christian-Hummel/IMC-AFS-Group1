@@ -31,3 +31,13 @@
     }
 }
 
+/* Custom zoom reminder for HQ30 and HQ100 */
+.zoom-reminder {
+    background: red !important;  
+    padding: 10px 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 1px solid #ccc;
+    color: #333;
+    font-weight: bold;
+}
