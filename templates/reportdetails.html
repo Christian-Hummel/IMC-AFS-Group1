@@ -30,7 +30,7 @@
 
 <!-- request id and role of current user -->
 {{ request.user.id|json_script:"user_id" }}
-{{ request.user.role|json_script:"user_role" }} 
+{{ request.user.role|json_script:"user_role" }}
 
 <!-- subscription list for manager check -->
 {{ subscriptions |json_script:"subscriptions" }}
@@ -77,10 +77,12 @@
 
 
 
-<button id="detailsbutton" onclick="toggleTabs()">Details</button>
-<button id="commentsbutton" onclick="toggleTabs()">Comments</button>
 
 
+<div class="button-container" id="button-container">
+    <button id="detailsbutton" class="active" onclick="toggleTabs()">Details</button>
+    <button id="commentsbutton" onclick="toggleTabs()">Comments</button>
+</div>
 
 <div class="report-container" id="report-container">
 <!-- Tab for report details -->
@@ -105,15 +107,15 @@
     {% endif %}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
 
-        
-        
+
+
 
         {% if user.role in priority and not user.id in subscriptions and not report.user_id is user.id or user.id and user.id not in subscriptions and not report.user_id is user.id %}
         <button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
         <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
         {% elif user.id in subscriptions and not report.user_id is user.id %}
         <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
-        <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>            
+        <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
         {% endif %}
 
         </div>
