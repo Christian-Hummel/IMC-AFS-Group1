@@ -108,8 +108,7 @@ function initializeMap() {
         const div = L.DomUtil.create('div', 'zoom-reminder');
         div.innerHTML = 'Zoom in to see flood zones';
 
-        /*div.style.display = 'none';  // Hidden by default*/
-        console.log("Zoom reminder created");
+        div.style.display = 'none';  // Hidden by default (when starting the app)
         return div;
     };
     zoomReminder.addTo(map);
@@ -117,16 +116,11 @@ function initializeMap() {
      // Zoom level check
      map.on('zoomend', function() {
         const reminderDiv = document.querySelector('.zoom-reminder');
-        const currentZoom = map.getZoom();
-        console.log('Zoom level:', currentZoom);
-    
+        
         if (map.getZoom() < 11 && (document.getElementById('toggleHQ30').checked || document.getElementById('toggleHQ100').checked)) {
             reminderDiv.style.display = 'block';
-            console.log('Should show reminder');
-
         } else {
             reminderDiv.style.display = 'none';
-            console.log('Should not show reminder');
         }
     });
 
@@ -161,7 +155,7 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                             fillOpacity: 0.8
                         }); // Return a new marker
                     } else {
-                        console.warn("Invalid coordinates for feature:", feature);
+                        // console.warn("Invalid coordinates for feature:", feature);
                         return null; // Skip invalid markers
                     }
                 },
