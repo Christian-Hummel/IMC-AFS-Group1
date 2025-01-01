@@ -31,12 +31,24 @@ function toggleSubscribe(){
 function toggleTabs() {
     const details = document.getElementById("details")
     const comments = document.getElementById("comments")
+
+    const dbutton = document.getElementById("detailsbutton")
+    const cbutton = document.getElementById("commentsbutton")
+
     if (details.style.display === "none"){
         details.style.display = "block";
         comments.style.display = "none";
+
+        dbutton.classList.add("active")
+        cbutton.classList.remove("active")
+
     } else if (comments.style.display === "none"){
         comments.style.display = "block";
         details.style.display = "none";
+
+        cbutton.classList.add("active")
+        dbutton.classList.remove("active")
+
     }
 }
 
