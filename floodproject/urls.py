@@ -23,6 +23,8 @@ urlpatterns = [
     path("verify/", views.verify, name="verify"),
     path("agent/tasks/",views.agent_tasks, name="agent_tasks"),
     path("agent/tasks/<int:task_id>/change_status/",views.change_task_status,name='change_status'),
+    path("manager/tasks/",views.manager_tasks, name="manager_tasks"),
+    path("manager/tasks/<int:task_id>", views.task_details , name="task-details")
 ]
 
 if settings.DEBUG:

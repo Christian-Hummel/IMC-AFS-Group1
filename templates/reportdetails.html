@@ -39,6 +39,11 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'main' %}">Home</a>
+            {% if user.is_authenticated and user.role == 'agent' %}
+                <a class="navbar-brand" href="{% url 'agent_tasks' %}">Tasks</a>
+            {% elif user.is_authenticated and user.role == 'manager' %}
+                <a class="navbar-brand" href="{% url 'manager_tasks' %}">Tasks</a>
+            {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

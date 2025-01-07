@@ -34,6 +34,18 @@ def agent_tasks(request):
         tasks = Task.objects.filter(agentID=request.user)
         return render(request, 'agent_tasks.html',{'tasks':tasks})
 
+def manager_tasks(request):
+    if request.user.is_authenticated and request.user.role == 'manager':
+        tasks = Task.objects.filter(managerID=request.user)
+        return render(request, 'manager_tasks.html', {'tasks': tasks})
+
+def task_details(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user in task.agentID.all() or request.user == task.managerID:
+
+        return render(request, 'detailed_task.html', {'task':task})
+
+
 
 def change_task_status(request,task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -41,6 +53,7 @@ def change_task_status(request,task_id):
         task.status = Task.Status.DONE
         task.save()
     return redirect('agent_tasks')
+
 
 
 def report_details(request, id):
