@@ -67,7 +67,19 @@
                     <label for="password_repeat" class="form-label">Repeat Password</label>
                     <input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter your password again" required>
                 </div>
+
+                <div class="mb-3">
+                    <label for="role" class="form-label">Role</label>
+                    <select name="role" id="role" required>
+                        <option value="user">User</option>
+                        <option value="agent">Agent</option>
+                        <option value="Manager">Manager</option>
+                    </select>
+                </div>
+
             
                 <button type="submit" class="btn btn-primary w-100">Register</button>
             </form>
-            
+        </div>
+    </div>
+</body>

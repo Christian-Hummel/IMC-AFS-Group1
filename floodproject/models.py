@@ -19,12 +19,17 @@ class CustomUserManager(BaseUserManager):
         return user
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    class Role(models.TextChoices):
+        USER = 'user', 'User'
+        AGENT = 'agent', 'Agent'
+        MANAGER = 'manager', 'Manager'
+        ADMIN = 'admin', 'Admin'
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     zip_code = models.CharField(max_length=10, null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)
-    role = models.CharField(max_length=20, default="user")
+    role = models.CharField(max_length=20, choices=Role.choices,default=Role.USER)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -52,22 +57,27 @@ class Report(models.Model):
     lat = models.FloatField()
     picture_description = models.CharField(max_length=100,default="",blank=True,null=True)
     picture = models.ImageField(upload_to='images/',default=0)
-    #user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,default=1)
-    user_id = models.IntegerField(default=0)
+    user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,related_name='reports')
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.title} - {self.description} - {self.lat} - {self.lon} - {self.user_id}"
 
 class Task(models.Model):
+    class Status(models.TextChoices):
+        TO_DO = 'To-Do', 'To-Do'
+        IN_PROGRESS = 'In Progress', 'In Progress'
+        DONE = 'Done', 'Done'
     description = models.CharField(max_length=100)
-    managerID = models.ForeignKey(CustomUser, related_name='manager', on_delete=models.CASCADE)
-    agentID = models.ForeignKey(CustomUser,related_name='agent', on_delete=models.CASCADE)
+    managerID = models.ForeignKey(CustomUser, related_name='managed_tasks', on_delete=models.CASCADE)
+    agentID = models.ManyToManyField(CustomUser,related_name='agents_tasks')
+    reportID = models.ForeignKey(Report,on_delete=models.CASCADE)
     assignedDate = models.CharField(max_length=100)
     dueDate = models.CharField(max_length=100)
+    status = models.CharField(max_length=20,choices=Status.choices,default=Status.TO_DO)
 
     def __str__(self):
-        return f"{self.description} - {self.managerID} - {self.agentID} - {self.assignedDate} - {self.dueDate}"
+        return f"{self.description} - {self.managerID} - {self.agentID} - {self.assignedDate} - {self.dueDate} - {self.status}"
 
 class Vote(models.Model):
     report_id = models.ForeignKey(Report, on_delete=models.CASCADE)

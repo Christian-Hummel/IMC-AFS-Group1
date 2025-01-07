@@ -21,6 +21,8 @@ urlpatterns = [
     path("reports/", views.report_data, name='report_data'),
     path("logout/", LogoutView.as_view(next_page="main"), name="logout"),
     path("verify/", views.verify, name="verify"),
+    path("agent/tasks/",views.agent_tasks, name="agent_tasks"),
+    path("agent/tasks/<int:task_id>/change_status/",views.change_task_status,name='change_status'),
 ]
 
 if settings.DEBUG:

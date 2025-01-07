@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse , get_object_or_404
 from django.contrib.auth.models import auth
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, Vote, CustomUser, Comment, Subscription
+from .models import Report, Vote, CustomUser, Comment, Subscription, Task
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -28,6 +28,20 @@ def get_severity_score(num):
         return "High Level"
     else:
         return "Critical Level"
+
+def agent_tasks(request):
+    if request.user.is_authenticated and request.user.role == 'agent':
+        tasks = Task.objects.filter(agentID=request.user)
+        return render(request, 'agent_tasks.html',{'tasks':tasks})
+
+
+def change_task_status(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user in task.agentID.all():
+        task.status = Task.Status.DONE
+        task.save()
+    return redirect('agent_tasks')
+
 
 def report_details(request, id):
     context = {}
@@ -150,6 +164,10 @@ def index(request):
     return render(request, "main.html")
 
 
+def agent(request):
+    return render(request, "agent_tasks.html")
+
+
 def register(request):
     if request.method == "POST":
         first_name = request.POST["firstname"].strip()
@@ -157,6 +175,7 @@ def register(request):
         password = request.POST["password"]
         password_repeat = request.POST["password_repeat"]
         email = request.POST["email"]
+        role = request.POST["role"]
 
 
 
@@ -168,6 +187,7 @@ def register(request):
                 user.first_name = first_name
                 user.last_name = last_name
                 user.password = password
+                user.role = role
                 user.set_password(password)
                 user.create_code()
                 user.save()
@@ -194,6 +214,7 @@ def register(request):
             first_name=first_name.capitalize(),
             last_name=last_name.capitalize(),
             password=password,
+            role=role,
         )
 
         user.set_password(password)
