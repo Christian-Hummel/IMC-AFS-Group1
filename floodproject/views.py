@@ -197,12 +197,22 @@ def prev_water_levels(request, hzb):
                     'value': plot_data[hzb]["values"]
                 })
 
+                # Calculate all-time high and low
+                all_time_high = df['value'].max()
+                all_time_low = df['value'].min()
+
                 # Calculate median and quartiles
                 median_value = df['value'].median()
                 q1 = df['value'].quantile(0.25)
                 q3 = df['value'].quantile(0.75)
 
                 fig = px.line(df, x='year', y='value')
+
+                # Add all-time high and low to the plot
+                fig.add_hline(y=all_time_high, line_dash="dash", line_color="red", annotation_text="All-Time High",
+                              annotation_position="bottom right")
+                fig.add_hline(y=all_time_low, line_dash="dash", line_color="blue", annotation_text="All-Time Low",
+                              annotation_position="bottom right")
 
                 # Add median and quartiles to the plot
                 fig.add_hline(y=median_value, line_dash="dash", line_color="green", annotation_text="Median",
@@ -211,6 +221,7 @@ def prev_water_levels(request, hzb):
                               annotation_position="bottom right")
                 fig.add_hline(y=q3, line_dash="dot", line_color="red", annotation_text="Q3",
                               annotation_position="bottom right")
+
 
                 fig.update_layout(xaxis_title="years",
                                   yaxis_title=f"level in {current_unit}",
