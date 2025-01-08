@@ -9,6 +9,11 @@
     {% load static %} <!-- necessary to connect to CSS in django -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
+
+<!--- SQL Part -->
+
+
+
 <body>
 
 
@@ -58,6 +63,15 @@
                     <tr>
                         <th>Description</th>
                         <td>{{ task.description }}</td>
+                        <td>
+                            <form method="post" action="{% url 'update_task_description' task.id %}">
+                                {% csrf_token %}
+                                <input type="text" name="description" value="{{ task.description }}"/>
+                                <button type="submit" id="update_task_description" class="btn btn-primary btn-sm">Update</button>
+                            </form>
+
+
+                        </td>
                     </tr>
                     <tr>
                         <th>Manager</th>
@@ -78,12 +92,93 @@
                     <tr>
                         <th>Status</th>
                         <td>{{ task.status }}</td>
+                        <td>
+                            <form method="post" action="{% url 'update_task_status' task.id %}">
+                                {% csrf_token %}
+                                <select name="status" id="status">
+                                    <option value="To-Do">To-Do</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Done">Done</option>
+                                </select>
+                                <button type="submit" id="update_task_status" class="btn btn-primary btn-sm">Update</button>
+                            </form>
+
+
+                        </td>
                     </tr>
                 </thead>
                 <tbody>
 
 
             </table>
+            <div class="container mt-5">
+                <h1>Assign Agents:</h1>
+                {% if available_agents %}
+
+                    <form method="post" action="{% url 'update_task_agents' task.id %}">
+                        {% csrf_token %}
+                        <select name="agent" id="agent">
+
+                            {% for agent in available_agents %}
+                                <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
+                            {% empty %}
+                                <option>No available agents</option>
+                            {% endfor %}
+
+
+
+                        </select>
+                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
+                {% else %}
+                        <p> There are no available agents to assign </p>
+                {% endif %}
+            </div>
+
+            <div class="container mt-5">
+                <h1>Promote Normal User:</h1>
+                {% if user %}
+
+                    <form method="post" action="{% url 'promote_user' task.id %}">
+                        {% csrf_token %}
+                        <select name="user" id="user">
+
+                            {% for u in user %}
+                                <option value="{{ u.id }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% empty %}
+                                <option>No available users</option>
+                            {% endfor %}
+
+
+
+                        </select>
+                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
+                {% else %}
+                        <p> There are no available agents to assign </p>
+                {% endif %}
+            </div>
+
+            <div class="container mt-5">
+                <h1>Invite New People:</h1>
+                {% if available_agents %}
+
+                    <form method="post" action="{% url 'update_task_agents' task.id %}">
+                        {% csrf_token %}
+                        <select name="agent" id="agent">
+
+                            {% for agent in available_agents %}
+                                <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
+                            {% empty %}
+                                <option>No available agents</option>
+                            {% endfor %}
+
+
+
+                        </select>
+                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
+                {% else %}
+                        <p> There are no available agents to assign </p>
+                {% endif %}
+            </div>
     </div>
 
 </body>

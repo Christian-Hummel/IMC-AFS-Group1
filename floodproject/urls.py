@@ -24,7 +24,12 @@ urlpatterns = [
     path("agent/tasks/",views.agent_tasks, name="agent_tasks"),
     path("agent/tasks/<int:task_id>/change_status/",views.change_task_status,name='change_status'),
     path("manager/tasks/",views.manager_tasks, name="manager_tasks"),
-    path("manager/tasks/<int:task_id>", views.task_details , name="task-details")
+    path("manager/tasks/<int:task_id>/", views.task_details , name="task-details"),
+    path("manager/tasks/<int:task_id>/update_task_description/", views.update_task_description, name="update_task_description"),
+    path("manager/tasks/<int:task_id>/update_task_status/", views.update_task_status, name="update_task_status"),
+    path("manager/tasks/<int:task_id>/update_task_agents/", views.update_task_agents, name="update_task_agents"),
+    path("manager/tasks/<int:task_id>/promote_users/", views.promote_user, name="promote_user"),
+    path("report/<int:report_id>/create_task/", views.create_task, name="create_task"),
 ]
 
 if settings.DEBUG:

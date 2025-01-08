@@ -41,9 +41,12 @@ def manager_tasks(request):
 
 def task_details(request,task_id):
     task = get_object_or_404(Task, id=task_id)
+    assigned_agents = task.agentID.all()
+    available_agents = CustomUser.objects.filter(role='agent').exclude(id__in=assigned_agents.values_list('id'))
+    user = CustomUser.objects.filter(role='user')
     if request.user in task.agentID.all() or request.user == task.managerID:
 
-        return render(request, 'detailed_task.html', {'task':task})
+        return render(request, 'detailed_task.html', {'task':task, 'assigned_agents':assigned_agents, 'available_agents':available_agents, 'user':user})
 
 
 
@@ -54,11 +57,77 @@ def change_task_status(request,task_id):
         task.save()
     return redirect('agent_tasks')
 
+def promote_user(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        if user_id:
+            user = get_object_or_404(CustomUser, id=user_id)
+            user.role = 'agent'
+            user.save()
+
+    return redirect('task-details', task_id=task_id)
+
+
+def update_task_description(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user in task.agentID.all() or request.user == task.managerID:
+        if request.method == 'POST':
+            new_description = request.POST.get('description')
+            if new_description:
+                task.description = new_description
+                task.save()
+
+    return redirect('task-details', task_id=task.id)
+
+def update_task_status(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user  in task.agentID.all() or request.user == task.managerID:
+        if request.method == 'POST':
+            new_status = request.POST.get('status')
+            if new_status:
+                task.status = new_status
+                task.save()
+
+    return redirect('task-details', task_id=task.id)
+
+def update_task_agents(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user in task.agentID.all() or request.user == task.managerID:
+        if request.method == 'POST':
+            agent_id = request.POST.get('agent')
+            if agent_id:
+                agent = get_object_or_404(CustomUser, id=agent_id, role='agent')
+                task.agentID.add(agent)
+
+    return redirect('task-details', task_id=task.id)
+
+def create_task(request, report_id):
+    report = Report.objects.get(id=report_id)
+
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        due_date = request.POST.get('due_date')
+        agent_id = request.POST.geT('agent')
+
+
+        agent = CustomUser.objects.get(id=agent_id)
+
+
+
+        task = Task.objects.create(description=description, managerID=request.user, reportID=report, due_date=due_date, status=Task.Status.TO_DO)
+
+        if agent:
+            task.agentID.add(agent)
+
+        return redirect('report_detail', report_id=report.id)
 
 
 def report_details(request, id):
+
     context = {}
     report = Report.objects.get(id=id)
+    available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__reportID=report)
     subscriptions = [subscription.user_id_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
     context["report"] = report
     context["subscriptions"] = subscriptions
@@ -92,6 +161,7 @@ def report_details(request, id):
         context["users"] = users
         context["votestats"] = votestats
         context["comments"] = all_comments
+        context["available_agents"] = available_agents
 
 
     return render(request, "reportdetails.html", context)
