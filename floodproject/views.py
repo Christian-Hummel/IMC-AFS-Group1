@@ -155,10 +155,8 @@ def build_code_response(code_nr):
 def water_level_data(request):
 
     data = load_water_level_data()
-
-    ################## Space for optional Data processing before sending it to frontend ##################
-
     return JsonResponse(data)  # Return the data as a JSON response to the frontend
+
 
 def report_data(request):
 
@@ -180,7 +178,6 @@ def prev_water_levels(request, hzb):
     hzb = str(hzb)
     current_unit = ""
 
-
     # extract current water levels from json request data
     try:
 
@@ -193,8 +190,6 @@ def prev_water_levels(request, hzb):
                 plot_data[hzb]["current_unit"] = dict["properties"]["einheit"]
                 current_unit = plot_data[hzb]["current_unit"]
 
-
-
                 # print(plot_data)
 
                 df = pd.DataFrame({
@@ -202,9 +197,20 @@ def prev_water_levels(request, hzb):
                     'value': plot_data[hzb]["values"]
                 })
 
-
+                # Calculate median and quartiles
+                median_value = df['value'].median()
+                q1 = df['value'].quantile(0.25)
+                q3 = df['value'].quantile(0.75)
 
                 fig = px.line(df, x='year', y='value')
+
+                # Add median and quartiles to the plot
+                fig.add_hline(y=median_value, line_dash="dash", line_color="green", annotation_text="Median",
+                              annotation_position="bottom right")
+                fig.add_hline(y=q1, line_dash="dot", line_color="blue", annotation_text="Q1",
+                              annotation_position="bottom right")
+                fig.add_hline(y=q3, line_dash="dot", line_color="red", annotation_text="Q3",
+                              annotation_position="bottom right")
 
                 fig.update_layout(xaxis_title="years",
                                   yaxis_title=f"level in {current_unit}",
