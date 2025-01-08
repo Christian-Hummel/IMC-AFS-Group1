@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     {% load static %} <!-- necessary to connect to CSS in django -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/waterdetails.css' %}">
 </head>
 <body>
 
@@ -16,8 +17,34 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                    <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'report' %}">
+                        <i class="fas fa-plus me-2"></i> New Report
+                    </a>
+                    </li>
+                    <li class="nav-item">
+
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="btn-logout" type="submit">logout</button>
+                        </form>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
+
     <div class="blue-line"></div>
     <p></p>
 
@@ -28,17 +55,16 @@
                 <div class="col-md-4">
                     <div class="water-container">
 
-                        <p>Messstelle:</p>
+                        <h1>Messstelle:</h1>
 
                         <strong>{{ plot_data.messstelle }}</strong>
 
                         <div class="water-info">
 
 
-
-                            <p>Minimum Value of the year {{ plot_data.minimum_year }}:  <strong>{{ plot_data.minimum }} {{ plot_data.einheit }}</strong></p>
-                            <p>Median Value:    <strong>{{ plot_data.median }} {{ plot_data.einheit }}</strong></p>
-                            <p>All-Time high Value of the year {{ plot_data.maximum_year }}:  <strong>{{ plot_data.maximum }} {{ plot_data.einheit }}</strong></p>
+                            <p>All-Time high Value of the year {{ plot_data.maximum_year }}:  <strong id="max">{{ plot_data.maximum }} {{ plot_data.einheit }}</strong></p>
+                            <p>Median Value:    <strong id="median">{{ plot_data.median }} {{ plot_data.einheit }}</strong></p>
+                            <p>Minimum Value of the year {{ plot_data.minimum_year }}:  <strong id="min">{{ plot_data.minimum }} {{ plot_data.einheit }}</strong></p>
                             <p>Current Water level: <strong>{{ plot_data.current_value }} {{ plot_data.current_unit }}</strong> - <strong>{{ plot_data.danger_level }}</strong></p>
 
 
