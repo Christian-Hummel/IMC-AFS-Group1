@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from . import views
 
 #urlpatterns is a variable that is used for the urls.py in the Quiz_Game folder 
@@ -15,6 +15,9 @@ urlpatterns = [
     path("water-levels/<int:hzb>", views.prev_water_levels, name='prev_water_levels'), # Historic water Levels
     path("water-levels/watererror", views.prev_water_levels, name='water_level_error'), # Error page for missing data
     path("reports/", views.report_data, name='report_data'),
-
+    path("password_reset/", PasswordResetView.as_view(), name="password_reset"),
+    path("password_reset/done/", PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path("reset/<uidb64>/<token>/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path("reset/done/", PasswordResetCompleteView.as_view(), name="password_reset_complete"),
 ]
 
