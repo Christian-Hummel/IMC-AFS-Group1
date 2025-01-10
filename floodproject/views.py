@@ -506,3 +506,29 @@ def send_password_reset_email(request):
             return redirect("register")
 
     return render(request, "registration/password_reset_form.html")
+
+
+def password_reset_form(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        messages.error(request, "User not found.")
+        return redirect("login")
+
+    if request.method == "POST":
+        new_password = request.POST["new_password"]
+        confirm_password = request.POST["confirm_password"]
+
+        if new_password == confirm_password:
+            user.set_password(new_password)
+            user.save()
+            messages.success(request, "Password reset successfully!")
+            return redirect("login")
+        else:
+            messages.error(request, "Passwords do not match.")
+
+    return render(request, "registration/password_reset_form.html", {'user': user})
+
+
+def password_reset_done(request):
+    return render(request, "registration/password_reset_done.html")
