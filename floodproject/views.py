@@ -506,4 +506,4 @@ def send_password_reset_email(request):
             return redirect("password_reset")
 
 
-    return render(request, "password_reset_form.html")
+    return render(request, "registration/password_reset_form.html")
