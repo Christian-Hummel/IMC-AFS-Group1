@@ -492,7 +492,7 @@ def send_password_reset_email(request):
             reset_url = request.build_absolute_uri(reverse('password_reset_confirm', args=[user.pk, token]))
 
             # Send the email with the reset URL
-            yag = yagmail.SMTP('example.mail3119@gmail.com', 'selin.meseli@gmail.com')  # Gmail credentials
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')  # Gmail credentials
             subject = "Password Reset Request"
             message = f"Hello {user.first_name},\n\nClick the link below to reset your password:\n{reset_url}\n\nThank you!"
             yag.send(to=email, subject=subject, contents=message)
@@ -503,7 +503,6 @@ def send_password_reset_email(request):
         except User.DoesNotExist:
             # If email does not exist in the database
             messages.error(request, "This email address is not registered.")
-            return redirect("password_reset")
-
+            return redirect("register")
 
     return render(request, "registration/password_reset_form.html")
