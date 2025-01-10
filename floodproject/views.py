@@ -9,6 +9,8 @@ import json
 from geopy.geocoders import Nominatim
 from django.core.mail import send_mail
 from AFS_Group1 import settings
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth import get_user_model
 import yagmail
 
 # Create your views here.
@@ -471,3 +473,37 @@ def toggle_subscribe(request, report_id):
         return HttpResponse("Subscription updated succesfullly")
     else:
         return HttpResponse("Invalid request method!")
+
+
+User = get_user_model()
+
+def send_password_reset_email(request):
+    if request.method == "POST":
+        email = request.POST["email"]
+        try:
+            # Check if the user exists with this email
+            user = User.objects.get(email=email)
+
+            # Create a token for the user
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+
+            # Create the reset URL with the token
+            reset_url = request.build_absolute_uri(reverse('password_reset_confirm', args=[user.pk, token]))
+
+            # Send the email with the reset URL
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'selin.meseli@gmail.com')  # Gmail credentials
+            subject = "Password Reset Request"
+            message = f"Hello {user.first_name},\n\nClick the link below to reset your password:\n{reset_url}\n\nThank you!"
+            yag.send(to=email, subject=subject, contents=message)
+
+            # Redirect to the 'password_reset_done' page
+            return redirect("password_reset_done")
+
+        except User.DoesNotExist:
+            # If email does not exist in the database
+            messages.error(request, "This email address is not registered.")
+            return redirect("password_reset")
+
+
+    return render(request, "password_reset_form.html")
