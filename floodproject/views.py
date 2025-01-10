@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, reverse , get_object_or_404
-from django.contrib.auth.models import auth
+from django.contrib.auth.models import auth, User
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
@@ -12,6 +12,7 @@ from AFS_Group1 import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth import get_user_model
 import yagmail
+from django.urls import reverse
 
 # Create your views here.
 
@@ -475,60 +476,75 @@ def toggle_subscribe(request, report_id):
         return HttpResponse("Invalid request method!")
 
 
-User = get_user_model()
 
 def send_password_reset_email(request):
+    errors = []  # To collect errors
+
     if request.method == "POST":
-        email = request.POST["email"]
-        try:
-            # Check if the user exists with this email
-            user = User.objects.get(email=email)
+        email = request.POST.get("email").strip()
 
-            # Create a token for the user
-            token_generator = PasswordResetTokenGenerator()
-            token = token_generator.make_token(user)
-
-            # Create the reset URL with the token
-            reset_url = request.build_absolute_uri(reverse('password_reset_confirm', args=[user.pk, token]))
-
-            # Send the email with the reset URL
-            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')  # Gmail credentials
+        if not email:
+            errors.append("Email field cannot be empty.")
+        elif not CustomUser.objects.filter(email=email).exists():
+            errors.append("No account found with this email address.")
+        else:
+            user = CustomUser.objects.get(email=email)
+            reset_url = request.build_absolute_uri(reverse('password_reset_confirm') + f"?email={user.email}")
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
             subject = "Password Reset Request"
-            message = f"Hello {user.first_name},\n\nClick the link below to reset your password:\n{reset_url}\n\nThank you!"
-            yag.send(to=email, subject=subject, contents=message)
+            message = f"""Hello {user.first_name},
 
-            # Redirect to the 'password_reset_done' page
+Click the link below to reset your password:
+{reset_url}
+
+If you didn't request this password reset, please ignore this email.
+
+Thank you!"""
+            yag.send(to=email, subject=subject, contents=message)
+            messages.success(request, "Password reset link has been sent to your email.")
             return redirect("password_reset_done")
 
-        except User.DoesNotExist:
-            # If email does not exist in the database
-            messages.error(request, "This email address is not registered.")
-            return redirect("register")
-
-    return render(request, "registration/password_reset_form.html")
+    return render(request, "registration/password_reset_form.html", {'errors': errors})
 
 
-def password_reset_form(request, user_id):
+def password_reset_confirm(request):
+    email = request.GET.get('email')
+
+    if not email:
+        messages.error(request, "Invalid reset link.")
+        return redirect('password_reset')
+
     try:
-        user = User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        messages.error(request, "User not found.")
-        return redirect("login")
+        user = CustomUser.objects.get(email=email)
+    except CustomUser.DoesNotExist:
+        messages.error(request, "No user found with this email.")
+        return redirect('password_reset')
+
+    errors = []  # Collect validation errors
 
     if request.method == "POST":
-        new_password = request.POST["new_password"]
-        confirm_password = request.POST["confirm_password"]
+        password = request.POST.get("password")
+        password_repeat = request.POST.get("password_repeat")
 
-        if new_password == confirm_password:
-            user.set_password(new_password)
+        if not password or not password_repeat:
+            errors.append("Please fill in both password fields.")
+        elif password != password_repeat:
+            errors.append("Passwords do not match!")
+        elif len(password) < 8:
+            errors.append("Password must be at least 8 characters long.")
+
+        if not errors:
+            user.set_password(password)
             user.save()
-            messages.success(request, "Password reset successfully!")
-            return redirect("login")
-        else:
-            messages.error(request, "Passwords do not match.")
+            messages.success(request, "Your password has been successfully reset. You can now log in with your new password.")
+            return redirect('password_reset_complete')
 
-    return render(request, "registration/password_reset_form.html", {'user': user})
-
+    # If there are errors or it's a GET request, render the form with errors
+    return render(request, "registration/password_reset_confirm.html", {'email': email, 'errors': errors})
 
 def password_reset_done(request):
     return render(request, "registration/password_reset_done.html")
+
+
+def password_reset_complete(request):
+    return render(request, "registration/password_reset_complete.html")

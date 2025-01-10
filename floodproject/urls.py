@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth.views import LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.views import LogoutView, PasswordResetDoneView, PasswordResetCompleteView
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
@@ -30,11 +30,10 @@ urlpatterns = [
     path("manager/tasks/<int:task_id>/update_task_agents/", views.update_task_agents, name="update_task_agents"),
     path("manager/tasks/<int:task_id>/promote_users/", views.promote_user, name="promote_user"),
     path("report/<int:report_id>/create_task/", views.create_task, name="create_task"),
-    path("password_reset/", PasswordResetView.as_view(), name="password_reset_form"),
-    path("password_reset/done/", PasswordResetDoneView.as_view(), name="password_reset_done"),
-    path("reset/<uidb64>/<token>/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
-    path("reset/done/", PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path('password_reset/', views.send_password_reset_email, name='password_reset'),
+    path('password_reset_confirm/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('password_reset_done/', views.password_reset_done, name='password_reset_done'),
+    path('password_reset_complete/', views.password_reset_complete, name='password_reset_complete'),
 ]
-
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
