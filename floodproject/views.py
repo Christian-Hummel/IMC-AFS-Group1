@@ -131,7 +131,7 @@ def report_details(request, id):
 
     context = {}
     report = Report.objects.get(id=id)
-    #available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__report=report)
+    available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__report=report)
     subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
     context["report"] = report
     context["subscriptions"] = subscriptions
@@ -165,7 +165,7 @@ def report_details(request, id):
         context["users"] = users
         context["votestats"] = votestats
         context["comments"] = all_comments
-        #context["available_agents"] = available_agents
+        context["available_agents"] = available_agents
 
 
     return render(request, "reportdetails.html", context)
