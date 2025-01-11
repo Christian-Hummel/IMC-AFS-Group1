@@ -28,35 +28,35 @@ function toggleSubscribe(){
 
 }
 
-function toggleTabs() {
-    const details = document.getElementById("details")
-    const comments = document.getElementById("comments")
-    const tasks = document.getElementById("createtasks")
+
+function toggleTabs (target){
+
+    const details = document.getElementById("details");
+    const comments = document.getElementById("comments");
+    const tasks = document.getElementById("tasks");
+
+    // create a list of all tabs and iterate over it
+    const array = [details, comments, tasks]
+
+    array.forEach((element) => {
+        if (target !== element.id){
+            element.style.display = "none"
+            // if condition to check if a button has got the class "active" - is highlighted
+            if (document.getElementById(element.id.concat("button")).classList.contains("active")){
+                document.getElementById(element.id.concat("button")).classList.remove("active")
+            }
+        }
+
+    })
+
+    // make target div visible
+    document.getElementById(target).style.display = "block"
+    // highlight corresponding tab button
+    document.getElementById(target.concat("button")).classList.add("active")
 
 
-    const dbutton = document.getElementById("detailsbutton")
-    const cbutton = document.getElementById("commentsbutton")
-    const tbutton = document.getElementById("tasksbutton")
-
-    if (details.style.display === "none" && comments.style.display === "none"){
-        details.style.display = "block";
-        comments.style.display = "none";
-        tasks.style.display = "none";
-
-        dbutton.classList.add("active")
-        cbutton.classList.remove("active")
-        tbutton.className.remove("active");
-
-    } else if (comments.style.display === "none"){
-        comments.style.display = "block";
-        details.style.display = "none";
-
-        cbutton.classList.add("active")
-        dbutton.classList.remove("active")
 
 
-
-    }
 }
 
 
