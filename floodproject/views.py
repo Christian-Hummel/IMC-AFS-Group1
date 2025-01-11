@@ -102,26 +102,6 @@ def update_task_agents(request, task_id):
 
     return redirect('task-details', task_id=task.id)
 
-def create_task(request, report_id):
-    report = Report.objects.get(id=report_id)
-
-    if request.method == 'POST':
-        description = request.POST.get('description')
-        due_date = request.POST.get('due_date')
-        agent_id = request.POST.geT('agent')
-
-
-        agent = CustomUser.objects.get(id=agent_id)
-
-
-
-        task = Task.objects.create(description=description, managerID=request.user, reportID=report, due_date=due_date, status=Task.Status.TO_DO)
-
-        if agent:
-            task.agentID.add(agent)
-
-        return redirect('report_detail', report_id=report.id)
-
 
 def report_details(request, id):
 
@@ -242,9 +222,43 @@ def edit_vote(request, report_id):
         return HttpResponse("No changes to previous rating detected")
 
 
-
 def index(request):
     return render(request, "main.html")
+
+
+def create_task_page(request, report_id):
+
+    report = get_object_or_404(Report, id=report_id)
+
+    agents = CustomUser.objects.filter(role='agent')
+
+
+    return render(request,"create_task.html", {'report': report, 'agents':agents})
+
+
+def create_task(request, report_id):
+
+
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        assigned_date = request.POST.get('assigned_date')
+        due_date = request.POST.get('due_date')
+        agent_id = request.POST.get('agent')
+
+
+
+        agent = CustomUser.objects.get(id=agent_id)
+
+
+        task = Task.objects.create(description=description, assignedDate=assigned_date, dueDate=due_date, managerID_id=request.user.id, status=Task.Status.TO_DO, reportID_id=report_id)
+
+        if agent:
+            task.agentID.add(agent)
+
+        task.save()
+
+    return redirect('create_task_page', report_id=report_id)
+
 
 
 def agent(request):

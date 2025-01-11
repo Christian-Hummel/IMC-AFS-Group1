@@ -29,7 +29,9 @@ urlpatterns = [
     path("manager/tasks/<int:task_id>/update_task_status/", views.update_task_status, name="update_task_status"),
     path("manager/tasks/<int:task_id>/update_task_agents/", views.update_task_agents, name="update_task_agents"),
     path("manager/tasks/<int:task_id>/promote_users/", views.promote_user, name="promote_user"),
-    path("report/<int:report_id>/create_task/", views.create_task, name="create_task"),
+    path("report/<int:report_id>/create_task/", views.create_task_page, name="create_task_page"),
+    path("report/<int:report_id>/create_task/submit/", views.create_task, name="create_task"),
+
 ]
 
 if settings.DEBUG:

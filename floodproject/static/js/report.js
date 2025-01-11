@@ -31,21 +31,16 @@ function toggleSubscribe(){
 function toggleTabs() {
     const details = document.getElementById("details")
     const comments = document.getElementById("comments")
-    const tasks = document.getElementById("createtasks")
-
 
     const dbutton = document.getElementById("detailsbutton")
     const cbutton = document.getElementById("commentsbutton")
-    const tbutton = document.getElementById("tasksbutton")
 
-    if (details.style.display === "none" && comments.style.display === "none"){
+    if (details.style.display === "none"){
         details.style.display = "block";
         comments.style.display = "none";
-        tasks.style.display = "none";
 
         dbutton.classList.add("active")
         cbutton.classList.remove("active")
-        tbutton.className.remove("active");
 
     } else if (comments.style.display === "none"){
         comments.style.display = "block";
@@ -221,6 +216,3 @@ jQuery(document).on('submit', '#submitcomment', function(e){
 
         })
 })
-
-
-
