@@ -34,20 +34,20 @@ def get_severity_score(num):
 
 def agent_tasks(request):
     if request.user.is_authenticated and request.user.role == 'agent':
-        tasks = Task.objects.filter(agentID=request.user)
+        tasks = Task.objects.filter(agent=request.user)
         return render(request, 'agent_tasks.html',{'tasks':tasks})
 
 def manager_tasks(request):
     if request.user.is_authenticated and request.user.role == 'manager':
-        tasks = Task.objects.filter(managerID=request.user)
+        tasks = Task.objects.filter(manager=request.user)
         return render(request, 'manager_tasks.html', {'tasks': tasks})
 
 def task_details(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    assigned_agents = task.agentID.all()
+    assigned_agents = task.agent.all()
     available_agents = CustomUser.objects.filter(role='agent').exclude(id__in=assigned_agents.values_list('id'))
     user = CustomUser.objects.filter(role='user')
-    if request.user in task.agentID.all() or request.user == task.managerID:
+    if request.user in task.agent.all() or request.user == task.manager:
 
         return render(request, 'detailed_task.html', {'task':task, 'assigned_agents':assigned_agents, 'available_agents':available_agents, 'user':user})
 
@@ -55,7 +55,7 @@ def task_details(request,task_id):
 
 def change_task_status(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agentID.all():
+    if request.user in task.agent.all():
         task.status = Task.Status.DONE
         task.save()
     return redirect('agent_tasks')
@@ -74,7 +74,7 @@ def promote_user(request, task_id):
 
 def update_task_description(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agentID.all() or request.user == task.managerID:
+    if request.user in task.agent.all() or request.user == task.manager:
         if request.method == 'POST':
             new_description = request.POST.get('description')
             if new_description:
@@ -85,7 +85,7 @@ def update_task_description(request,task_id):
 
 def update_task_status(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user  in task.agentID.all() or request.user == task.managerID:
+    if request.user  in task.agent.all() or request.user == task.manager:
         if request.method == 'POST':
             new_status = request.POST.get('status')
             if new_status:
@@ -96,32 +96,33 @@ def update_task_status(request,task_id):
 
 def update_task_agents(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agentID.all() or request.user == task.managerID:
+    if request.user in task.agent.all() or request.user == task.manager:
         if request.method == 'POST':
             agent_id = request.POST.get('agent')
             if agent_id:
                 agent = get_object_or_404(CustomUser, id=agent_id, role='agent')
-                task.agentID.add(agent)
+                task.agent.add(agent)
 
     return redirect('task-details', task_id=task.id)
 
 def create_task(request, report_id):
     report = Report.objects.get(id=report_id)
 
+
     if request.method == 'POST':
         description = request.POST.get('description')
         due_date = request.POST.get('due_date')
-        agent_id = request.POST.geT('agent')
+        agent_id = request.POST.get('agent')
 
 
         agent = CustomUser.objects.get(id=agent_id)
 
 
 
-        task = Task.objects.create(description=description, managerID=request.user, reportID=report, due_date=due_date, status=Task.Status.TO_DO)
+        task = Task.objects.create(description=description, manager=request.user, report=report, due_date=due_date, status=Task.Status.TO_DO)
 
         if agent:
-            task.agentID.add(agent)
+            task.agent.add(agent)
 
         return redirect('report_detail', report_id=report.id)
 
@@ -130,8 +131,8 @@ def report_details(request, id):
 
     context = {}
     report = Report.objects.get(id=id)
-    available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__reportID=report)
-    subscriptions = [subscription.user_id_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
+    #available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__report=report)
+    subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
     context["report"] = report
     context["subscriptions"] = subscriptions
     context["priority"] = ["manager", "superadmin"]
@@ -140,18 +141,18 @@ def report_details(request, id):
     if request.user.id:
 
         # fetch Vote model from database
-        all_report_votes = Vote.objects.filter(report_id_id=id)
+        all_report_votes = Vote.objects.filter(report_id=id)
         # fetch user ids and pass it to context as a list
-        users = [review.user_id_id for review in all_report_votes]
+        users = [review.user_id for review in all_report_votes]
         # fetch Comment model from database
-        all_comments = Comment.objects.filter(report_id_id=id).order_by("-date")
+        all_comments = Comment.objects.filter(report_id=id).order_by("-date")
 
         votestats = {}
 
         if request.user.id in users:
 
-            current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id_id][0]
-            flag = ["yes" if request.user.id == review.user_id_id and review.validity == False else "no" for review in all_report_votes][0]
+            current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id][0]
+            flag = ["yes" if request.user.id == review.user_id and review.validity == False else "no" for review in all_report_votes][0]
 
             context["current_severity"] = current_severity
             context["flag"] = flag
@@ -164,7 +165,7 @@ def report_details(request, id):
         context["users"] = users
         context["votestats"] = votestats
         context["comments"] = all_comments
-        context["available_agents"] = available_agents
+        #context["available_agents"] = available_agents
 
 
     return render(request, "reportdetails.html", context)
@@ -179,6 +180,9 @@ def process_report_entry(request):
         log = 0
         lat = 0
 
+        user = CustomUser.objects.get(id=request.user.id)
+
+
         if location:
             # calling the Nominatim tool and create Nominatim class
             loc = Nominatim(user_agent="Geopy Library")
@@ -191,14 +195,16 @@ def process_report_entry(request):
             lat = getLoc.latitude
 
         rep = Report(title=title, description=description, lon=log, lat=lat, picture=picture,
-                     picture_description=picture_description, user_id=request.user.id)
+                     picture_description=picture_description, user_id=CustomUser.objects.get(id=user.id).id)
         rep.save()
+
 
         # automatic first subscriber upon creation of a report
 
-        subscription = Subscription(report_id_id=rep.id, user_id_id=request.user.id)
+        subscription = Subscription(report_id=rep.id, user_id=CustomUser.objects.get(id=user.id).id)
 
         subscription.save()
+
 
         return HttpResponse("Data sucessfully inserted!")
     else:
@@ -210,7 +216,7 @@ def process_vote_entry(request,report_id):
         validity = request.POST.get("invcheck")
         if not validity:
             validity = True
-        vote = Vote(report_id_id=report_id, user_id_id=request.user.id,rating=sev_rating, validity=validity)
+        vote = Vote(report_id=report_id, user_id=request.user.id,rating=sev_rating, validity=validity)
 
         vote.save()
 
@@ -224,7 +230,7 @@ def edit_vote(request, report_id):
 
     if request.method == 'POST':
 
-        current_vote_query = Vote.objects.filter(user_id_id=request.user.id, report_id_id=report_id)
+        current_vote_query = Vote.objects.filter(user_id=CustomUser.objects.get(id=request.user.id).id, report_id=report_id)
         vote_id = current_vote_query.values('id')[0]["id"]
 
         current_vote = Vote.objects.get(id=vote_id)
@@ -433,7 +439,7 @@ def submit_comment(request, report_id):
 
         username = " ".join([request.user.first_name, request.user.last_name])
 
-        comment = Comment.objects.create(comment=text, report_id_id=report_id,user_id_id=request.user.id, username=username)
+        comment = Comment.objects.create(comment=text, report_id=report_id,user_id=CustomUser.objects.get(id=request.user.id).id, username=username)
 
         comment.save()
 
@@ -448,9 +454,9 @@ def submit_comment(request, report_id):
 def toggle_subscribe(request, report_id):
     if request.method == "GET":
 
-        if Subscription.objects.filter(user_id_id=request.user.id, report_id_id=report_id):
+        if Subscription.objects.filter(user_id=request.user.id, report_id=report_id):
 
-            subscription = Subscription.objects.get(user_id_id=request.user.id, report_id_id=report_id)
+            subscription = Subscription.objects.get(user_id=request.user.id, report_id=report_id)
 
             if subscription.active:
 
@@ -466,7 +472,7 @@ def toggle_subscribe(request, report_id):
         else:
 
 
-            subscription = Subscription.objects.create(user_id_id=request.user.id, report_id_id=report_id)
+            subscription = Subscription.objects.create(user_id=CustomUser.objects.get(id=request.user.id).id, report_id=report_id)
 
             subscription.save()
 
