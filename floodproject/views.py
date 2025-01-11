@@ -256,6 +256,10 @@ def index(request):
     return render(request, "main.html")
 
 
+def profile(request):
+    return render(request, "userprofile.html")
+
+
 def agent(request):
     return render(request, "agent_tasks.html")
 
