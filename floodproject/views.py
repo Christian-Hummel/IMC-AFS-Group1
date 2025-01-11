@@ -268,10 +268,21 @@ def register(request):
     if request.method == "POST":
         first_name = request.POST["firstname"].strip()
         last_name = request.POST["lastname"].strip()
+        address = request.POST["address"]
         password = request.POST["password"]
         password_repeat = request.POST["password_repeat"]
         email = request.POST["email"]
         role = request.POST["role"]
+
+        # calling the Nominatim tool and create Nominatim class
+        loc = Nominatim(user_agent="Geopy Library")
+
+        # entering the location name
+        getLoc = loc.geocode(address)
+
+        # printing address
+        lng = getLoc.longitude
+        lat = getLoc.latitude
 
 
 
@@ -282,6 +293,8 @@ def register(request):
             if not user.is_verified:
                 user.first_name = first_name
                 user.last_name = last_name
+                user.latitude = lat
+                user.longitude = lng
                 user.password = password
                 user.role = role
                 user.set_password(password)
@@ -309,6 +322,8 @@ def register(request):
             email=email,
             first_name=first_name.capitalize(),
             last_name=last_name.capitalize(),
+            latitude=lat,
+            longitude=lng,
             password=password,
             role=role,
         )
