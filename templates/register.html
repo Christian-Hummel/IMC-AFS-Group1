@@ -53,6 +53,11 @@
                     <label for="lastname" class="form-label">Last Name</label>
                     <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter your last name" value="{{ request.POST.name|default_if_none:'' }}" required>
                 </div>
+                
+                <div class="mb-3">
+                    <label for="address" class="form-label">Home address</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address" value="{{ request.POST.address|default_if_none:'' }}" required>
+                </div>
             
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
