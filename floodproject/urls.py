@@ -12,6 +12,7 @@ urlpatterns = [
     path("report/<int:id>", views.report_details, name="report-details"),
     path("login/", views.login, name="login"),
     path("register/", views.register, name="register"),
+    path('profile/',views.profile,name="profile"),
     path('report-entry/',views.process_report_entry,name="process-report-entry"),
     path('vote-entry/<int:report_id>', views.process_vote_entry, name="process-vote-entry"),
     path('edit-vote/<int:report_id>', views.edit_vote, name="edit_vote"),
