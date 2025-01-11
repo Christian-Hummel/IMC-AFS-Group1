@@ -10,6 +10,15 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
+<body>
+
+<script src={% static 'js/jquery-3.7.1.min.js' %}></script>
+
+<!-- jquery -needed for asynchronous calls -->
+
+
+<script src={% static 'js/profile.js' %}></script>
+    
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -54,8 +63,24 @@
 
     <div class="blue-line"></div>
 
-    <div id="datasheet" class="datasheet">
+    
+    <div class="userbutton-container" id="button-container">
+        <button id="databutton" class="active" onclick="toggleTabs('data')">Data</button>
+        <button id="notificationsbutton" onclick="toggleTabs('notifications')">Notifications</button>
+    </div>
+    
+    <div class="profile-container" id="profile-container">
+        <div id="data" class="data" style="display: block">
         <p>Username: {{ user.first_name }} {{ user.last_name }}</p>
         <p>Email: {{ user.email }}</p>
         <p>Role: {{ user.role }}</p>
+        <p>Address: {{ home_address }}</p>
+        <button id="changepassword" onclick="">Change Password</button>
+        <button id="changelocation" onclick="">Edit location</button>
+        </div>
+        <div id="notifications" class="notifications" style="display:none">
+            <p>Notification area</p>
+        </div>
     </div>
+
+</body>
