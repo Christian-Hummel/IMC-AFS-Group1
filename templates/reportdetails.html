@@ -85,11 +85,9 @@
 
 
 <div class="button-container" id="button-container">
-    <button id="detailsbutton" class="active" onclick="toggleTabs()">Details</button>
-    <button id="commentsbutton" onclick="toggleTabs()">Comments</button>
-    {% if user.is_authenticated and user.role == 'manager' %}
-        <button id="tasksbutton" onclick="toggleTabs('tasks')">Tasks</button>
-    {% endif %}
+    <button id="detailsbutton" class="active" onclick="toggleTabs('details')">Details</button>
+    <button id="commentsbutton" onclick="toggleTabs('comments')">Comments</button>
+    <button id="tasksbutton" onclick="toggleTabs('tasks')">Tasks</button>
 </div>
 
 <div class="report-container" id="report-container">
@@ -215,12 +213,18 @@
         <br>
     {% endfor %}
     {% endif %}
+    {% elif not user.id %}
+    <p>Please log in to write a comment</p>
+    {% elif user.id not in subscriptions %}
+    <p>Please subscribe to view comments</p>
+    {% endif %}
 
 
+</div>
 <!-- Tab for Task Creation -->
-{% if user.is_authenticated and user.role == 'manager' %}
 <div id="tasks" class="tasks" style="display: none;">
     <div class="container mt-5">
+    {% if user.id and user.role == "manager" %}
         <h2>Create Task for this Report</h2>
         <form method="post" action="{% url 'create_task' report.id %}">
             {% csrf_token %}
@@ -251,18 +255,11 @@
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Create Task</button>
         </form>
+        {% elif not user.id %}
+        <p>Only agents and managers are able to see tasks</p>    
+        {% endif %}
     </div>
 </div>
-{% endif %}
-
-
-
-</div>
-    {% elif not user.id %}
-    <p>Please log in to write a comment</p>
-    {% elif user.id not in subscriptions %}
-    <p>Please subscribe to view comments</p>
-    {% endif %}
 </div>
 
 
