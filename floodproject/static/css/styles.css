@@ -83,3 +83,11 @@ p {
 button.active {
     background-color: gray;
 }
+
+.datasheet {
+    margin: auto;
+    margin-top: 30px;
+    width: 60%;
+    border: 3px solid black;
+    padding: 10px;
+}
