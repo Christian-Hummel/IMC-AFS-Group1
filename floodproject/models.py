@@ -4,14 +4,14 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 import random
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, zip_code=None, city=None, password=None, role = "user"):
-        user = self.model(email = email, first_name = first_name, last_name = last_name, zip_code = zip_code, city = city,role = role)
+    def create_user(self, email, first_name, last_name, latitude, longitude, password=None, role = "user"):
+        user = self.model(email = email, first_name = first_name, last_name = last_name, latitude=latitude, longitude=longitude,role = role)
         user.set_password(password)
         user.save(using=self.db)
         return user
 
-    def create_superuser(self, email, first_name, last_name, zip_code=None, city=None, password=None, role = "admin"):
-        user = self.create_user(email = email, first_name = first_name, last_name = last_name, zip_code = zip_code, city = city, role = role)
+    def create_superuser(self, email, first_name, last_name, latitude, longitude, password=None, role = "admin"):
+        user = self.create_user(email = email, first_name = first_name, last_name = last_name, latitude=latitude, longitude=longitude, role = role)
         user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
@@ -29,8 +29,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True,)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    zip_code = models.CharField(max_length=10, null=True, blank=True)
-    city = models.CharField(max_length=50, null=True, blank=True)
+    latitude = models.FloatField(max_length=10, default=47.4231277, null=False, blank=False)
+    longitude = models.FloatField(max_length=10, default=13.6539813, null=False, blank=False)
     role = models.CharField(max_length=20, choices=Role.choices,default=Role.USER)
 
     is_active = models.BooleanField(default=True)
