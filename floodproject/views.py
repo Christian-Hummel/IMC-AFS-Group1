@@ -257,7 +257,15 @@ def index(request):
 
 
 def profile(request):
-    return render(request, "userprofile.html")
+    context = {}
+
+    geolocator = Nominatim(user_agent="Geopy Library")
+
+    location = geolocator.reverse(f"{request.user.latitude}, {request.user.longitude}")
+
+    context["home_address"] = location.address
+
+    return render(request, "userprofile.html", context)
 
 
 def agent(request):
@@ -279,6 +287,10 @@ def register(request):
 
         # entering the location name
         getLoc = loc.geocode(address)
+
+        # Works only partially - many invalid cases will get some values assigned
+        if not getLoc:
+            return HttpResponse("Address not found")
 
         # printing address
         lng = getLoc.longitude
