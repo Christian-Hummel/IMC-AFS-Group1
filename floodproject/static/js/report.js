@@ -148,12 +148,6 @@ function computeDistance(location) {
 
     }
 
-
-
-
-
-
-
 }
 
 jQuery(document).on('submit', '#submitcomment', function(e){
@@ -177,8 +171,6 @@ jQuery(document).on('submit', '#submitcomment', function(e){
 
                 if (subscriptions.indexOf(userId) < 0 && tempflag === false){
 
-                    console.log("not subscribed")
-
 
                     var request = new XMLHttpRequest();
 
@@ -191,11 +183,6 @@ jQuery(document).on('submit', '#submitcomment', function(e){
 
                     tempflag = true
 
-
-
-
-                } else {
-                    console.log("subscribed")
                 }
 
                 // if there are no comments yet
