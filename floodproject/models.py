@@ -119,3 +119,16 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f"{self.report_id} - {self.user_id} - {self.active}"
+
+
+class Notification(models.Model):
+    title = models.CharField(max_length=256, default="")
+    description = models.TextField(default="")
+    time = models.DateTimeField(auto_now=True)
+    read = models.BooleanField(default=False)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return f"{self.title} - {self.description} - {self.time} - {self.read}"
