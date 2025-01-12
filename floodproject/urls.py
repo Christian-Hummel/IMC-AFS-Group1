@@ -35,6 +35,10 @@ urlpatterns = [
     path('password_reset_confirm/', views.password_reset_confirm, name='password_reset_confirm'),
     path('password_reset_done/', views.password_reset_done, name='password_reset_done'),
     path('password_reset_complete/', views.password_reset_complete, name='password_reset_complete'),
+    path('password_update/', views.password_update, name='password_update'),
+    path('password_update_success/', views.password_update_success, name='password_update_success'),
+    path('location_update/', views.location_update, name='location_update'),
+    path('location_update_success/', views.location_update_success, name='location_update_success'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
