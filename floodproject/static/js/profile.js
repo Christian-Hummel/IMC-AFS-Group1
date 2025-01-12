@@ -37,7 +37,7 @@ function toggleTabs (target){
 
 }
 
-function ToggleSubtabs(target) {
+function toggleSubtabs(target) {
 
     data = document.getElementById("data");
 
@@ -54,6 +54,22 @@ function ToggleSubtabs(target) {
 
 };
 
+function markRead() {
+
+    notifications = document.querySelectorAll('input:checked')
+
+    notifications.forEach((element) => {
+        element.parentNode.classList.add("selected")
+    })
+}
+
+function markUnread() {
+    console.log("a")
+}
+
+function deleteNotification() {
+    console.log("b")
+}
 
 
 // jQuery(document).on('submit', '#submitchanges', function(e){
