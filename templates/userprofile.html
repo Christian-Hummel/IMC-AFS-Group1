@@ -65,22 +65,79 @@
 
     
     <div class="userbutton-container" id="button-container">
-        <button id="databutton" class="active" onclick="toggleTabs('data')">Data</button>
+        <button id="userprofilebutton" class="active" onclick="toggleTabs('userprofile')">Profile</button>
         <button id="notificationsbutton" onclick="toggleTabs('notifications')">Notifications</button>
     </div>
     
     <div class="profile-container" id="profile-container">
-        <div id="data" class="data" style="display: block">
+        <div id="userprofile" class="userprofile" style="display:block">
+        <div id="data" class="userdata" style="display: block">
         <p>Username: {{ user.first_name }} {{ user.last_name }}</p>
         <p>Email: {{ user.email }}</p>
         <p>Role: {{ user.role }}</p>
         <p>Address: {{ home_address }}</p>
-        <button id="changepassword" onclick="">Change Password</button>
-        <button id="changelocation" onclick="">Edit location</button>
+            {% if not request.session.pwchange %}
+            <button id="passwordbutton" onclick="ToggleSubtabs('changepassword')">Change Password</button>
+            {% endif %}
+            {% if not request.session.locationchange %}
+            <button id="locationbutton" onclick="ToggleSubtabs('changelocation')">Edit location</button>
+            {% endif %}
         </div>
+    
+
+        <div class="changepassword" id="changepassword" style="display:none">
+            <h2 class="text-center mb-4">Change Password</h2>
+            <form method="post" action="{% url 'password_update' %}">
+                {% csrf_token %}
+                            
+                <div class="mb-3">
+                    <label for="currentpassword" class="form-label">Current Password</label>
+                    <input type="password" class="form-control" id="currentpassword" name="currentpassword" placeholder="Enter your current password" required>
+                </div>
+                
+            
+                <div class="mb-3">
+                    <label for="newpassword" class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="Enter your new password" required>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="password_repeat" class="form-label">Repeat Password</label>
+                    <input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Enter new password again" required>
+                </div>
+
+                
+                <button type="submit" class="btn btn-primary w-100">Submit changes</button>
+            </form>
+                <p></p>
+                <button class="btn btn-primary w-100" onclick="ToggleSubtabs('changepassword')">Cancel</button>
+        </div>
+        
+        <div class="changelocation" id="changelocation" style="display:none">
+            <h2 class="text-center mb-4">Change Home Address</h2>
+            <p>Current Address: {{ home_address }}</p>
+            <form method="post" action="{% url 'location_update' %}">
+                {% csrf_token %}
+                            
+                <div class="mb-3">
+                    <label for="newlocation" class="form-label">New address</label>
+                    <input type="text" class="form-control" id="newlocation" name="newlocation" placeholder="Enter your new address" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">Submit changes</button>
+            </form>
+                <p></p>
+                <button class="btn btn-primary w-100" onclick="ToggleSubtabs('changelocation')">Cancel</button>
+        </div>
+        
+        </div>
+    
         <div id="notifications" class="notifications" style="display:none">
             <p>Notification area</p>
         </div>
     </div>
+
+
+
 
 </body>
