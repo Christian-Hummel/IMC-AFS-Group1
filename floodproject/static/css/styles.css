@@ -104,4 +104,15 @@ button.active {
     padding: 10px;
 }
 
+.changepassword {
+    margin: auto;
+    width: 50%;
+
+}
+
+.changelocation {
+    margin:auto;
+    width: 50%;
+}
+
 
