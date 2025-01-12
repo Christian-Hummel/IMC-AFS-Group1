@@ -4,7 +4,7 @@ from django.contrib.auth.models import auth, User
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, Vote, CustomUser, Comment, Subscription, Task
+from .models import Report, Vote, CustomUser, Comment, Subscription, Task, Notification
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -260,11 +260,14 @@ def index(request):
 def profile(request):
     context = {}
 
+    notifications = Notification.objects.filter(user_id=request.user.id)
+
     geolocator = Nominatim(user_agent="Geopy Library")
 
     location = geolocator.reverse(f"{request.user.latitude}, {request.user.longitude}")
 
     context["home_address"] = location.address
+    context["notifications"] = notifications
 
     return render(request, "userprofile.html", context)
 
@@ -428,7 +431,7 @@ def report_data(request):
     return JsonResponse(reports, safe=False, status=200)
 
 # function to extract references and pass them with bold html tags to view
-def check_reference(text, user_id):
+def check_reference(text, user_id, report_id):
     # iterating over the contents of the comment for references
 
     i = 0
@@ -449,12 +452,23 @@ def check_reference(text, user_id):
                     #author of a post should not be able to reference him or herself
                     if user.id != user_id:
 
-                        #space to add notification functionality here
-
                         original = f"@{firstname} {lastname}"
                         bold = f"<b>{firstname.capitalize()} {lastname.capitalize()}</b>"
 
                         text = text.replace(original, bold)
+
+                        # space to add notification functionality here
+
+                        current_user = CustomUser.objects.get(id=user_id)
+
+                        title = f"{current_user.first_name} {current_user.last_name} mentioned you in a comment"
+
+                        description = text
+
+                        notification = Notification.objects.create(title=title, description=description, user_id=user.id, report_id=report_id)
+                        notification.save()
+
+
 
         i += 1
 
@@ -467,7 +481,7 @@ def submit_comment(request, report_id):
 
         context = {}
 
-        text = check_reference(request.POST.get("textcomment"), request.user.id)
+        text = check_reference(request.POST.get("textcomment"), request.user.id, report_id)
 
         username = " ".join([request.user.first_name, request.user.last_name])
 
