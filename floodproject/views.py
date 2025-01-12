@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect, reverse , get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import auth, User
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
@@ -190,7 +191,7 @@ def process_report_entry(request):
             # entering the location name
             getLoc = loc.geocode(location)
 
-            # printing address
+            # extract longitude and latitude
             log = getLoc.longitude
             lat = getLoc.latitude
 
@@ -585,3 +586,75 @@ def password_reset_done(request):
 
 def password_reset_complete(request):
     return render(request, "registration/password_reset_complete.html")
+
+def password_update(request):
+    if request.method == "POST":
+        current_password = request.POST["currentpassword"]
+        new_password = request.POST["newpassword"]
+        password_repeat = request.POST["password_repeat"]
+
+        if request.user.check_password(current_password):
+
+
+            if new_password != password_repeat:
+                return HttpResponse("Passwords do not match!")
+
+            elif new_password == password_repeat and new_password == current_password:
+                return HttpResponse("Please enter a password different from your current password")
+
+            else:
+                request.user.set_password(new_password)
+                # add boolean value to prevent repeated editing of password, need to log in with new password first
+                request.session["pwchange"] = True
+                request.user.save()
+                update_session_auth_hash(request, request.user)
+
+                return redirect("password_update_success")
+
+        else:
+            return HttpResponse("Incorrect current password")
+
+
+def password_update_success(request):
+    return render(request, "password_update_success.html")
+
+
+def location_update(request):
+    if request.method == "POST":
+        address = request.POST["newlocation"]
+
+        # calling the Nominatim tool and create Nominatim class
+        geolocator = Nominatim(user_agent="Geopy Library")
+
+        # current address:
+
+        current_address = geolocator.reverse(f"{request.user.latitude}, {request.user.longitude}")
+
+        # entering the location name
+        new_address = geolocator.geocode(address)
+
+
+        # Works only partially - many invalid cases will get some values assigned
+        if not new_address:
+            return HttpResponse("Address not found")
+
+        # extract longitude and latitude of address
+        lng = new_address.longitude
+        lat = new_address.latitude
+
+        if current_address.address == new_address.address:
+            return HttpResponse("Please enter a new address")
+
+        else:
+            request.user.longitude = lng
+            request.user.latitude = lat
+            # add boolean value to prevent editing of location multiple time in short time period
+            # this constraint of 30 days as stated in the success html is not implemented just, a suggestion
+            request.session["locationchange"] = True
+            request.user.save()
+            return redirect("location_update_success")
+
+
+
+def location_update_success(request):
+    return render(request, "location_update_success.html")
