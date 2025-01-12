@@ -1,12 +1,16 @@
 
 function toggleTabs (target){
 
-    const data = document.getElementById("data");
+    const userprofile = document.getElementById("userprofile");
     const notifications = document.getElementById("notifications");
+    const data = document.getElementById("data");
+
+    const changepassword = document.getElementById("changepassword");
+    const changelocation = document.getElementById("changelocation");
 
 
     // create a list of all tabs and iterate over it
-    const array = [data, notifications]
+    const array = [userprofile, notifications]
 
     array.forEach((element) => {
         if (target !== element.id){
@@ -17,15 +21,40 @@ function toggleTabs (target){
             }
         }
 
-    })
+    });
+
+    if (target === "userprofile" && data.style.display === "none"){
+        data.style.display = "block"
+        changepassword.style.display = "none"
+        changelocation.style.display = "none"
+    }
 
     // make target div visible
-    document.getElementById(target).style.display = "block"
+    document.getElementById(target).style.display = "block";
     // highlight corresponding tab button
-    document.getElementById(target.concat("button")).classList.add("active")
+    document.getElementById(target.concat("button")).classList.add("active");
 
 
 }
+
+function ToggleSubtabs(target) {
+
+    data = document.getElementById("data");
+
+    targetform = document.getElementById(target);
+
+    if (targetform.style.display === "none") {
+        targetform.style.display = "block"
+        data.style.display = "none"
+    } else {
+        data.style.display = "block"
+        targetform.style.display = "none"
+
+    }
+
+};
+
+
 
 // jQuery(document).on('submit', '#submitchanges', function(e){
 //         e.preventDefault();
@@ -85,3 +114,7 @@ function toggleTabs (target){
 //
 //         })
 // })
+
+// min-height: 100vh;
+
+//
