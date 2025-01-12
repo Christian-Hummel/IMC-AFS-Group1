@@ -77,10 +77,10 @@
         <p>Role: {{ user.role }}</p>
         <p>Address: {{ home_address }}</p>
             {% if not request.session.pwchange %}
-            <button id="passwordbutton" onclick="ToggleSubtabs('changepassword')">Change Password</button>
+            <button id="passwordbutton" onclick="toggleSubtabs('changepassword')">Change Password</button>
             {% endif %}
             {% if not request.session.locationchange %}
-            <button id="locationbutton" onclick="ToggleSubtabs('changelocation')">Edit location</button>
+            <button id="locationbutton" onclick="toggleSubtabs('changelocation')">Edit location</button>
             {% endif %}
         </div>
     
@@ -110,7 +110,7 @@
                 <button type="submit" class="btn btn-primary w-100">Submit changes</button>
             </form>
                 <p></p>
-                <button class="btn btn-primary w-100" onclick="ToggleSubtabs('changepassword')">Cancel</button>
+                <button class="btn btn-primary w-100" onclick="toggleSubtabs('changepassword')">Cancel</button>
         </div>
         
         <div class="changelocation" id="changelocation" style="display:none">
@@ -127,15 +127,29 @@
                 <button type="submit" class="btn btn-primary w-100">Submit changes</button>
             </form>
                 <p></p>
-                <button class="btn btn-primary w-100" onclick="ToggleSubtabs('changelocation')">Cancel</button>
+                <button class="btn btn-primary w-100" onclick="toggleSubtabs('changelocation')">Cancel</button>
         </div>
         
         </div>
     
         <div id="notifications" class="notifications" style="display:none">
-            <p>Notification area</p>
+            
+            {% if notifications %}
+                {% for notification in notifications %}
+                    <a class="notiflink" href="{% url 'profile' %}" style="color: black; text-decoration: none"><div>
+                 <span>{{ notification.title }}</span> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
+                    </div></a>
+                    
+                {% endfor %}
+            {% else %}
+                <p>Notification area</p>
+            {% endif %}
+            <br>
+            <button id="markreadbutton" onclick="markRead()">Mark Read</button> <button id="markunreadbutton" onclick="markUnread()">Mark Unread</button> <button id="deletebutton" onclick="deleteNotification()">Delete</button>
         </div>
     </div>
+
+    
 
 
 
