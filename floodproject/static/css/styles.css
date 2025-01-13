@@ -82,7 +82,7 @@ p {
 
 .userbutton-container{
     margin: auto;
-    width: 60%;
+    width: 50%;
     margin-top: 30px;
 }
 
@@ -99,7 +99,7 @@ button.active {
 
 .profile-container {
     margin: auto;
-    width: 60%;
+    width: 50%;
     border: 3px solid black;
     padding: 10px;
 }
