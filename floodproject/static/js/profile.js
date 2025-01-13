@@ -54,6 +54,22 @@ function toggleSubtabs(target) {
 
 };
 
+function visitNotification(element, id){
+    var request = new XMLHttpRequest();
+
+    readUrl = "/profile/setread/" + id
+
+    request.open('GET', readUrl)
+
+    request.send();
+
+    if (element.parentNode.classList.contains("unread")) {
+            element.parentNode.classList.remove("unread")
+        }
+
+
+}
+
 function markRead() {
 
     notifications = document.querySelectorAll('input:checked')
