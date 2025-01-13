@@ -270,7 +270,17 @@ def edit_vote(request, report_id):
 
 
 def index(request):
-    return render(request, "main.html")
+    context = {}
+
+    notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
+
+    print(notifications)
+
+
+
+    context["notifications"] = notifications
+
+    return render(request, "main.html", context)
 
 
 def profile(request):
