@@ -13,6 +13,7 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path("register/", views.register, name="register"),
     path('profile/',views.profile,name="profile"),
+    path('profile/notification/<int:notification_id>', views.notification_details, name="notification-details"),
     path('profile/setread/<int:notification_id>',views.set_read,name="set-read"),
     path('profile/setunread/<int:notification_id>', views.set_unread, name="set-unread"),
     path('profile/deletenotif/<int:notification_id>', views.delete_notification, name="delete-notification"),
