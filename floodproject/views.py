@@ -721,3 +721,17 @@ def set_unread(request, notification_id):
     else:
         return HttpResponse("Invalid request method!")
 
+def delete_notification(request, notification_id):
+    if request.method == "GET":
+
+        notification = Notification.objects.get(id=notification_id)
+
+        if notification:
+            notification.delete()
+
+            return HttpResponse("Notification has been sucessfully deleted")
+
+        else:
+            return HttpResponse("Notification not found")
+    else:
+        return HttpResponse("Invalid request method")
