@@ -686,6 +686,17 @@ def location_update_success(request):
     return render(request, "location_update_success.html")
 
 
+def notification_details(request, notification_id):
+    context = {}
+
+    notification = Notification.objects.get(id=notification_id)
+
+    context["notification"] = notification
+
+
+    return render(request, "singlenotification.html", context)
+
+
 def set_read(request, notification_id):
     if request.method == "GET":
 
