@@ -120,6 +120,9 @@
     />
     {% endif %}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
+    {% if user.id == report.user_id or user.role in priority %}
+        <a href="{% url 'delete-report' report.id %}" class="btn btn-danger">Delete Report</a>
+    {% endif %}
 
 
 
@@ -269,6 +272,7 @@
     </div>
 </div>
 </div>
+
 
 
 
