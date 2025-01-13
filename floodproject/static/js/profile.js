@@ -59,13 +59,44 @@ function markRead() {
     notifications = document.querySelectorAll('input:checked')
 
     notifications.forEach((element) => {
-        element.parentNode.classList.add("selected")
+
+        var request = new XMLHttpRequest();
+
+        readUrl = "/profile/setread/" + element.value
+
+        request.open('GET', readUrl)
+
+        request.send();
+
+        if (element.parentNode.classList.contains("unread")) {
+            element.parentNode.classList.remove("unread")
+        }
+
     })
+
 }
 
 function markUnread() {
-    console.log("a")
+
+    notifications = document.querySelectorAll('input:checked')
+
+    notifications.forEach((element) => {
+
+        var request = new XMLHttpRequest();
+
+        unreadUrl = "/profile/setunread/" + element.value
+
+        request.open('GET', unreadUrl)
+
+        request.send();
+
+        if(!element.parentNode.classList.contains("unread")){
+           element.parentNode.classList.add("unread")
+        }
+
+    })
 }
+
 
 function deleteNotification() {
     console.log("b")
