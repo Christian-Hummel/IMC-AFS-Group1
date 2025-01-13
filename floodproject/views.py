@@ -489,6 +489,18 @@ def submit_comment(request, report_id):
 
         comment.save()
 
+        subscriptions = Subscription.objects.filter(report_id=report_id, active=True)
+
+        for subscription in subscriptions:
+
+            if subscription.user_id != request.user.id:
+
+                title = f"{request.user.first_name} {request.user.last_name} added a comment to a report"
+                description = comment.comment
+
+                notification = Notification(title=title, description=description, user_id=subscription.user_id, report_id=report_id)
+                notification.save()
+
         context["comment"] = comment
 
         return render(request, 'singlecomment.html', context)
@@ -672,3 +684,40 @@ def location_update(request):
 
 def location_update_success(request):
     return render(request, "location_update_success.html")
+
+
+def set_read(request, notification_id):
+    if request.method == "GET":
+
+
+        notification = Notification.objects.get(id=notification_id)
+
+        if notification.read:
+            return HttpResponse("status already on read")
+
+        else:
+            notification.read = True
+            notification.save()
+
+            return HttpResponse("status set to read")
+
+    else:
+        return HttpResponse("Invalid request method!")
+
+def set_unread(request, notification_id):
+    if request.method == "GET":
+
+        notification = Notification.objects.get(id=notification_id)
+
+        if not notification.read:
+            return HttpResponse("status already on unread")
+
+        else:
+            notification.read = False
+            notification.save()
+
+            return HttpResponse("status set to unread")
+
+    else:
+        return HttpResponse("Invalid request method!")
+
