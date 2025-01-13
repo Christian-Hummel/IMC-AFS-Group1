@@ -136,16 +136,25 @@
             
             {% if notifications %}
                 {% for notification in notifications %}
-                    <a class="notiflink" href="{% url 'profile' %}" style="color: black; text-decoration: none"><div>
-                 <span>{{ notification.title }}</span> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
-                    </div></a>
+                    <a class="notiflink" href="{% url 'profile' %}" style="color: black; text-decoration: none">
+                        {% if notification.read %}
+                        <div>
+                            <span>{{ notification.title }}</span> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
+                        </div>
+                        {% elif not notification.read %}
+                        <div class="unread">
+                            <span>{{ notification.title }}</span> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
+                        </div>
+                        {% endif %}
+                    
+                    </a> {{ notification.read }}
                     
                 {% endfor %}
+                            <br>
+            <button id="markreadbutton" onclick="markRead()">Mark Read</button> <button id="markunreadbutton" onclick="markUnread()">Mark Unread</button> <button id="deletebutton" onclick="deleteNotification()">Delete</button>
             {% else %}
                 <p>Notification area</p>
             {% endif %}
-            <br>
-            <button id="markreadbutton" onclick="markRead()">Mark Read</button> <button id="markunreadbutton" onclick="markUnread()">Mark Unread</button> <button id="deletebutton" onclick="deleteNotification()">Delete</button>
         </div>
     </div>
 
