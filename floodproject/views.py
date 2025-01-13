@@ -211,6 +211,22 @@ def process_report_entry(request):
     else:
         return HttpResponse("Invalid request method!")
 
+
+def delete_report(request, id):
+
+    if request.user.role not in ["manager", "superadmin"]:
+
+        report = Report.objects.get(id=id)
+
+        tasks = Task.objects.filter(report_id=id)
+
+        for task in tasks:
+            if task.status != Task.Status.DONE:
+                return HttpResponse("This Report cannot be deleted because of active tasks assigned to it.")
+
+        report.delete()
+        return render(request, "report_delete_success.html")
+
 def process_vote_entry(request,report_id):
     if request.method == 'POST':
         sev_rating = request.POST.get("severityselect")
@@ -434,6 +450,9 @@ def report_data(request):
 def check_reference(text, user_id, report_id):
     # iterating over the contents of the comment for references
 
+    current_user = CustomUser.objects.get(id=user_id)
+    reflist = []
+
     i = 0
     while i < len(text):
 
@@ -449,6 +468,7 @@ def check_reference(text, user_id, report_id):
 
                     user = CustomUser.objects.filter(first_name=firstname.capitalize(), last_name=lastname.capitalize()).first()
 
+
                     #author of a post should not be able to reference him or herself
                     if user.id != user_id:
 
@@ -457,9 +477,7 @@ def check_reference(text, user_id, report_id):
 
                         text = text.replace(original, bold)
 
-                        # space to add notification functionality here
-
-                        current_user = CustomUser.objects.get(id=user_id)
+                        # notification preparation
 
                         title = f"{current_user.first_name} {current_user.last_name} mentioned you in a comment"
 
@@ -468,9 +486,23 @@ def check_reference(text, user_id, report_id):
                         notification = Notification.objects.create(title=title, description=description, user_id=user.id, report_id=report_id)
                         notification.save()
 
-
+                        reflist.append(user.id)
 
         i += 1
+
+    subscriptions = Subscription.objects.filter(report_id=report_id, active=True)
+
+    for subscription in subscriptions:
+
+        if subscription.user_id != user_id and subscription.user_id not in reflist:
+            title = f"{current_user.first_name} {current_user.last_name} added a comment to a report"
+            description = text
+
+            notification = Notification(title=title, description=description, user_id=subscription.user_id,
+                                        report_id=report_id)
+            notification.save()
+
+
 
     return text
 
@@ -489,17 +521,6 @@ def submit_comment(request, report_id):
 
         comment.save()
 
-        subscriptions = Subscription.objects.filter(report_id=report_id, active=True)
-
-        for subscription in subscriptions:
-
-            if subscription.user_id != request.user.id:
-
-                title = f"{request.user.first_name} {request.user.last_name} added a comment to a report"
-                description = comment.comment
-
-                notification = Notification(title=title, description=description, user_id=subscription.user_id, report_id=report_id)
-                notification.save()
 
         context["comment"] = comment
 
@@ -690,8 +711,10 @@ def notification_details(request, notification_id):
     context = {}
 
     notification = Notification.objects.get(id=notification_id)
+    report = Report.objects.get(id=notification.report_id)
 
     context["notification"] = notification
+    context["report"] = report
 
 
     return render(request, "singlenotification.html", context)
