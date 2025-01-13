@@ -136,19 +136,25 @@
 
             <div class="container mt-5">
                 <h1>Promote Normal User:</h1>
+                {% if user %}
 
                     <form method="post" action="{% url 'promote_user' task.id %}">
                         {% csrf_token %}
-                        <input type="text" name="description" value="{{ task.description }}"/>
-<!--
-                        # query if user exists
-                        # if yes => query if user already ERA , if yes => do nothing, if no => promote
-                        # if no => do nothing?
-                        # if user does not exist, do nothing? --!>
+                        <select name="user" id="user">
+
+                            {% for u in user %}
+                                <option value="{{ u.id }}">{{ u.first_name }} {{ u.last_name }}</option>
+                            {% empty %}
+                                <option>No available users</option>
+                            {% endfor %}
+
+
 
                         </select>
                     <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
-
+                {% else %}
+                        <p> There are no available agents to assign </p>
+                {% endif %}
             </div>
 
             <div class="container mt-5">
