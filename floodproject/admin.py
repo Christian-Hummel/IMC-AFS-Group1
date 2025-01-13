@@ -7,13 +7,13 @@ class UserAdmin(BaseUserAdmin):
     model = CustomUser
 
     # Fields to display in the list view
-    list_display = ('email', 'first_name', 'last_name', 'zip_code', 'city', 'role', 'is_staff', 'is_superuser', 'is_active', 'is_verified')
+    list_display = ('email', 'first_name', 'last_name', 'latitude', 'longitude', 'role', 'is_staff', 'is_superuser', 'is_active', 'is_verified')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'role', 'is_verified')
 
     # Fields displayed in the detail view for existing users
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'zip_code', 'city', 'role')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'latitude', 'longitude', 'role')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_verified')}),
     )
 
@@ -21,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name', 'zip_code', 'city', 'role', 'is_staff', 'is_active', 'is_verified')
+            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name', 'latitude', 'longitude', 'role', 'is_staff', 'is_active', 'is_verified')
         }),
     )
 

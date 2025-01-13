@@ -80,6 +80,42 @@ p {
     background-color: white;
 }
 
+.userbutton-container{
+    margin: auto;
+    width: 50%;
+    margin-top: 30px;
+}
+
+.userbutton-container button {
+    vertical-align: top;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+}
+
 button.active {
     background-color: gray;
+}
+
+.profile-container {
+    margin: auto;
+    width: 50%;
+    border: 3px solid black;
+    padding: 10px;
+}
+
+.changepassword {
+    margin: auto;
+    width: 50%;
+
+}
+
+.changelocation {
+    margin:auto;
+    width: 50%;
+}
+
+
+.unread {
+    color: lightblue;
 }

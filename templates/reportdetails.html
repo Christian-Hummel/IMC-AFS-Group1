@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> <!-- for icons -->
     {% load static %} <!-- necessary to connect to CSS in django -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
@@ -54,6 +55,13 @@
                         <i class="fas fa-plus me-2"></i> New Report
                     </a>
                     </li>
+                        {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'profile' %}">
+                        <i class="fa-solid fa-circle-user me-2"></i> Profile
+                    </a>
+                    </li>
+                        {% endif %}
                     <li class="nav-item">
                         {% if not user.is_authenticated %}
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
@@ -83,9 +91,11 @@
 
 
 
+
 <div class="button-container" id="button-container">
     <button id="detailsbutton" class="active" onclick="toggleTabs('details')">Details</button>
     <button id="commentsbutton" onclick="toggleTabs('comments')">Comments</button>
+    <button id="tasksbutton" onclick="toggleTabs('tasks')">Tasks</button>
 </div>
 
 <div class="report-container" id="report-container">
@@ -121,18 +131,6 @@
         <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
         <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
         {% endif %}
-
-
-
-<!-- Tab for Task Creation -->
-        {% if user.is_authenticated and user.role == 'manager' %}
-            <button id="tasksbutton" onclick="window.location.href='{% url 'create_task_page' report.id %}'">Create Task</button>
-        {% endif %}
-
-
-
-
-
 
         </div>
         <div class="col-md-4">
@@ -223,20 +221,58 @@
         <br>
     {% endfor %}
     {% endif %}
-
-
-
-
-
-</div>
     {% elif not user.id %}
     <p>Please log in to write a comment</p>
     {% elif user.id not in subscriptions %}
     <p>Please subscribe to view comments</p>
     {% endif %}
+
+
+</div>
+<!-- Tab for Task Creation -->
+<div id="tasks" class="tasks" style="display: none;">
+    <div class="container mt-5">
+    {% if user.id and user.role == "manager" %}
+        <h2>Create Task for this Report</h2>
+        <form method="post" action="{% url 'create_task' report.id %}">
+            {% csrf_token %}
+
+            <!-- Task Description -->
+            <div class="mb-3">
+                <label for="task_description" class="form-label">Task Description</label>
+                <input type="text" class="form-control" id="task_description" name="description" placeholder="Enter task description" required>
+            </div>
+
+            <!-- Task Due Date -->
+            <div class="mb-3">
+                <label for="task_due_date" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="task_due_date" name="due_date" required>
+            </div>
+
+            <!-- Assign Agent -->
+            <div class="mb-3">
+                <label for="task_agent" class="form-label">Assign Agent</label>
+                <select name="agent" id="task_agent" class="form-select">
+                    <option value="" disabled selected>Select an agent</option>
+                    {% for agent in available_agents %}
+                        <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Create Task</button>
+        </form>
+        {% elif not user.id %}
+        <p>Only agents and managers are able to see tasks</p>    
+        {% endif %}
+    </div>
+</div>
 </div>
 
 
 
 </body>
 </html>
+
+

@@ -24,26 +24,12 @@
                     <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'login' %}">
                         <i class="fas fa-plus me-2"></i> New Report
                     </a>
-                    </li>
-                    <li class="nav-item">
-                        {% if not user.is_authenticated %}
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        {% endif %}
-                    </li>
-
-                    <li class="nav-item">
-                        {% if not user.is_authenticated %}
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
-                        {% endif %}
-                    </li>
-                    {% if user.is_authenticated %}
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button class="btn-logout" type="submit">logout</button>
                         </form>
                     </li>
-                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -89,7 +75,7 @@
                 </tbody>
             </table>
         {% else %}
-            <p>No tasks assigned to you currently</p>
+            <p>No tasks assigned to you currently </p>
         {% endif %}
     </div>
 

@@ -28,30 +28,35 @@ function toggleSubscribe(){
 
 }
 
-function toggleTabs() {
-    const details = document.getElementById("details")
-    const comments = document.getElementById("comments")
 
-    const dbutton = document.getElementById("detailsbutton")
-    const cbutton = document.getElementById("commentsbutton")
+function toggleTabs (target){
 
-    if (details.style.display === "none"){
-        details.style.display = "block";
-        comments.style.display = "none";
+    const details = document.getElementById("details");
+    const comments = document.getElementById("comments");
+    const tasks = document.getElementById("tasks");
 
-        dbutton.classList.add("active")
-        cbutton.classList.remove("active")
+    // create a list of all tabs and iterate over it
+    const array = [details, comments, tasks]
 
-    } else if (comments.style.display === "none"){
-        comments.style.display = "block";
-        details.style.display = "none";
+    array.forEach((element) => {
+        if (target !== element.id){
+            element.style.display = "none"
+            // if condition to check if a button has got the class "active" - is highlighted
+            if (document.getElementById(element.id.concat("button")).classList.contains("active")){
+                document.getElementById(element.id.concat("button")).classList.remove("active")
+            }
+        }
 
-        cbutton.classList.add("active")
-        dbutton.classList.remove("active")
+    })
+
+    // make target div visible
+    document.getElementById(target).style.display = "block"
+    // highlight corresponding tab button
+    document.getElementById(target.concat("button")).classList.add("active")
 
 
 
-    }
+
 }
 
 
@@ -143,12 +148,6 @@ function computeDistance(location) {
 
     }
 
-
-
-
-
-
-
 }
 
 jQuery(document).on('submit', '#submitcomment', function(e){
@@ -172,8 +171,6 @@ jQuery(document).on('submit', '#submitcomment', function(e){
 
                 if (subscriptions.indexOf(userId) < 0 && tempflag === false){
 
-                    console.log("not subscribed")
-
 
                     var request = new XMLHttpRequest();
 
@@ -186,11 +183,6 @@ jQuery(document).on('submit', '#submitcomment', function(e){
 
                     tempflag = true
 
-
-
-
-                } else {
-                    console.log("subscribed")
                 }
 
                 // if there are no comments yet
@@ -216,3 +208,6 @@ jQuery(document).on('submit', '#submitcomment', function(e){
 
         })
 })
+
+
+

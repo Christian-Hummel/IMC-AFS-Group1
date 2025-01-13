@@ -4,14 +4,15 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 import random
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, zip_code=None, city=None, password=None, role = "user"):
-        user = self.model(email = email, first_name = first_name, last_name = last_name, zip_code = zip_code, city = city,role = role)
+    def create_user(self, email, first_name, last_name, latitude, longitude, password=None, role = "user"):
+        user = self.model(email = email, first_name = first_name, last_name = last_name, latitude=latitude, longitude=longitude,role = role)
         user.set_password(password)
         user.save(using=self.db)
         return user
 
-    def create_superuser(self, email, first_name, last_name, zip_code=None, city=None, password=None, role = "admin"):
-        user = self.create_user(email = email, first_name = first_name, last_name = last_name, zip_code = zip_code, city = city, role = role)
+    def create_superuser(self, email, first_name, last_name, latitude, longitude, password=None, role = "admin"):
+        user = self.create_user(email = email, first_name = first_name, last_name = last_name, latitude=latitude, longitude=longitude, role = role)
+        user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
         user.is_verified = True
@@ -24,11 +25,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         AGENT = 'agent', 'Agent'
         MANAGER = 'manager', 'Manager'
         ADMIN = 'admin', 'Admin'
-    email = models.EmailField(unique=True)
+    id = models.AutoField(primary_key=True)
+    email = models.EmailField(unique=True,)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    zip_code = models.CharField(max_length=10, null=True, blank=True)
-    city = models.CharField(max_length=50, null=True, blank=True)
+    latitude = models.FloatField(max_length=10, default=47.4231277, null=False, blank=False)
+    longitude = models.FloatField(max_length=10, default=13.6539813, null=False, blank=False)
     role = models.CharField(max_length=20, choices=Role.choices,default=Role.USER)
 
     is_active = models.BooleanField(default=True)
@@ -57,7 +59,7 @@ class Report(models.Model):
     lat = models.FloatField()
     picture_description = models.CharField(max_length=100,default="",blank=True,null=True)
     picture = models.ImageField(upload_to='images/',default=0)
-    user_id = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,related_name='reports')
+    user = models.ForeignKey(CustomUser,null=False, on_delete=models.CASCADE,related_name='reports')
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -69,19 +71,19 @@ class Task(models.Model):
         IN_PROGRESS = 'In Progress', 'In Progress'
         DONE = 'Done', 'Done'
     description = models.CharField(max_length=100)
-    managerID = models.ForeignKey(CustomUser, related_name='managed_tasks', on_delete=models.CASCADE)
-    agentID = models.ManyToManyField(CustomUser,related_name='agents_tasks')
-    reportID = models.ForeignKey(Report,on_delete=models.CASCADE)
+    manager = models.ForeignKey(CustomUser, related_name='managed_tasks', on_delete=models.CASCADE)
+    agent = models.ManyToManyField(CustomUser,related_name='agents_tasks')
+    report = models.ForeignKey(Report,on_delete=models.CASCADE)
     assignedDate = models.CharField(max_length=100)
     dueDate = models.CharField(max_length=100)
     status = models.CharField(max_length=20,choices=Status.choices,default=Status.TO_DO)
 
     def __str__(self):
-        return f"{self.description} - {self.managerID} - {self.agentID} - {self.assignedDate} - {self.dueDate} - {self.status}"
+        return f"{self.description} - {self.manager} - {self.agent} - {self.assignedDate} - {self.dueDate} - {self.status}"
 
 class Vote(models.Model):
-    report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     validity = models.BooleanField(default=True)
     rating = models.IntegerField(
         default=0,
@@ -92,7 +94,7 @@ class Vote(models.Model):
     )
 
     class Meta:
-        unique_together = ('report_id','user_id')
+        unique_together = ('report','user')
 
     def __str__(self):
         return f"{self.report_id} - {self.user_id} - {self.rating} - {self.validity}"
@@ -100,20 +102,33 @@ class Vote(models.Model):
 
 class Comment(models.Model):
     comment = models.TextField()
-    report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     username = models.CharField(max_length=256, default="")
     date = models.DateTimeField(auto_now=True)
 
 
 class Subscription(models.Model):
-    report_id = models.ForeignKey(Report, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
 
 
     class Meta:
-        unique_together = ('report_id','user_id')
+        unique_together = ('report','user')
 
     def __str__(self):
         return f"{self.report_id} - {self.user_id} - {self.active}"
+
+
+class Notification(models.Model):
+    title = models.CharField(max_length=256, default="")
+    description = models.TextField(default="")
+    time = models.DateTimeField(auto_now=True)
+    read = models.BooleanField(default=False)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return f"{self.title} - {self.description} - {self.time} - {self.read}"
