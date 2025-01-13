@@ -151,16 +151,13 @@
                     
                 {% endfor %}
                             <br>
-            <button id="markreadbutton" onclick="markRead()">Mark Read</button> <button id="markunreadbutton" onclick="markUnread()">Mark Unread</button> <button id="deletebutton" onclick="deleteNotification()">Delete</button>
+            <button id="markreadbutton" onclick="markRead()">Mark Read</button> <button id="markunreadbutton" onclick="markUnread()">Mark Unread</button> <button id="notifdeletebutton" onclick="deleteNotification()">Delete</button>
             {% else %}
-                <p>Notification area</p>
+                <br>
+                <p>No Notifications at the moment</p>
             {% endif %}
         </div>
     </div>
-
-    
-
-
 
 
 </body>
