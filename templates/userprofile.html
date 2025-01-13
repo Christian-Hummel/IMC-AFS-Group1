@@ -139,11 +139,11 @@
 
                         {% if notification.read %}
                         <div>
-                            <a class="notiflink" data-href="{% url 'notification-details' notification.id %}" onclick="window.open(this.dataset.href, 'popup-name', 'width=500,height=500,toolbar=no,scrollbars=yes,resizable=yes, left=100, top=100')" style="color: inherit; text-decoration: none;"><span>{{ notification.title }}</span></a> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
+                            <a class="notiflink" data-href="{% url 'notification-details' notification.id %}" onclick="window.open(this.dataset.href, 'notif-popup', 'width=500,height=500,toolbar=no,scrollbars=yes,resizable=yes, left=100, top=100'); visitNotification(this, {{ notification.id }})" style="color: inherit; text-decoration: none;"><span>{{ notification.title }}</span></a> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
                         </div>
                         {% elif not notification.read %}
                         <div class="unread">
-                            <a class="notiflink" data-href="{% url 'notification-details' notification.id %}" onclick="window.open(this.dataset.href, 'popup-name', 'width=500,height=500,toolbar=no,scrollbars=yes,resizable=yes, left=100, top=100')" style="color: inherit; text-decoration: none;"><span>{{ notification.title }}</span></a> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
+                            <a class="notiflink" data-href="{% url 'notification-details' notification.id %}" onclick="window.open(this.dataset.href, 'notif-popup', 'width=500,height=500,toolbar=no,scrollbars=yes,resizable=yes, left=100, top=100'); visitNotification(this, {{ notification.id }})" style="color: inherit; text-decoration: none;"><span>{{ notification.title }}</span></a> <input type="checkbox" value="{{ notification.id }}" style="float: right;margin-top: 9px"><span style="float: right">{{ notification.time }}</span>
                         </div>
                         {% endif %}
 
