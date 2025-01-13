@@ -113,7 +113,7 @@ function deleteNotification() {
 
         request.send();
 
-        element.parentNode.parentNode.remove();
+        element.parentNode.remove();
 
     })
 
