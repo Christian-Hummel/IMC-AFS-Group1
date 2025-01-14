@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="Merge + problems with my files">
+    <list default="true" id="316ae2e4-c0d0-4dcc-a04a-27b79e8ccc43" name="Changes" comment="Created Task overview for manager + detailed task for manager">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/floodproject/static/js/report.js" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/static/js/report.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/floodproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/floodproject/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/floodproject/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/detailed_task.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/detailed_task.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/main.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/reportdetails.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reportdetails.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,18 +36,6 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Alexman-0809&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Christian-Hummel/AFS_Group1.git&quot;,
-    &quot;accountId&quot;: &quot;611d1fc9-4fff-4496-bc7f-7d4bfad156ec&quot;
-  }
-}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -62,21 +50,16 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Django Server.AFS_Group1.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
     &quot;git-widget-placeholder&quot;: &quot;Backend__Application&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/offic/OneDrive/Dokumente/Uni/Informatics IMC/3.Semester/Software Engineering and Project Management/AFS_Group1&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -89,7 +72,6 @@
   <component name="RunManager" selected="Django Server.AFS_Group1">
     <configuration name="manage" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="AFS_Group1" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -112,7 +94,6 @@
     </configuration>
     <configuration name="AFS_Group1" type="Python.DjangoServer" factoryName="Django server">
       <module name="AFS_Group1" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -145,14 +126,6 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
-        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
-      </set>
-    </attachedChunks>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -177,15 +150,7 @@
       <workItem from="1736166857865" duration="8499000" />
       <workItem from="1736257217149" duration="8167000" />
       <workItem from="1736271605963" duration="5033000" />
-      <workItem from="1736341725240" duration="8491000" />
-      <workItem from="1736350428884" duration="60000" />
-      <workItem from="1736428036131" duration="114000" />
-      <workItem from="1736435427572" duration="2951000" />
-      <workItem from="1736444040177" duration="4135000" />
-      <workItem from="1736599573732" duration="766000" />
-      <workItem from="1736687155592" duration="1000" />
-      <workItem from="1736788665532" duration="7837000" />
-      <workItem from="1736874703707" duration="2858000" />
+      <workItem from="1736341725240" duration="8372000" />
     </task>
     <task id="LOCAL-00001" summary="Created Documentation.md">
       <option name="closed" value="true" />
@@ -243,31 +208,7 @@
       <option name="project" value="LOCAL" />
       <updated>1736274796416</updated>
     </task>
-    <task id="LOCAL-00008" summary="Created Emergency Manager functionality">
-      <option name="closed" value="true" />
-      <created>1736350314558</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1736350314558</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Created Task Creation for specific Report in report.details">
-      <option name="closed" value="true" />
-      <created>1736599661705</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1736599661705</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Merge + problems with my files">
-      <option name="closed" value="true" />
-      <created>1736792115103</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1736792115103</updated>
-    </task>
-    <option name="localTasksCounter" value="11" />
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -293,10 +234,7 @@
     <MESSAGE value="updated xml files" />
     <MESSAGE value="Created basic Emergency Agent Functionality (see his Tasks and change Status of Task)" />
     <MESSAGE value="Created Task overview for manager + detailed task for manager" />
-    <MESSAGE value="Created Emergency Manager functionality" />
-    <MESSAGE value="Created Task Creation for specific Report in report.details" />
-    <MESSAGE value="Merge + problems with my files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge + problems with my files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created Task overview for manager + detailed task for manager" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/AFS_Group1$describe_features.coverage" NAME="describe_features Coverage Results" MODIFIED="1732208401872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Docs/Map" />
