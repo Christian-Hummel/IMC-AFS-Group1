@@ -269,7 +269,7 @@ def process_report_entry(request):
         subscription.save()
 
 
-        return HttpResponse("Data sucessfully inserted!")
+        return render(request, "report_create_success.html")
     else:
         return HttpResponse("Invalid request method!")
 
