@@ -320,6 +320,11 @@ def update_task_agents(request, task_id):
                 agent = get_object_or_404(CustomUser, id=agent_id, role='agent')
                 task.agent.add(agent)
 
+                title = "You have been assigned for a task"
+
+                notification = Notification.objects.create(title=title, description=task.description, user_id=agent_id, report_id=task.report_id)
+                notification.save()
+
     return redirect('task-details', task_id=task.id)
 
 def create_task(request, report_id):
@@ -529,7 +534,7 @@ def check_reference(text, user_id, report_id):
             title = f"{current_user.first_name} {current_user.last_name} added a comment to a report"
             description = text
 
-            notification = Notification(title=title, description=description, user_id=subscription.user_id,
+            notification = Notification.ojects.create(title=title, description=description, user_id=subscription.user_id,
                                         report_id=report_id)
             notification.save()
 
