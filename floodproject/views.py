@@ -8,10 +8,6 @@ from .models import Report, Vote, CustomUser, Comment, Subscription, Task, Notif
 import requests
 import json
 from geopy.geocoders import Nominatim
-from django.core.mail import send_mail
-from AFS_Group1 import settings
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.contrib.auth import get_user_model
 import yagmail
 from django.urls import reverse
 
@@ -358,15 +354,12 @@ def report(request):
     return render(request, "report.html")
 
 def report_details(request, id):
-
     context = {}
     report = Report.objects.get(id=id)
     available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__report=report)
     agents = CustomUser.objects.filter(role='agent')
+    tasks = Task.objects.filter(agent=request.user, report=report.id)
     subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
-    context["report"] = report
-    context["subscriptions"] = subscriptions
-    context["priority"] = ["manager", "admin"]
 
 
     if request.user.id:
@@ -396,13 +389,20 @@ def report_details(request, id):
         votestats["total_rating"] = sum([int(review.rating) for review in all_report_votes])
         votestats["flag_count"] = len([review.validity for review in all_report_votes if review.validity == False])
 
-
-        context["users"] = users
-        context["votestats"] = votestats
-        context["comments"] = all_comments
+        context["report"] = report
         context["available_agents"] = available_agents
-        context["notifications"] = notifications
         context["agents"] = agents
+        context["tasks"] = tasks
+        context["subscriptions"] = subscriptions
+        context["priority"] = ["manager", "admin"]
+        context["users"] = users
+        context["comments"] = all_comments
+        context["notifications"] = notifications
+        context["votestats"] = votestats
+
+
+
+
 
 
     return render(request, "reportdetails.html", context)
