@@ -96,6 +96,7 @@ def send_email_invite(request, task_id):
     return redirect('task-details', task_id=task_id)
 
 
+
 def update_task_description(request,task_id):
     task = get_object_or_404(Task, id=task_id)
     if request.user in task.agent.all() or request.user == task.manager:
