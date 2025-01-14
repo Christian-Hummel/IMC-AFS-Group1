@@ -93,7 +93,24 @@ def send_email_invite(request, task_id):
 
                 task.agent.add(user)
 
-    return redirect('task-details', task_id=task_id)
+                yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+                yag.send(
+                    to=email_address,
+                    subject="Task Invitation",
+                    contents=f"You have been invited to a task and have been promoted to Agent. Take a look at your new Tasks Page"
+                )
+
+        elif not user:
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+            registration_link = f"http://127.0.0.1:8000/register/?email={email_address}&role=agent"
+            yag.send(
+                to=email_address,
+                subject="Task Invitation",
+                contents=f"You have been invited to a task. Register here: {registration_link}"
+            )
+
+
+    return redirect('manager_tasks')
 
 
 
