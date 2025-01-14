@@ -31,36 +31,55 @@ p {
 
 
 .navbar-logo-container {
-    position: fixed;
-    top: 0;
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60px;
-    z-index: 3;
+    z-index: 1;
     pointer-events: none;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.navbar-logo {
-    max-width: 300px;
-    height: auto;
-    pointer-events: auto;
-}
 
-/* Media query for smaller screens */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
+    .navbar-logo-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+    }
+
     .navbar-logo {
-        max-width: 200px;
+        max-width: 300px;
+}
+
+
+@media (max-width: 768px) {
+    .navbar-logo-container {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .navbar-logo {
+        max-width: 300px;
     }
 }
 
 @media (max-width: 576px) {
+    .navbar-logo-container {
+        position: fixed; /* Fixed position for very small screens */
+        top: 10px; /* Add space from the top */
+        left: 50%;
+        transform: translateX(-50%); /* Center it on the screen */
+    }
+
     .navbar-logo {
-        max-width: 150px;
+        max-width: 150px; /* Adjust logo size for very small screens */
     }
 }
+
 
 
 /* Blue Line Below Navbar */
