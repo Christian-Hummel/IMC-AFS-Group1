@@ -162,6 +162,7 @@ def create_task(request, report_id):
 
     if request.method == 'POST':
         description = request.POST.get('description')
+        assigned_date = request.POST.get('assigned_date')
         due_date = request.POST.get('due_date')
         agent_id = request.POST.get('agent')
 
@@ -170,7 +171,7 @@ def create_task(request, report_id):
 
 
 
-        task = Task.objects.create(description=description, manager=request.user, report=report, dueDate=due_date, status=Task.Status.TO_DO)
+        task = Task.objects.create(description=description, manager=request.user, report=report, assigned_date=assigned_date, due_date=due_date, status=Task.Status.TO_DO)
 
         if agent:
             task.agent.add(agent)
@@ -271,11 +272,12 @@ def process_report_entry(request):
 
 def delete_report(request, id):
 
+    report = Report.objects.get(id=id)
+
+    tasks = Task.objects.filter(report_id=id)
+
+
     if request.user.role not in ["manager", "admin"]:
-
-        report = Report.objects.get(id=id)
-
-        tasks = Task.objects.filter(report_id=id)
 
         for task in tasks:
             if task.status != Task.Status.DONE:
@@ -283,6 +285,14 @@ def delete_report(request, id):
 
         report.delete()
         return render(request, "report_delete_success.html")
+
+
+    else:
+
+        report.delete()
+        return render(request, "report_delete_success.html")
+
+
 
 
 
