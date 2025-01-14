@@ -28,10 +28,10 @@ urlpatterns = [
     path("water-levels/<int:hzb>", views.prev_water_levels, name='prev_water_levels'), # Historic water Levels
     path("water-levels/watererror", views.prev_water_levels, name='water_level_error'), # Error page for missing data
     path("reports/", views.report_data, name='report_data'),
-    path("password_reset/", PasswordResetView.as_view(), name="password_reset"),
-    path("password_reset/done/", PasswordResetDoneView.as_view(), name="password_reset_done"),
-    path("reset/<uidb64>/<token>/", PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
-    path("reset/done/", PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path('password_reset/', views.send_password_reset_email, name='password_reset'),
+    path('password_reset_confirm/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('password_reset_done/', views.password_reset_done, name='password_reset_done'),
+    path('password_reset_complete/', views.password_reset_complete, name='password_reset_complete'),
     path("logout/", LogoutView.as_view(next_page="main"), name="logout"),
     path("verify/", views.verify, name="verify"),
     path("agent/tasks/",views.agent_tasks, name="agent_tasks"),
