@@ -81,6 +81,9 @@ def send_email_invite(request, task_id):
 
                 task.agent.add(user)
 
+            elif user.role == "admin":
+                pass
+
             else:
                 user.role = "agent"
                 user.save()
@@ -161,12 +164,12 @@ def create_task(request, report_id):
 
 
 
-        task = Task.objects.create(description=description, manager=request.user, report=report, due_date=due_date, status=Task.Status.TO_DO)
+        task = Task.objects.create(description=description, manager=request.user, report=report, dueDate=due_date, status=Task.Status.TO_DO)
 
         if agent:
             task.agent.add(agent)
 
-        return redirect('report_detail', report_id=report.id)
+        return redirect('report-details', id=report.id)
 
 
 def report_details(request, id):
