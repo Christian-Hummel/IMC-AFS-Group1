@@ -57,9 +57,12 @@
                     </li>
                         {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'profile' %}">
+                        <a class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'profile' %}">
+                            {% if notifications > 0 %}
+                            <span class="badge bg-danger position-absolute m-1 start-100 translate-middle"> {{ notifications }}</span>
+                            {% endif %}
                         <i class="fa-solid fa-circle-user me-2"></i> Profile
-                    </a>
+                        </a>
                     </li>
                         {% endif %}
                     <li class="nav-item">
@@ -77,7 +80,7 @@
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button class="btn-logout" type="submit">logout</button>
+                        <button class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="submit">logout</button>
                         </form>
                     </li>
                     {% endif %}
