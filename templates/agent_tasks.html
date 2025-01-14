@@ -60,6 +60,7 @@
                         <th>Assigned Date</th>
                         <th>Due Date</th>
                         <th>Status</th>
+                        <th>Report</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -70,9 +71,10 @@
                         <td>{{ task.report.title }}</td>
                         <td>{{ task.report.lat }}</td>
                         <td>{{ task.report.lon }}</td>
-                        <td>{{ task.assignedDate }}</td>
-                        <td>{{ task.dueDate }}</td>
+                        <td>{{ task.assigned_date }}</td>
+                        <td>{{ task.due_date }}</td>
                         <td>{{ task.status }}</td>
+                        <td><button class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" onclick="window.open('/report/{{ task.report_id }}', '_self')">Report</button></td>
                         <td>
                         {% if task.status == 'In Progress' %}
                             <form method="post" action="{% url 'change_status' task.id %}">
