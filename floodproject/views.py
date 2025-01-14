@@ -231,6 +231,15 @@ def change_task_status(request,task_id):
     if request.user in task.agent.all():
         task.status = Task.Status.DONE
         task.save()
+
+        manager = CustomUser.objects.get(id=task.manager_id)
+
+        title = "This Task has been completed"
+
+        notification = Notification.objects.create(title=title, description=task.description, user_id=manager.id, report_id=task.report_id)
+        notification.save()
+
+
     return redirect('agent_tasks')
 
 
