@@ -40,7 +40,13 @@ def agent_tasks(request):
 
 def manager_tasks(request):
     if request.user.is_authenticated and request.user.role == 'manager':
+        context = {}
         tasks = Task.objects.filter(manager=request.user)
+        print([task.agent for task in tasks])
+        print(CustomUser.objects.get(id=1).first_name)
+
+        context["tasks"] = tasks
+
         return render(request, 'manager_tasks.html', {'tasks': tasks})
 
 def task_details(request,task_id):
@@ -282,8 +288,14 @@ def process_vote_entry(request,report_id):
     if request.method == 'POST':
         sev_rating = request.POST.get("severityselect")
         validity = request.POST.get("invcheck")
+
         if not validity:
             validity = True
+
+        elif validity:
+            sev_rating = 0
+
+
         vote = Vote(report_id=report_id, user_id=request.user.id,rating=sev_rating, validity=validity)
 
         vote.save()
