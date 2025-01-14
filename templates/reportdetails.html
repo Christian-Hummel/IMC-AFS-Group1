@@ -240,35 +240,32 @@
     <div class="container mt-5">
     {% if user.id and user.role == "manager" %}
         <h2>Create Task for this Report</h2>
-        <form method="post" action="{% url 'create_task' report.id %}">
-            {% csrf_token %}
-
-            <!-- Task Description -->
-            <div class="mb-3">
-                <label for="task_description" class="form-label">Task Description</label>
-                <input type="text" class="form-control" id="task_description" name="description" placeholder="Enter task description" required>
-            </div>
-
-            <!-- Task Due Date -->
-            <div class="mb-3">
-                <label for="task_due_date" class="form-label">Due Date</label>
-                <input type="date" class="form-control" id="task_due_date" name="due_date" required>
-            </div>
-
-            <!-- Assign Agent -->
-            <div class="mb-3">
-                <label for="task_agent" class="form-label">Assign Agent</label>
-                <select name="agent" id="task_agent" class="form-select">
-                    <option value="" disabled selected>Select an agent</option>
-                    {% for agent in available_agents %}
-                        <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Create Task</button>
-        </form>
+                            <form method="post" action="{% url 'create_task' report.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description" name="description" placeholder="Enter the Description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assigned_date" class="form-label">Task Assigned Date</label>
+                            <input type="date" class="form-control" id="assigned_date" name="assigned_date" placeholder="Enter the assigned date"  required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="due_date" class="form-label">Task Due Date</label>
+                            <input type="date" class="form-control" id="due_date" name="due_date" placeholder="Enter the due date"  required>
+                        </div>
+                        <input type="hidden" name="manager_id" value="{{ user.id }}">
+                        <div class="mb-3">
+                            <label for="agent" class="form-label">Assign Agent</label>
+                            <select name="agent" id="agent" class="form-select" required>
+                                <option value="" disabled selected>Select an agent</option>
+                                {% for agent in agents %}
+                                    <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Task</button>
+                    </form>
         {% elif not user.id %}
         <p>Only agents and managers are able to see tasks</p>    
         {% endif %}
