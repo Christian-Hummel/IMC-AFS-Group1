@@ -45,6 +45,8 @@
                         <th>Description</th>
                         <th>Manager</th>
                         <th>Report</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
                         <th>Assigned Date</th>
                         <th>Due Date</th>
                         <th>Status</th>
@@ -54,21 +56,15 @@
                     {% for task in tasks %}
                     <tr>
                         <td>{{ task.description }}</td>
-                        <td>{{ task.managerID.first_name }} {{ task.managerID.last_name }}</td>
-                        <td>{{ task.reportID.title }}</td>
+                        <td>{{ task.manager.first_name }} {{ task.manager.last_name }}</td>
+                        <td>{{ task.report.title }}</td>
+                        <td>{{ task.report.lat }}</td>
+                        <td>{{ task.report.lon }}</td>
                         <td>{{ task.assignedDate }}</td>
                         <td>{{ task.dueDate }}</td>
                         <td>{{ task.status }}</td>
                         <td>
                             <a href="{% url 'task-details' task.id %}" class="btn btn-primary btn-sam">View Details</a>
-                        </td>
-                        <td>
-{#                        {% if task.status == 'In Progress' %}#}
-{#                            <form method="post" action="{% url 'change_status' task.id %}">#}
-{#                                {% csrf_token %}#}
-{#                                <button type="submit" class="btn btn-success btn-sm">Mark as Done</button>#}
-{#                            </form>#}
-{#                        {% endif %}#}
                         </td>
                     </tr>
                     {% endfor %}

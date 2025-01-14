@@ -75,11 +75,19 @@
                     </tr>
                     <tr>
                         <th>Manager</th>
-                        <td>{{ task.managerID.first_name }} {{ task.managerID.last_name }}</td>
+                        <td>{{ task.manager.first_name }} {{ task.manager.last_name }}</td>
                     </tr>
                     <tr>
                         <th>Report</th>
-                        <td>{{ task.reportID.title }}</td>
+                        <td>{{ task.report.title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Longitude</th>
+                        <td>{{ task.report.lon }}</td>
+                    </tr>
+                    <tr>
+                        <th>Latitude</th>
+                        <td>{{ task.report.lat }}</td>
                     </tr>
                     <tr>
                         <th>Assigned Date</th>
