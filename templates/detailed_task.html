@@ -91,11 +91,11 @@
                     </tr>
                     <tr>
                         <th>Assigned Date</th>
-                        <td>{{ task.assignedDate }}</td>
+                        <td>{{ task.assigned_date }}</td>
                     </tr>
                     <tr>
                         <th>Due Date</th>
-                        <td>{{ task.dueDate }}</td>
+                        <td>{{ task.due_date }}</td>
                     </tr>
                     <tr>
                         <th>Status</th>
@@ -165,6 +165,13 @@
 
             </div>
     </div>
-
+    {% if assigned_agents %}
+    <div class="container mt-5">
+        <h1>Currently assigned to this task:</h1>
+        {% for agent in assigned_agents %}
+        <strong>{{ agent.first_name }} {{ agent.last_name }}</strong>
+        {% endfor %}
+    {% endif %}
+    </div>
 </body>
 </html>
