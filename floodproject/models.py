@@ -74,12 +74,12 @@ class Task(models.Model):
     manager = models.ForeignKey(CustomUser, related_name='managed_tasks', on_delete=models.CASCADE)
     agent = models.ManyToManyField(CustomUser,related_name='agents_tasks')
     report = models.ForeignKey(Report,on_delete=models.CASCADE)
-    assignedDate = models.CharField(max_length=100)
-    dueDate = models.CharField(max_length=100)
+    assigned_date = models.CharField(max_length=100)
+    due_date = models.CharField(max_length=100)
     status = models.CharField(max_length=20,choices=Status.choices,default=Status.TO_DO)
 
     def __str__(self):
-        return f"{self.description} - {self.manager} - {self.agent} - {self.assignedDate} - {self.dueDate} - {self.status}"
+        return f"{self.description} - {self.manager} - {self.agent} - {self.assigned_date} - {self.due_date} - {self.status}"
 
 class Vote(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
@@ -89,7 +89,7 @@ class Vote(models.Model):
         default=0,
         validators=[
             MaxValueValidator(5),
-            MinValueValidator(1)
+            MinValueValidator(0)
         ]
     )
 
