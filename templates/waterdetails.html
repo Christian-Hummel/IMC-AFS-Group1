@@ -13,32 +13,53 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'main' %}">Home</a>
+            {% if user.is_authenticated and user.role == 'agent' %}
+                <a class="navbar-brand" href="{% url 'agent_tasks' %}">Tasks</a>
+            {% elif user.is_authenticated and user.role == 'manager' %}
+                <a class="navbar-brand" href="{% url 'manager_tasks' %}">Tasks</a>
+            {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
+                        {% if user.is_authenticated %}
                     <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'report' %}">
+                        {% else %}
+                    <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'login' %}">
+                        {% endif %}
                         <i class="fas fa-plus me-2"></i> New Report
                     </a>
                     </li>
+                        {% if user.is_authenticated %}
                     <li class="nav-item">
-
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'profile' %}">
+                            {% if notifications > 0 %}
+                            <span class="badge bg-danger position-absolute m-1 start-100 translate-middle"> {{ notifications }}</span>
+                            {% endif %}
+                        <i class="fa-solid fa-circle-user me-2"></i> Profile
+                        </a>
                     </li>
-
+                        {% endif %}
                     <li class="nav-item">
+                        {% if not user.is_authenticated %}
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        {% if not user.is_authenticated %}
                         <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        {% endif %}
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button class="btn-logout" type="submit">logout</button>
+                        <button class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="submit">logout</button>
                         </form>
                     </li>
                     {% endif %}
@@ -57,9 +78,15 @@
                 <div class="col-md-4">
                     <div class="water-container">
 
-                        <h1>Messstelle:</h1>
+                        <h1>Messstelle: <strong>{{ plot_data.messstelle }}</strong></h1>
 
-                        <strong>{{ plot_data.messstelle }}</strong>
+
+                        <strong>Plot Data:</strong>
+                        <br>
+                        <strong>Maximum amount of surface water level</strong>
+                        <br>
+                        <strong>recorded per year</strong>
+
 
                         <div class="water-info">
 
