@@ -41,6 +41,13 @@
             {% elif user.is_authenticated and user.role == 'manager' %}
                 <a class="navbar-brand" href="{% url 'manager_tasks' %}">Tasks</a>
             {% endif %}
+
+        <div class="navbar-logo-container">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'img/logo.png' %}" alt="Logo" class="navbar-logo">
+            </a>
+        </div>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
