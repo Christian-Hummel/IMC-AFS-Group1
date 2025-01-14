@@ -119,6 +119,7 @@
 
 
             </table>
+            {% if task.status != "Done" %}
             <div class="container mt-5">
                 <h1>Assign Agents:</h1>
                 {% if available_agents %}
@@ -142,6 +143,11 @@
                 {% endif %}
                 </form>
             </div>
+            {% elif task.status == "Done" %}
+            <div>
+                <strong>Change Status to assign agents</strong>
+            </div>
+            {% endif %}
 
             <div class="container mt-5">
                 <h1>Promote Normal User to Agent:</h1>
