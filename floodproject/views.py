@@ -187,7 +187,7 @@ def report_details(request, id):
     subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
     context["report"] = report
     context["subscriptions"] = subscriptions
-    context["priority"] = ["manager", "superadmin"]
+    context["priority"] = ["manager", "admin"]
 
 
     if request.user.id:
@@ -271,7 +271,7 @@ def process_report_entry(request):
 
 def delete_report(request, id):
 
-    if request.user.role not in ["manager", "superadmin"]:
+    if request.user.role not in ["manager", "admin"]:
 
         report = Report.objects.get(id=id)
 
@@ -283,6 +283,8 @@ def delete_report(request, id):
 
         report.delete()
         return render(request, "report_delete_success.html")
+
+
 
 def process_vote_entry(request,report_id):
     if request.method == 'POST':
