@@ -3,7 +3,7 @@ from django.contrib.auth.models import auth
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
-from .models import Report, Vote, CustomUser, Comment, Subscription, Task
+from .models import Report, Vote, CustomUser, Comment, Subscription, Task, Notification
 import requests
 import json
 from geopy.geocoders import Nominatim
@@ -36,15 +36,15 @@ def agent_tasks(request):
 
 def manager_tasks(request):
     if request.user.is_authenticated and request.user.role == 'manager':
-        tasks = Task.objects.filter(managerID=request.user)
+        tasks = Task.objects.filter(manager_id=request.user)
         return render(request, 'manager_tasks.html', {'tasks': tasks})
 
 def task_details(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    assigned_agents = task.agentID.all()
+    assigned_agents = task.agent.all()
     available_agents = CustomUser.objects.filter(role='agent').exclude(id__in=assigned_agents.values_list('id'))
     user = CustomUser.objects.filter(role='user')
-    if request.user in task.agentID.all() or request.user == task.managerID:
+    if request.user in task.agent.all() or request.user == task.manager:
 
         return render(request, 'detailed_task.html', {'task':task, 'assigned_agents':assigned_agents, 'available_agents':available_agents, 'user':user})
 
@@ -52,26 +52,67 @@ def task_details(request,task_id):
 
 def change_task_status(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agentID.all():
+    if request.user in task.agent.all():
         task.status = Task.Status.DONE
         task.save()
     return redirect('agent_tasks')
 
-def promote_user(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
-    if request.method == 'POST':
-        user_id = request.POST.get('user')
-        if user_id:
-            user = get_object_or_404(CustomUser, id=user_id)
-            user.role = 'agent'
-            user.save()
 
-    return redirect('task-details', task_id=task_id)
+def send_email_invite(request, task_id):
+
+    if request.method == "POST":
+        email_address = request.POST.get('email_address')
+        user = CustomUser.objects.get(email=email_address)
+
+        task = Task.objects.get(id=task_id)
+        report = Report.objects.get(id=task.report.id)
+
+        if user:
+            if user.role  in ["manager", "agent"]:
+                title="You have been assigned for a task"
+
+                notification = Notification.objects.create(title=title, description=task.description, user_id=user.id,
+                                                           report_id=report.id)
+                notification.save()
+
+                task.agent.add(user)
+
+            else:
+                user.role = "agent"
+                user.save()
+                title = "You have been assigned for a task"
+
+                # create Notification for this user
+                notification = Notification.objects.create(title=title, description=task.description, user_id=user.id, report_id=report.id)
+                notification.save()
+
+
+                task.agent.add(user)
+
+                yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+                yag.send(
+                    to=email_address,
+                    subject="Task Invitation",
+                    contents=f"You have been invited to a task and have been promoted to Agent. Take a look at your new Tasks Page"
+                )
+
+
+
+        elif not user:
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+            registration_link = f"http://127.0.0.1:8000/register/?email={email_address}&role=agent"
+            yag.send(
+                to=email_address,
+                subject="Task Invitation",
+                contents=f"You have been invited to a task. Register here: {registration_link}"
+            )
+
+    return redirect('manager_tasks')
 
 
 def update_task_description(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agentID.all() or request.user == task.managerID:
+    if request.user in task.agent.all() or request.user == task.manager:
         if request.method == 'POST':
             new_description = request.POST.get('description')
             if new_description:
@@ -82,7 +123,7 @@ def update_task_description(request,task_id):
 
 def update_task_status(request,task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user  in task.agentID.all() or request.user == task.managerID:
+    if request.user  in task.agent.all() or request.user == task.manager:
         if request.method == 'POST':
             new_status = request.POST.get('status')
             if new_status:
@@ -93,12 +134,12 @@ def update_task_status(request,task_id):
 
 def update_task_agents(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agentID.all() or request.user == task.managerID:
+    if request.user in task.agent.all() or request.user == task.manager:
         if request.method == 'POST':
             agent_id = request.POST.get('agent')
             if agent_id:
                 agent = get_object_or_404(CustomUser, id=agent_id, role='agent')
-                task.agentID.add(agent)
+                task.agent.add(agent)
 
     return redirect('task-details', task_id=task.id)
 
@@ -108,7 +149,7 @@ def create_task(request, report_id):
     if request.method == 'POST':
         description = request.POST.get('description')
         due_date = request.POST.get('due_date')
-        agent_id = request.POST.geT('agent')
+        agent_id = request.POST.get('agent')
 
 
         agent = CustomUser.objects.get(id=agent_id)
@@ -128,7 +169,7 @@ def report_details(request, id):
     context = {}
     report = Report.objects.get(id=id)
     available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__reportID=report)
-    subscriptions = [subscription.user_id_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
+    subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
     context["report"] = report
     context["subscriptions"] = subscriptions
     context["priority"] = ["manager", "superadmin"]
@@ -139,7 +180,7 @@ def report_details(request, id):
         # fetch Vote model from database
         all_report_votes = Vote.objects.filter(report_id_id=id)
         # fetch user ids and pass it to context as a list
-        users = [review.user_id_id for review in all_report_votes]
+        users = [review.user_id for review in all_report_votes]
         # fetch Comment model from database
         all_comments = Comment.objects.filter(report_id_id=id).order_by("-date")
 
@@ -148,7 +189,7 @@ def report_details(request, id):
         if request.user.id in users:
 
             current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id_id][0]
-            flag = ["yes" if request.user.id == review.user_id_id and review.validity == False else "no" for review in all_report_votes][0]
+            flag = ["yes" if request.user.id == review.user_id and review.validity == False else "no" for review in all_report_votes][0]
 
             context["current_severity"] = current_severity
             context["flag"] = flag
@@ -258,7 +299,7 @@ def register(request):
         password = request.POST["password"]
         password_repeat = request.POST["password_repeat"]
         email = request.POST["email"]
-        role = request.POST["role"]
+        role = request.POST.get("role","user")
 
 
 
@@ -314,7 +355,14 @@ def register(request):
         return redirect ("verify")
 
     else:
-        return render(request, "register.html")
+        email_prefill = request.GET.get("email", "")
+        role_prefill = request.GET.get("role", "user")
+
+
+        return render(request, "register.html", {
+            "email_prefill": email_prefill,
+            "role_prefill": role_prefill,
+        })
 
 def verify(request):
     if request.method == "POST":

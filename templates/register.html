@@ -61,7 +61,7 @@
             
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ request.POST.email|default_if_none:'' }}" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ email_prefill|default_if_none:'' }}" required>
                 </div>
             
                 <div class="mb-3">
@@ -77,9 +77,9 @@
                 <div class="mb-3">
                     <label for="role" class="form-label">Role</label>
                     <select name="role" id="role" required>
-                        <option value="user">User</option>
-                        <option value="agent">Agent</option>
-                        <option value="manager">Manager</option>
+                        <option value="user" {% if role_prefill == "user" %}selected{% endif %}>User</option>
+                        <option value="agent" {% if role_prefill == "agent" %}selected{% endif %}>Agent</option>
+                        <option value="manager" {% if role_prefill == "manager" %}selected{% endif %}>Manager</option>
                     </select>
                 </div>
 

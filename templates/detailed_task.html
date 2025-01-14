@@ -132,46 +132,29 @@
                 {% else %}
                         <p> There are no available agents to assign </p>
                 {% endif %}
+                </form>
             </div>
 
             <div class="container mt-5">
-                <h1>Promote Normal User:</h1>
+                <h1>Promote Normal User to Agent:</h1>
 
-                    <form method="post" action="{% url 'promote_user' task.id %}">
+                    <form method="post" action="{% url 'send_email_invite' task.id %}">
                         {% csrf_token %}
-                        <input type="text" name="description" value="{{ task.description }}"/>
-<!--
-                        # query if user exists
-                        # if yes => query if user already ERA , if yes => do nothing, if no => promote
-                        # if no => do nothing?
-                        # if user does not exist, do nothing? --!>
-
-                        </select>
-                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
+                        <input type="email" name="email_address" class="form-control" placeholder="Enter email address">
+                        <button type="submit" class="btn btn-primary btn-sm">Send Email</button>
+                    </form>
 
             </div>
 
             <div class="container mt-5">
-                <h1>Invite New People:</h1>
-                {% if available_agents %}
+                <h1>Assign New People to Task:</h1>
 
-                    <form method="post" action="{% url 'update_task_agents' task.id %}">
+                    <form method="post" action="{% url 'send_email_invite' task.id %}">
                         {% csrf_token %}
-                        <select name="agent" id="agent">
+                        <input type="email" name="email_address" class="form-control" placeholder="Enter email address">
+                        <button type="submit" class="btn btn-primary btn-sm">Send Email</button>
+                    </form>
 
-                            {% for agent in available_agents %}
-                                <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
-                            {% empty %}
-                                <option>No available agents</option>
-                            {% endfor %}
-
-
-
-                        </select>
-                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
-                {% else %}
-                        <p> There are no available agents to assign </p>
-                {% endif %}
             </div>
     </div>
 
