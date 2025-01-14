@@ -10,7 +10,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self.db)
         return user
 
-    def create_superuser(self, email, first_name, last_name, latitude, longitude, password=None, role = "admin"):
+    def create_superuser(self, email, first_name, last_name, latitude=47.7972, longitude=13.0477, password=None, role = "admin"):
         user = self.create_user(email = email, first_name = first_name, last_name = last_name, latitude=latitude, longitude=longitude, role = role)
         user.set_password(password)
         user.is_staff = True
