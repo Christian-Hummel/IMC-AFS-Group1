@@ -355,10 +355,24 @@ def create_task(request, report_id):
         if agent:
             task.agent.add(agent)
 
-        title = "You have been assigned for a task"
+            title = "You have been assigned for a task"
 
-        notification = Notification.objects.create(title=title, description=task.description, user_id=agent.id, report_id=report.id)
-        notification.save()
+            notification1 = Notification.objects.create(title=title, description=task.description, user_id=agent.id, report_id=report.id)
+            notification1.save()
+
+            if request.user.id != report.user_id and report.user_id != agent.id:
+                title = "A task has been created for your report"
+                notification2 = Notification.objects.create(title=title, description=task.description, user_id=report.user_id, report_id=report_id)
+                notification2.save()
+
+        subscriptions = Subscription.objects.filter(report_id=report_id)
+        subscribers = [subscription.user_id for subscription in subscriptions]
+
+
+        if request.user.id not in subscribers:
+            sub = Subscription.objects.create(report_id=report_id, user_id=request.user.id)
+            sub.save()
+
 
         return redirect('report-details', id=report.id)
 
