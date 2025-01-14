@@ -147,6 +147,10 @@ def report_details(request, id):
         users = [review.user_id for review in all_report_votes]
         # fetch Comment model from database
         all_comments = Comment.objects.filter(report_id=id).order_by("-date")
+        # fetch Notifications for user from database
+        notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
+
+
 
         votestats = {}
 
@@ -167,6 +171,7 @@ def report_details(request, id):
         context["votestats"] = votestats
         context["comments"] = all_comments
         context["available_agents"] = available_agents
+        context["notifications"] = notifications
 
 
     return render(request, "reportdetails.html", context)
@@ -273,10 +278,6 @@ def index(request):
     context = {}
 
     notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
-
-    print(notifications)
-
-
 
     context["notifications"] = notifications
 
