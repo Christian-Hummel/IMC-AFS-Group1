@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flood Project</title>
+    <title>Create new Report</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> <!-- for icons -->
@@ -14,6 +14,11 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'main' %}">Home</a>
+            {% if user.is_authenticated and user.role == 'agent' %}
+                <a class="navbar-brand" href="{% url 'agent_tasks' %}">Tasks</a>
+            {% elif user.is_authenticated and user.role == 'manager' %}
+                <a class="navbar-brand" href="{% url 'manager_tasks' %}">Tasks</a>
+            {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -23,13 +28,14 @@
                     <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'report' %}">
                         <i class="fas fa-plus me-2"></i> New Report
                     </a>
-                    </li>
+                        {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="submit">logout</button>
+                        </form>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}">Register</a>
-                    </li>
+                        {% endif %}
                 </ul>
             </div>
         </div>
@@ -43,7 +49,7 @@
     </div>
     <br>
     <div class="container-fluid">
-        <form method="post" action="{% url 'process-report-entry' %}">
+        <form method="post" action="{% url 'process-report-entry' %}" enctype="multipart/form-data">
             {% csrf_token %}
         <div class="row">
             <div class="col-md-6">
@@ -57,15 +63,10 @@
                     <input type="text" class="form-control" id="description" name="description" placeholder="Description "style="width: 80%;">
                     <br>
 
-
-                    <!-- backend for picture upload needed -->
-                    <input type="text" class="form-control" id="picture" placeholder="Picture description" style="width: 80%;">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}   {{ form.as_p }}
-                        <button type="submit" style="width: 80%">Upload Picture</button>
-                        <br>
-
-                    </form>
+                    <input type="text" class="form-control" id="picture_description" placeholder="Picture description" style="width: 80%;">
+                    <br>
+                    <input type="file" class="form-control" id="picture" name="picture" style="width: 80%;">
+                    <br>
                     <button type="submit">Submit Information</button>
                 </div>
 
