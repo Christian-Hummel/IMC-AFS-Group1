@@ -14,13 +14,9 @@
 
     <div class="notification-detail">
         <span class="text-muted">Date: {{ notification.time }}</span>
-        <p></p>
-        <span class="font-weight-bold">{{ notification.title }}:</span>
-        <p></p>
-        <span class="font-weight-bold"><em>{{ notification.description | safe }}</em></span>
-        <p></p>
-        <span class="font-weight-bold">Report Title: {{ report.title }}</span>
-        <p></p>
+        <p><span class="font-weight-bold">{{ notification.title }}:</span></p>
+        <p><span class="font-weight-bold"><em>{{ notification.description | safe }}</em></span></p>
+        <p><span class="font-weight-bold">Report Title: {{ report.title }}</span></p>
     </div>
     <div class="notifbuttondiv" id="notifbuttondiv">
         <button onclick="window.open('/report/{{ report.id }}', '_blank')">Go to Report</button>
