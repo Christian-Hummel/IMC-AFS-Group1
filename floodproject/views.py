@@ -17,8 +17,175 @@ from django.urls import reverse
 
 # Create your views here.
 
-def report(request):
-    return render(request, "report.html")
+### Home Page
+def index(request):
+    context = {}
+
+    notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
+
+    context["notifications"] = notifications
+
+    return render(request, "main.html", context)
+
+### Register/ Login / Verify
+
+def register(request):
+    if request.method == "POST":
+        first_name = request.POST["firstname"].strip()
+        last_name = request.POST["lastname"].strip()
+        address = request.POST["address"]
+        password = request.POST["password"]
+        password_repeat = request.POST["password_repeat"]
+        email = request.POST["email"]
+        role = request.POST.get("role", "user")
+
+        # calling the Nominatim tool and create Nominatim class
+        loc = Nominatim(user_agent="Geopy Library")
+
+        # entering the location name
+        getLoc = loc.geocode(address)
+
+        # Works only partially - many invalid cases will get some values assigned
+        if not getLoc:
+            return HttpResponse("Address not found")
+
+        # printing address
+        lng = getLoc.longitude
+        lat = getLoc.latitude
+
+        if CustomUser.objects.filter(email=email).exists():
+            user = CustomUser.objects.get(email=email)
+
+            # overwrite user if email is not verified
+            if not user.is_verified:
+                user.first_name = first_name
+                user.last_name = last_name
+                user.latitude = lat
+                user.longitude = lng
+                user.password = password
+                user.role = role
+                user.set_password(password)
+                user.create_code()
+                user.save()
+
+                # Send email with verification code using yagmail
+                yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+                subject = "Your Verification Code"
+                message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
+                yag.send(to=email, subject=subject, contents=message)
+
+                request.session["user_code"] = str(user.code)
+                return redirect("verify")
+
+            else:
+                messages.error(request, 'Email already exists.')
+                return redirect('register')
+
+        elif password != password_repeat:
+            messages.info(request, "Passwords do not match!")
+            return redirect("register")
+
+        user = CustomUser.objects.create_user(
+            email=email,
+            first_name=first_name.capitalize(),
+            last_name=last_name.capitalize(),
+            latitude=lat,
+            longitude=lng,
+            password=password,
+            role=role,
+        )
+
+        user.set_password(password)
+        user.create_code()
+        user.save()
+
+        # Send email with verification code using yagmail
+        yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+        subject = "Your Verification Code"
+        message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
+        yag.send(to=email, subject=subject, contents=message)
+
+        return redirect("verify")
+
+    else:
+        email_prefill = request.GET.get("email", "")
+        role_prefill = request.GET.get("role", "user")
+
+        return render(request, "register.html", {
+            "email_prefill": email_prefill,
+            "role_prefill": role_prefill,
+        })
+
+
+def verify(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        code = request.POST.get("code")
+
+        # get specific user
+        user = CustomUser.objects.get(email=email)
+
+        if "user_code" in request.session:
+            user.code = request.session["user_code"]
+
+        if user.code == code:
+            user.is_verified = True
+            user.save()
+            auth.login(request, user)
+            return redirect("main")
+
+        else:
+            return render(request, "verify.html")
+
+    return render(request, "verify.html")
+
+
+def login(request):
+    if request.method == "POST":
+        email = request.POST["email"]
+        password = request.POST["password"]
+
+        user = auth.authenticate(request, email=email, password=password)
+
+        if user and user.is_verified:
+            auth.login(request, user)
+            return redirect("main")
+
+        elif user and not user.is_verified:
+            user.create_code()
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+            subject = "Your Verification Code"
+            message = f"Hello {user.first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
+            yag.send(to=email, subject=subject, contents=message)
+            request.session["user_code"] = str(user.code)
+            return redirect("verify")
+
+        else:
+            messages.info(request, "Invalid Email or Password")
+            return redirect("login")
+
+    else:
+        return render(request, "login.html")
+
+
+### Waterlevel
+
+
+def water_level_data(request):
+    # URL to fetch the water levels in GeoJSON format
+    wfs_url = (
+        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
+    )
+
+    # Get the data from the WFS URL
+    response = requests.get(wfs_url)
+    data = response.json()  # GeoJSON data
+
+    ################## Space for optional Data processing before sending it to frontend ##################
+
+    return JsonResponse(data)  # Return the data as a JSON response to the frontend
+
+
 
 def get_severity_score(num):
 
@@ -32,6 +199,9 @@ def get_severity_score(num):
         return "High Level"
     else:
         return "Critical Level"
+
+
+### Task
 
 def agent_tasks(request):
     if request.user.is_authenticated and request.user.role == 'agent':
@@ -182,6 +352,10 @@ def create_task(request, report_id):
 
         return redirect('report-details', id=report.id)
 
+### Report
+
+def report(request):
+    return render(request, "report.html")
 
 def report_details(request, id):
 
@@ -296,241 +470,6 @@ def delete_report(request, id):
         report.delete()
         return render(request, "report_delete_success.html")
 
-
-
-
-
-def process_vote_entry(request,report_id):
-    if request.method == 'POST':
-        sev_rating = request.POST.get("severityselect")
-        validity = request.POST.get("invcheck")
-
-        if not validity:
-            validity = True
-
-        elif validity:
-            sev_rating = 0
-
-
-        vote = Vote(report_id=report_id, user_id=request.user.id,rating=sev_rating, validity=validity)
-
-        vote.save()
-
-        return HttpResponse("Vote sucessfully inserted!")
-    else:
-        return HttpResponse("Invalid request method!")
-
-
-def edit_vote(request, report_id):
-
-
-    if request.method == 'POST':
-
-        current_vote_query = Vote.objects.filter(user_id=CustomUser.objects.get(id=request.user.id).id, report_id=report_id)
-        vote_id = current_vote_query.values('id')[0]["id"]
-
-        current_vote = Vote.objects.get(id=vote_id)
-
-        new_rating = request.POST.get("severityselect")
-        new_validity = request.POST.get("invcheck")
-
-        if not new_validity:
-            new_validity = True
-
-
-        current_vote.rating = new_rating
-        current_vote.validity = new_validity
-        current_vote.save()
-
-        return HttpResponse("Vote sucessfully edited")
-    else:
-        return HttpResponse("No changes to previous rating detected")
-
-
-
-def index(request):
-    context = {}
-
-    notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
-
-    context["notifications"] = notifications
-
-    return render(request, "main.html", context)
-
-
-def profile(request):
-    context = {}
-
-    notifications = Notification.objects.filter(user_id=request.user.id)
-
-    geolocator = Nominatim(user_agent="Geopy Library")
-
-    location = geolocator.reverse(f"{request.user.latitude}, {request.user.longitude}")
-
-    context["home_address"] = location.address
-    context["notifications"] = notifications
-
-    return render(request, "userprofile.html", context)
-
-
-def agent(request):
-    return render(request, "agent_tasks.html")
-
-
-def register(request):
-    if request.method == "POST":
-        first_name = request.POST["firstname"].strip()
-        last_name = request.POST["lastname"].strip()
-        address = request.POST["address"]
-        password = request.POST["password"]
-        password_repeat = request.POST["password_repeat"]
-        email = request.POST["email"]
-        role = request.POST.get("role","user")
-
-        # calling the Nominatim tool and create Nominatim class
-        loc = Nominatim(user_agent="Geopy Library")
-
-        # entering the location name
-        getLoc = loc.geocode(address)
-
-        # Works only partially - many invalid cases will get some values assigned
-        if not getLoc:
-            return HttpResponse("Address not found")
-
-        # printing address
-        lng = getLoc.longitude
-        lat = getLoc.latitude
-
-
-
-        if CustomUser.objects.filter(email=email).exists():
-            user = CustomUser.objects.get(email=email)
-
-            # overwrite user if email is not verified
-            if not user.is_verified:
-                user.first_name = first_name
-                user.last_name = last_name
-                user.latitude = lat
-                user.longitude = lng
-                user.password = password
-                user.role = role
-                user.set_password(password)
-                user.create_code()
-                user.save()
-
-                # Send email with verification code using yagmail
-                yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
-                subject = "Your Verification Code"
-                message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
-                yag.send(to=email, subject=subject, contents=message)
-
-                request.session["user_code"] = str(user.code)
-                return redirect("verify")
-
-            else:
-                messages.error(request, 'Email already exists.')
-                return redirect('register')
-
-        elif password != password_repeat:
-            messages.info(request, "Passwords do not match!")
-            return redirect("register")
-
-        user = CustomUser.objects.create_user(
-            email=email,
-            first_name=first_name.capitalize(),
-            last_name=last_name.capitalize(),
-            latitude=lat,
-            longitude=lng,
-            password=password,
-            role=role,
-        )
-
-        user.set_password(password)
-        user.create_code()
-        user.save()
-
-
-        # Send email with verification code using yagmail
-        yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
-        subject = "Your Verification Code"
-        message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
-        yag.send(to=email, subject=subject, contents=message)
-
-        return redirect ("verify")
-
-    else:
-        email_prefill = request.GET.get("email", "")
-        role_prefill = request.GET.get("role", "user")
-
-
-        return render(request, "register.html", {
-            "email_prefill": email_prefill,
-            "role_prefill": role_prefill,
-        })
-
-def verify(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        code = request.POST.get("code")
-
-        #get specific user
-        user = CustomUser.objects.get(email = email)
-
-        if "user_code" in request.session:
-            user.code = request.session["user_code"]
-
-        if user.code == code:
-            user.is_verified = True
-            user.save()
-            auth.login(request, user)
-            return redirect("main")
-        
-        else:
-            return render(request, "verify.html")
-
-    return render(request, "verify.html")
-
-def login(request):
-    if request.method == "POST":
-        email = request.POST["email"]
-        password = request.POST["password"]
-
-        user = auth.authenticate(request, email=email, password=password)
-
-        if user and user.is_verified:
-            auth.login(request, user)
-            return redirect("main")
-
-        elif user and not user.is_verified:
-            user.create_code()
-            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
-            subject = "Your Verification Code"
-            message = f"Hello {user.first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
-            yag.send(to=email, subject=subject, contents=message)
-            request.session["user_code"] = str(user.code)
-            return redirect("verify")
-
-        else:
-            messages.info(request, "Invalid Email or Password")
-            return redirect("login")
-
-    else:
-        return render(request, "login.html")
-
-
-def water_level_data(request):
-    # URL to fetch the water levels in GeoJSON format
-    wfs_url = (
-        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
-    )
-
-    # Get the data from the WFS URL
-    response = requests.get(wfs_url)
-    data = response.json()  # GeoJSON data
-
-    ################## Space for optional Data processing before sending it to frontend ##################
-
-    return JsonResponse(data)  # Return the data as a JSON response to the frontend
 
 
 def report_data(request):
@@ -653,6 +592,81 @@ def toggle_subscribe(request, report_id):
         return HttpResponse("Invalid request method!")
 
 
+### Vote
+
+
+def process_vote_entry(request,report_id):
+    if request.method == 'POST':
+        sev_rating = request.POST.get("severityselect")
+        validity = request.POST.get("invcheck")
+
+        if not validity:
+            validity = True
+
+        elif validity:
+            sev_rating = 0
+
+
+        vote = Vote(report_id=report_id, user_id=request.user.id,rating=sev_rating, validity=validity)
+
+        vote.save()
+
+        return HttpResponse("Vote sucessfully inserted!")
+    else:
+        return HttpResponse("Invalid request method!")
+
+
+def edit_vote(request, report_id):
+
+
+    if request.method == 'POST':
+
+        current_vote_query = Vote.objects.filter(user_id=CustomUser.objects.get(id=request.user.id).id, report_id=report_id)
+        vote_id = current_vote_query.values('id')[0]["id"]
+
+        current_vote = Vote.objects.get(id=vote_id)
+
+        new_rating = request.POST.get("severityselect")
+        new_validity = request.POST.get("invcheck")
+
+        if not new_validity:
+            new_validity = True
+
+
+        current_vote.rating = new_rating
+        current_vote.validity = new_validity
+        current_vote.save()
+
+        return HttpResponse("Vote sucessfully edited")
+    else:
+        return HttpResponse("No changes to previous rating detected")
+
+
+
+### Profile
+
+def profile(request):
+    context = {}
+
+    notifications = Notification.objects.filter(user_id=request.user.id)
+
+    geolocator = Nominatim(user_agent="Geopy Library")
+
+    location = geolocator.reverse(f"{request.user.latitude}, {request.user.longitude}")
+
+    context["home_address"] = location.address
+    context["notifications"] = notifications
+
+    return render(request, "userprofile.html", context)
+
+
+def agent(request):
+    return render(request, "agent_tasks.html")
+
+
+
+
+### Password Reset
 
 def send_password_reset_email(request):
     errors = []  # To collect errors
@@ -726,6 +740,8 @@ def password_reset_done(request):
 def password_reset_complete(request):
     return render(request, "registration/password_reset_complete.html")
 
+### Profile
+
 def password_update(request):
     if request.method == "POST":
         current_password = request.POST["currentpassword"]
@@ -798,6 +814,8 @@ def location_update(request):
 def location_update_success(request):
     return render(request, "location_update_success.html")
 
+
+### Notifications
 
 def notification_details(request, notification_id):
     context = {}
