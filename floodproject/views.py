@@ -170,11 +170,15 @@ def create_task(request, report_id):
         agent = CustomUser.objects.get(id=agent_id)
 
 
-
         task = Task.objects.create(description=description, manager=request.user, report=report, assigned_date=assigned_date, due_date=due_date, status=Task.Status.TO_DO)
 
         if agent:
             task.agent.add(agent)
+
+        title = "You have been assigned for a task"
+
+        notification = Notification.objects.create(title=title, description=task.description, user_id=agent.id, report_id=report.id)
+        notification.save()
 
         return redirect('report-details', id=report.id)
 
