@@ -50,34 +50,29 @@
     <div class="blue-line"></div>
 
     <br>
-    <div class="container-fluid">
+    <div class="container">
         <h1 class="text-center">Create a new report</h1>
     </div>
     <br>
-    <div class="container-fluid">
-        <form method="post" action="{% url 'process-report-entry' %}" enctype="multipart/form-data">
+    <div class="container d-flex justify-content-center">
+        <form method="post" action="{% url 'process-report-entry' %}" enctype="multipart/form-data" class="w-50">
             {% csrf_token %}
-        <div class="row">
-            <div class="col-md-6">
-                <div class="container-fluid "style="margin-top: 10%">
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Title "style="width: 80%;">
-                    <br>
-
-                    <input type="text" class="form-control" id="location" name="location" placeholder="Location "style="width: 80%;">
-                    <br>
-
-                    <input type="text" class="form-control" id="description" name="description" placeholder="Description "style="width: 80%;">
-                    <br>
-
-                    <input type="text" class="form-control" id="picture_description" placeholder="Picture description" style="width: 80%;">
-                    <br>
-                    <input type="file" class="form-control" id="picture" name="picture" style="width: 80%;">
-                    <br>
-                    <button type="submit" class="btn btn-primary w-50">Submit Information</button>
-                </div>
-
+            <div class="mb-3">
+                <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
             </div>
-        </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" id="location" name="location" placeholder="Location" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" id="description" name="description" placeholder="Description" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" id="picture_description" name="picture_description" placeholder="Picture description" required>
+            </div>
+            <div class="mb-3">
+                <input type="file" class="form-control" id="picture" name="picture" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-50">Submit Information</button>
         </form>
     </div>
 </body>

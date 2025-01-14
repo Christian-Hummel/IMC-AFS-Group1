@@ -84,13 +84,13 @@
         <p>Role: {{ user.role }}</p>
         <p>Address: {{ home_address }}</p>
             {% if not request.session.pwchange %}
-            <button id="passwordbutton" onclick="toggleSubtabs('changepassword')">Change Password</button>
+            <button id="passwordbutton" class="btn btn-primary w-20" onclick="toggleSubtabs('changepassword')">Change Password</button>
             {% endif %}
             {% if not request.session.locationchange %}
-            <button id="locationbutton" onclick="toggleSubtabs('changelocation')">Edit location</button>
+            <button id="locationbutton" class="btn btn-primary w-20" onclick="toggleSubtabs('changelocation')">Edit location</button>
             {% endif %}
         </div>
-    
+
 
         <div class="changepassword" id="changepassword" style="display:none">
             <h2 class="text-center mb-4">Change Password</h2>
