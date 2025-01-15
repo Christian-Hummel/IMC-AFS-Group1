@@ -364,7 +364,7 @@ def change_task_status(request,task_id):
 
         manager = CustomUser.objects.get(id=task.manager_id)
 
-        title = "This Task has been completed"
+        title = "A Task has been completed"
 
         notification = Notification.objects.create(title=title, description=task.description, user_id=manager.id, report_id=task.report_id)
         notification.save()
