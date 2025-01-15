@@ -33,7 +33,6 @@ p {
 .navbar-logo-container {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
     z-index: 1;
     pointer-events: none;
     top: 50%;
