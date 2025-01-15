@@ -246,7 +246,7 @@
 </div>
 <!-- Tab for Task Creation -->
 <div id="tasks" class="tasks" style="display: none;">
-    {% if user.id and user.role == "manager" %}
+    {% if user.id and user.role in priority %}
     <div class="container mt-5">
         <h2>Create Task for this Report</h2>
                             <form method="post" action="{% url 'create_task' report.id %}">
@@ -310,7 +310,7 @@
         {% else %}
             <p>No tasks assigned to you currently </p>
         {% endif %}
-    {% elif not user.id %}
+    {% else %}
         <p>Only agents and managers are able to see tasks</p>
         {% endif %}
     </div>
