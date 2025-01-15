@@ -96,6 +96,7 @@ def register(request):
         )
 
         user.set_password(password)
+        user.create_code()
         user.save()
 
         # Send email with verification code using yagmail
