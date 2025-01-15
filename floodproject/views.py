@@ -866,6 +866,9 @@ def edit_vote(request, report_id):
         if not new_validity:
             new_validity = True
 
+        elif new_validity:
+            new_rating = 0
+
 
         current_vote.rating = new_rating
         current_vote.validity = new_validity
