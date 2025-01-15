@@ -76,6 +76,8 @@ class Task(models.Model):
     report = models.ForeignKey(Report,on_delete=models.CASCADE)
     assigned_date = models.CharField(max_length=100)
     due_date = models.CharField(max_length=100)
+    latitude = models.FloatField(max_length=10, default=47.4231277, null=False, blank=False)
+    longitude = models.FloatField(max_length=10, default=13.6539813, null=False, blank=False)
     status = models.CharField(max_length=20,choices=Status.choices,default=Status.TO_DO)
 
     def __str__(self):
