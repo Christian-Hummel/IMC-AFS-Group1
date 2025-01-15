@@ -130,9 +130,11 @@
             src="{{ report.picture.url }}"
             alt="{{ report.picture_description }}"
     />
+        <br>
+        <br>
     {% endif %}
-    <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
-        
+
+
 
         {% if user.role in priority and not user.id in subscriptions and not report.user_id is user.id or user.id and user.id not in subscriptions and not report.user_id is user.id %}
         <button id="subscribe" class="btn btn-blue" onclick="toggleSubscribe()">Subscribe</button>
@@ -141,7 +143,8 @@
         <button id="unsubscribe" class="btn btn-blue" onclick="toggleSubscribe()">Unsubscribe</button>
         <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
         {% endif %}
-        
+
+        <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
         {% if user.id == report.user_id or user.role in priority %}
         <a href="{% url 'delete-report' report.id %}" class="btn btn-danger">Delete Report</a>
         {% endif %}
