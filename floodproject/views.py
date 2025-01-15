@@ -450,17 +450,33 @@ def create_task(request, report_id):
     report = Report.objects.get(id=report_id)
 
 
+
+
     if request.method == 'POST':
         description = request.POST.get('description')
         assigned_date = request.POST.get('assigned_date')
         due_date = request.POST.get('due_date')
         agent_id = request.POST.get('agent')
+        alt_location = request.POST.get('alt_location')
 
+        latitude = report.lat
+        longitude = report.lon
+
+        if alt_location:
+
+            loc = Nominatim(user_agent="Geopy Library")
+
+            # entering the location name
+            getLoc = loc.geocode(alt_location)
+
+            # extract longitude and latitude
+            longitude = getLoc.longitude
+            latitude = getLoc.latitude
 
         agent = CustomUser.objects.get(id=agent_id)
 
 
-        task = Task.objects.create(description=description, manager=request.user, report=report, assigned_date=assigned_date, due_date=due_date, status=Task.Status.TO_DO)
+        task = Task.objects.create(description=description, manager=request.user, report=report, assigned_date=assigned_date, due_date=due_date, latitude=latitude, longitude=longitude, status=Task.Status.TO_DO)
 
         if agent:
             task.agent.add(agent)
