@@ -8,8 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the map
     const autmap = initializeMap();
 
-
-
     // Create a cluster groups (for aggregating markers) for each data type
 
     var waterLevelCluster = L.markerClusterGroup({
@@ -37,6 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+
 
 var reportCluster = L.markerClusterGroup({
     maxClusterRadius: 40,
@@ -101,10 +101,32 @@ function initializeMap() {
         attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
     }).addTo(map);
 
-    console.log("Map initialized");
+    // Custom zoom reminder control
+    const zoomReminder = L.control({position: 'bottomright'});
+
+    zoomReminder.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'zoom-reminder');
+        div.innerHTML = 'Zoom in to see flood zones';
+
+        div.style.display = 'none';  // Hidden by default (when starting the app)
+        return div;
+    };
+    zoomReminder.addTo(map);
+
+     // Zoom level check
+     map.on('zoomend', function() {
+        const reminderDiv = document.querySelector('.zoom-reminder');
+        
+        if (map.getZoom() < 11 && (document.getElementById('toggleHQ30').checked || document.getElementById('toggleHQ100').checked)) {
+            reminderDiv.style.display = 'block';
+        } else {
+            reminderDiv.style.display = 'none';
+        }
+    });
 
     return map;
 }
+
 
 
 function fetchWaterLevelData(waterLevelCluster, autmap) {
@@ -118,36 +140,39 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                     // color-coding for water levels markers
                     let gesamtcode = feature.properties.gesamtcode;
                     let color = getColor(gesamtcode); // Get color based on the gesamtcodes first digit
-
+                    
                     // Parse the lon and lat from the feature properties
                     let lon = parseFloat(feature.properties.lon.replace(",", "."));
                     let lat = parseFloat(feature.properties.lat.replace(",", "."));
 
-
-                    if (!isNaN(lon) && !isNaN(lat)) { // Check if coordinates are valid
-                        return L.circleMarker([lat, lon], { // using circle markers because hex colors are not supported in leaflet
+                    if (!isNaN(lon) && !isNaN(lat)) {
+                        
+                        // Create and retutn the circle marker
+                        return L.circleMarker([lat, lon], {
                             radius: 8,
                             fillColor: color,
-                            color: '#000', // Optional border color
+                            color: '#000',
                             weight: 1,
                             opacity: 1,
-                            fillOpacity: 0.8
-                        }); // Return a new marker
-                    } else {
-                        console.warn("Invalid coordinates for feature:", feature);
-                        return null; // Skip invalid markers
+                            fillOpacity: 0.8,
+                        });
+                        
                     }
+                    // console.warn("Invalid coordinates for feature:", feature);
+                    return null; // Skip invalid markers
                 },
 
                 onEachFeature: function (feature, layer) {
                     if (layer) {
+                        let trend = getTrendText(feature.properties.gesamtcode);
                         var infoContent = `
                             <strong>Measuring point:</strong> ${feature.properties.messstelle || "N/A"} <br>
                             <strong>Water body:</strong> ${feature.properties.gewaesser || "N/A"} <br>
                             <strong>Amount:</strong> ${feature.properties.wert || "N/A"} ${feature.properties.einheit} <br>
+                            <strong>Trend:</strong> ${trend} <br>
                             <strong>Time:</strong> ${feature.properties.zeitpunkt || "N/A"} <br>
-                            <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a>
-                            <strong></strong> <a href="/water-levels/${feature.properties.hzbnr}">previous levels</a>
+                            <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a> <br>
+                                <a href="/water-levels/${feature.properties.hzbnr}" style="margin-left: 1.8cm;">Previous Levels</a> 
                         `;
                         layer.bindPopup(infoContent);
                     }
@@ -155,10 +180,8 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
             }).eachLayer(function (layer) {
                 waterLevelCluster.addLayer(layer); // Add each marker to the cluster group
             });
-
             // Add cluster layer to the map by default (when starting the app)
             waterLevelCluster.addTo(autmap);
-
         })
         .catch(err => console.error('Error fetching water levels:', err));
 }
@@ -240,9 +263,18 @@ function setupCheckboxToggle(checkboxId, clusterGroup, map) {
             if (!map.hasLayer(clusterGroup)) {
                 clusterGroup.addTo(map);
             }
+            // Show zoom reminder if HQ layers are toggled and zoom level is too low
+            if ((checkboxId === 'toggleHQ30' || checkboxId === 'toggleHQ100') && map.getZoom() < 11) {
+                document.querySelector('.zoom-reminder').style.display = 'block';
+            }
+
         } else {
             if (map.hasLayer(clusterGroup)) {
                 map.removeLayer(clusterGroup);
+            }
+            // Hide zoom reminder if HQ layers are not checked
+            if ((checkboxId === 'toggleHQ30' || checkboxId === 'toggleHQ100') && !document.getElementById('toggleHQ30').checked && !document.getElementById('toggleHQ100').checked) {
+                document.querySelector('.zoom-reminder').style.display = 'none';
             }
         }
     });
@@ -256,29 +288,35 @@ function setupCheckboxToggle(checkboxId, clusterGroup, map) {
 // 2. digit: 0...gleichbleibend, 1...steigend, 2...sinkend, 3...normal;
 // 3. digit: 0...normal, 1... older than 24 hours
 
-// color-coding for water levels marker function
+// Helper function to get color
 function getColor(gesamtcode) {
     if (gesamtcode == null) {
-        return '#eff4f7'; // Default color for no data
+        return '#eff4f7';
     }
 
-    gesamtcode = gesamtcode.toString().split('').map(Number); // Convert to array of digits
-    if (gesamtcode[0] === 1) {
-        return '#3bacbe'; // Niederwasser (Low water)
-    } else if (gesamtcode[0] === 2) {
-        return '#4e8fcc'; // Mittelwasser (Medium water)
-    } else if (gesamtcode[0] === 3) {
-        return '#003d84'; // erhöhte Wasserführung (Increased water flow)
-    } else if (gesamtcode[0] === 4) {
-        return '#ffd400'; // Hochwasser Stufe 1 (Flood level 1)
-    } else if (gesamtcode[0] === 5) {
-        return '#f59c00'; // Hochwasser Stufe 2 (Flood level 2)
-    } else if (gesamtcode[0] === 6) {
-        return '#e6320f'; // Hochwasser Stufe 3 (Flood level 3)
-    } else {
-        return '#eff4f7'; // no data (gesamtcode[0] == 9)
+    let firstDigit = parseInt(gesamtcode.toString()[0]);
+    switch(firstDigit) {
+        case 1: return '#3bacbe'; // Niederwasser
+        case 2: return '#4e8fcc'; // Mittelwasser
+        case 3: return '#003d84'; // erhöhte Wasserführung
+        case 4: return '#ffd400'; // Hochwasser Stufe 1
+        case 5: return '#f59c00'; // Hochwasser Stufe 2
+        case 6: return '#e6320f'; // Hochwasser Stufe 3
+        default: return '#eff4f7'; // no data
     }
 }
 
+function getTrendText(gesamtcode) {
+    if (gesamtcode == null) return 'Unknown';
+    
+    let secondDigit = parseInt(gesamtcode.toString()[1]);
+    switch(secondDigit) {
+        case 1: return 'Rising';
+        case 2: return 'Falling';
+        case 0: return 'Steady';
+        case 3: return 'Normal';
+        default: return 'Unknown';
+    }
+}
 
 
