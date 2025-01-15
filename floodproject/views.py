@@ -227,6 +227,11 @@ def build_code_response(code_nr):
 
 
 def prev_water_levels(request, hzb):
+    context = {}
+
+    notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
+
+
 
     current_data = load_water_level_data()
 
@@ -289,9 +294,10 @@ def prev_water_levels(request, hzb):
 
                 plot_data[hzb]["plot"] = plot(fig, output_type='div')
 
+                context["plot_data"] = plot_data[hzb]
+                context["notifications"] = notifications
 
-
-                return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
+                return render(request, "waterdetails.html", context)
 
     except:
 
@@ -317,17 +323,27 @@ def get_severity_score(num):
 ### Task
 
 def agent_tasks(request):
-    if request.user.is_authenticated and request.user.role == 'agent':
-        tasks = Task.objects.filter(agent=request.user)
-        return render(request, 'agent_tasks.html',{'tasks':tasks})
+    context = {}
+
+    tasks = Task.objects.filter(agent=request.user)
+    notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
+
+    context["tasks"] = tasks
+    context["notifications"] = notifications
+
+    return render(request, "agent_tasks.html",context)
 
 def manager_tasks(request):
     if request.user.is_authenticated and request.user.role == 'manager':
         context = {}
-        tasks = Task.objects.filter(manager=request.user)
-        context["tasks"] = tasks
 
-        return render(request, 'manager_tasks.html', {'tasks': tasks})
+        tasks = Task.objects.filter(manager=request.user)
+        notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
+
+        context["tasks"] = tasks
+        context["notifications"] = notifications
+
+        return render(request, "manager_tasks.html", context)
 
 def task_details(request,task_id):
     task = get_object_or_404(Task, id=task_id)
@@ -801,9 +817,6 @@ def profile(request):
 
     return render(request, "userprofile.html", context)
 
-
-def agent(request):
-    return render(request, "agent_tasks.html")
 
 
 
