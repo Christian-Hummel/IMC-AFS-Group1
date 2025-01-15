@@ -27,6 +27,7 @@
                     <img src="{% static 'img/logo.png' %}" alt="Logo" class="navbar-logo">
                 </a>
             </div>
+            <a class="navbar-brand" href="{% url 'manager_tasks' %}">Tasks</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -138,11 +139,11 @@
 
 
                         </select>
-                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
+                        <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
+                    </form>
                 {% else %}
                         <p> There are no available agents to assign </p>
                 {% endif %}
-                </form>
             </div>
             {% elif task.status == "Done" %}
             <div>
