@@ -88,7 +88,7 @@ class Vote(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     validity = models.BooleanField(default=True)
     rating = models.IntegerField(
-        default=0,
+        default=1,
         validators=[
             MaxValueValidator(5),
             MinValueValidator(0)
