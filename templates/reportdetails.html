@@ -132,19 +132,18 @@
     />
     {% endif %}
     <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
-    {% if user.id == report.user_id or user.role in priority %}
-        <a href="{% url 'delete-report' report.id %}" class="btn btn-danger">Delete Report</a>
-    {% endif %}
-
-
-
+        
 
         {% if user.role in priority and not user.id in subscriptions and not report.user_id is user.id or user.id and user.id not in subscriptions and not report.user_id is user.id %}
-        <button id="subscribe" onclick="toggleSubscribe()">Subscribe</button>
+        <button id="subscribe" class="btn btn-blue" onclick="toggleSubscribe()">Subscribe</button>
         <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
         {% elif user.id in subscriptions and not report.user_id is user.id %}
-        <button id="unsubscribe" onclick="toggleSubscribe()">Unsubscribe</button>
+        <button id="unsubscribe" class="btn btn-blue" onclick="toggleSubscribe()">Unsubscribe</button>
         <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
+        {% endif %}
+        
+        {% if user.id == report.user_id or user.role in priority %}
+        <a href="{% url 'delete-report' report.id %}" class="btn btn-danger">Delete Report</a>
         {% endif %}
 
         </div>
@@ -165,7 +164,7 @@
             </select>
             <label id="checklabel" class="checkbox"><input type="hidden" id="invcheck" name="invcheck" value="False"></label>
             <p></p>
-            <button id="vsubmit" hidden="hidden">Submit Review</button>
+            <button id="vsubmit" class="btn btn-secondary" hidden="hidden">Submit Review</button>
         </form>
     {% elif user.id in users %}
         <p>Severity score previously issued: <strong>{{ current_severity }}</strong></p>
@@ -181,14 +180,14 @@
                     <option value="4">Critical Level</option>
             </select>
             <label id="checklabel" class="checkbox"><input type="hidden" id="invcheck" name="invcheck" value="False"></label>
-            <p></p>
-            <button id="vsubmit" hidden="hidden">Confirm Changes</button>
+            <br>
+            <button id="vsubmit" class="btn btn-secondary" hidden="hidden">Confirm Changes</button>
         </form>
 
     {% endif %}
-        <p></p>
+        <br>
         {% if user.role in priority %}
-        <button id="showstats" onclick="showVotestats()">Show rating statistics</button>
+        <button id="showstats" class="btn btn-secondary" onclick="showVotestats()">Show rating statistics</button>
         <div id="votestats" class="votestats" style="display: none">
         Number of Reviews:<strong> {{ votestats.num_ratings }}</strong>
         <br>Total severity rating:<strong> {{ votestats.total_rating }}</strong></br>
@@ -197,7 +196,6 @@
         {% endif %}
 
     </div>
-
 </div>
 </div>
 
