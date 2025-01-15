@@ -1,0 +1,37 @@
+body {
+    background-color: #eff4f7;
+}
+
+.container-fluid {
+    padding: 20px;
+}
+
+.water-container {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.water-info p {
+    margin: 0;
+    padding: 5px 0;
+}
+
+
+.col-md-8 {
+    padding-left: 20px;
+}
+
+#median {
+    color: #5fb564;
+}
+
+#max {
+    color: #ca0237;
+}
+
+#min {
+    color: #0063a3;
+}
