@@ -80,6 +80,10 @@ p {
     }
 }
 
+.badge {
+    border-radius: 50%;
+}
+
 
 
 /* Blue Line Below Navbar */
