@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="icon" href="{% static 'img/favicon.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> <!-- for icons -->
+    {% load static %} <!-- necessary to connect to CSS in django -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
@@ -28,14 +30,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                    <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'login' %}">
+                    <a class="btn btn-blue d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'report' %}">
                         <i class="fas fa-plus me-2"></i> New Report
                     </a>
                     </li>
                     <li class="nav-item">
+                        <a class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'profile' %}">
+                            {% if notifications > 0 %}
+                            <span class="badge bg-danger position-absolute m-1 start-100 translate-middle"> {{ notifications }}</span>
+                            {% endif %}
+                        <i class="fa-solid fa-circle-user me-2"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button class="btn-logout" type="submit">logout</button>
+                        <button class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="submit">logout</button>
                         </form>
                     </li>
                 </ul>
@@ -53,20 +63,26 @@
                         <th>Description</th>
                         <th>Manager</th>
                         <th>Report</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
                         <th>Assigned Date</th>
                         <th>Due Date</th>
                         <th>Status</th>
+                        <th>Report</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for task in tasks %}
                     <tr>
                         <td>{{ task.description }}</td>
-                        <td>{{ task.managerID.first_name }} {{ task.managerID.last_name }}</td>
-                        <td>{{ task.reportID.title }}</td>
-                        <td>{{ task.assignedDate }}</td>
-                        <td>{{ task.dueDate }}</td>
+                        <td>{{ task.manager.first_name }} {{ task.manager.last_name }}</td>
+                        <td>{{ task.report.title }}</td>
+                        <td>{{ task.report.lat }}</td>
+                        <td>{{ task.report.lon }}</td>
+                        <td>{{ task.assigned_date }}</td>
+                        <td>{{ task.due_date }}</td>
                         <td>{{ task.status }}</td>
+                        <td><button class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" onclick="window.open('/report/{{ task.report_id }}', '_self')">Report</button></td>
                         <td>
                         {% if task.status == 'In Progress' %}
                             <form method="post" action="{% url 'change_status' task.id %}">
