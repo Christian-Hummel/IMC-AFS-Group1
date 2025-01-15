@@ -26,263 +26,7 @@ from django.urls import reverse
 
 # Create your views here.
 
-def report(request):
-    return render(request, "report.html")
-
-def get_severity_score(num):
-
-    if num == 1:
-        return "Low Level"
-    elif num == 2:
-        return "Moderate Level"
-    elif num == 3:
-        return "Medium Level"
-    elif num == 4:
-        return "High Level"
-    else:
-        return "Critical Level"
-
-def agent_tasks(request):
-    if request.user.is_authenticated and request.user.role == 'agent':
-        tasks = Task.objects.filter(agent=request.user)
-        return render(request, 'agent_tasks.html',{'tasks':tasks})
-
-def manager_tasks(request):
-    if request.user.is_authenticated and request.user.role == 'manager':
-        tasks = Task.objects.filter(manager=request.user)
-        return render(request, 'manager_tasks.html', {'tasks': tasks})
-
-def task_details(request,task_id):
-    task = get_object_or_404(Task, id=task_id)
-    assigned_agents = task.agent.all()
-    available_agents = CustomUser.objects.filter(role='agent').exclude(id__in=assigned_agents.values_list('id'))
-    user = CustomUser.objects.filter(role='user')
-    if request.user in task.agent.all() or request.user == task.manager:
-
-        return render(request, 'detailed_task.html', {'task':task, 'assigned_agents':assigned_agents, 'available_agents':available_agents, 'user':user})
-
-
-
-def change_task_status(request,task_id):
-    task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agent.all():
-        task.status = Task.Status.DONE
-        task.save()
-    return redirect('agent_tasks')
-
-def promote_user(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
-    if request.method == 'POST':
-        user_id = request.POST.get('user')
-        if user_id:
-            user = get_object_or_404(CustomUser, id=user_id)
-            user.role = 'agent'
-            user.save()
-
-    return redirect('task-details', task_id=task_id)
-
-
-def update_task_description(request,task_id):
-    task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agent.all() or request.user == task.manager:
-        if request.method == 'POST':
-            new_description = request.POST.get('description')
-            if new_description:
-                task.description = new_description
-                task.save()
-
-    return redirect('task-details', task_id=task.id)
-
-def update_task_status(request,task_id):
-    task = get_object_or_404(Task, id=task_id)
-    if request.user  in task.agent.all() or request.user == task.manager:
-        if request.method == 'POST':
-            new_status = request.POST.get('status')
-            if new_status:
-                task.status = new_status
-                task.save()
-
-    return redirect('task-details', task_id=task.id)
-
-def update_task_agents(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
-    if request.user in task.agent.all() or request.user == task.manager:
-        if request.method == 'POST':
-            agent_id = request.POST.get('agent')
-            if agent_id:
-                agent = get_object_or_404(CustomUser, id=agent_id, role='agent')
-                task.agent.add(agent)
-
-    return redirect('task-details', task_id=task.id)
-
-def create_task(request, report_id):
-    report = Report.objects.get(id=report_id)
-
-
-    if request.method == 'POST':
-        description = request.POST.get('description')
-        due_date = request.POST.get('due_date')
-        agent_id = request.POST.get('agent')
-
-
-        agent = CustomUser.objects.get(id=agent_id)
-
-
-
-        task = Task.objects.create(description=description, manager=request.user, report=report, due_date=due_date, status=Task.Status.TO_DO)
-
-        if agent:
-            task.agent.add(agent)
-
-        return redirect('report_detail', report_id=report.id)
-
-
-def report_details(request, id):
-
-    context = {}
-    report = Report.objects.get(id=id)
-    available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__report=report)
-    subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
-    context["report"] = report
-    context["subscriptions"] = subscriptions
-    context["priority"] = ["manager", "superadmin"]
-
-
-    if request.user.id:
-
-        # fetch Vote model from database
-        all_report_votes = Vote.objects.filter(report_id=id)
-        # fetch user ids and pass it to context as a list
-        users = [review.user_id for review in all_report_votes]
-        # fetch Comment model from database
-        all_comments = Comment.objects.filter(report_id=id).order_by("-date")
-        # fetch Notifications for user from database
-        notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
-
-
-
-        votestats = {}
-
-        if request.user.id in users:
-
-            current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id][0]
-            flag = ["yes" if request.user.id == review.user_id and review.validity == False else "no" for review in all_report_votes][0]
-
-            context["current_severity"] = current_severity
-            context["flag"] = flag
-
-        votestats["num_ratings"] = len([review for review in all_report_votes])
-        votestats["total_rating"] = sum([int(review.rating) for review in all_report_votes])
-        votestats["flag_count"] = len([review.validity for review in all_report_votes if review.validity == False])
-
-
-        context["users"] = users
-        context["votestats"] = votestats
-        context["comments"] = all_comments
-        context["available_agents"] = available_agents
-        context["notifications"] = notifications
-
-
-    return render(request, "reportdetails.html", context)
-
-def process_report_entry(request):
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        location = request.POST.get('location')
-        picture_description = request.POST.get('picture_description')
-        picture = request.FILES.get('picture')
-        log = 0
-        lat = 0
-
-        user = CustomUser.objects.get(id=request.user.id)
-
-
-        if location:
-            # calling the Nominatim tool and create Nominatim class
-            loc = Nominatim(user_agent="Geopy Library")
-
-            # entering the location name
-            getLoc = loc.geocode(location)
-
-            # extract longitude and latitude
-            log = getLoc.longitude
-            lat = getLoc.latitude
-
-        rep = Report(title=title, description=description, lon=log, lat=lat, picture=picture,
-                     picture_description=picture_description, user_id=CustomUser.objects.get(id=user.id).id)
-        rep.save()
-
-
-        # automatic first subscriber upon creation of a report
-
-        subscription = Subscription(report_id=rep.id, user_id=CustomUser.objects.get(id=user.id).id)
-
-        subscription.save()
-
-
-        return HttpResponse("Data sucessfully inserted!")
-    else:
-        return HttpResponse("Invalid request method!")
-
-
-def delete_report(request, id):
-
-    if request.user.role not in ["manager", "superadmin"]:
-
-        report = Report.objects.get(id=id)
-
-        tasks = Task.objects.filter(report_id=id)
-
-        for task in tasks:
-            if task.status != Task.Status.DONE:
-                return HttpResponse("This Report cannot be deleted because of active tasks assigned to it.")
-
-        report.delete()
-        return render(request, "report_delete_success.html")
-
-def process_vote_entry(request,report_id):
-    if request.method == 'POST':
-        sev_rating = request.POST.get("severityselect")
-        validity = request.POST.get("invcheck")
-        if not validity:
-            validity = True
-        vote = Vote(report_id=report_id, user_id=request.user.id,rating=sev_rating, validity=validity)
-
-        vote.save()
-
-        return HttpResponse("Vote sucessfully inserted!")
-    else:
-        return HttpResponse("Invalid request method!")
-
-
-def edit_vote(request, report_id):
-
-
-    if request.method == 'POST':
-
-        current_vote_query = Vote.objects.filter(user_id=CustomUser.objects.get(id=request.user.id).id, report_id=report_id)
-        vote_id = current_vote_query.values('id')[0]["id"]
-
-        current_vote = Vote.objects.get(id=vote_id)
-
-        new_rating = request.POST.get("severityselect")
-        new_validity = request.POST.get("invcheck")
-
-        if not new_validity:
-            new_validity = True
-
-
-        current_vote.rating = new_rating
-        current_vote.validity = new_validity
-        current_vote.save()
-
-        return HttpResponse("Vote sucessfully edited")
-    else:
-        return HttpResponse("No changes to previous rating detected")
-
-
-
+### Home Page
 def index(request):
     context = {}
 
@@ -292,25 +36,7 @@ def index(request):
 
     return render(request, "main.html", context)
 
-
-def profile(request):
-    context = {}
-
-    notifications = Notification.objects.filter(user_id=request.user.id)
-
-    geolocator = Nominatim(user_agent="Geopy Library")
-
-    location = geolocator.reverse(f"{request.user.latitude}, {request.user.longitude}")
-
-    context["home_address"] = location.address
-    context["notifications"] = notifications
-
-    return render(request, "userprofile.html", context)
-
-
-def agent(request):
-    return render(request, "agent_tasks.html")
-
+### Register/ Login / Verify
 
 def register(request):
     if request.method == "POST":
@@ -320,7 +46,7 @@ def register(request):
         password = request.POST["password"]
         password_repeat = request.POST["password_repeat"]
         email = request.POST["email"]
-        role = request.POST["role"]
+        role = request.POST.get("role", "user")
 
         # calling the Nominatim tool and create Nominatim class
         loc = Nominatim(user_agent="Geopy Library")
@@ -335,8 +61,6 @@ def register(request):
         # printing address
         lng = getLoc.longitude
         lat = getLoc.latitude
-
-
 
         if CustomUser.objects.filter(email=email).exists():
             user = CustomUser.objects.get(email=email)
@@ -384,25 +108,31 @@ def register(request):
         user.create_code()
         user.save()
 
-
         # Send email with verification code using yagmail
         yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
         subject = "Your Verification Code"
         message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
         yag.send(to=email, subject=subject, contents=message)
 
-        return redirect ("verify")
+        return redirect("verify")
 
     else:
-        return render(request, "register.html")
+        email_prefill = request.GET.get("email", "")
+        role_prefill = request.GET.get("role", "user")
+
+        return render(request, "register.html", {
+            "email_prefill": email_prefill,
+            "role_prefill": role_prefill,
+        })
+
 
 def verify(request):
     if request.method == "POST":
         email = request.POST.get("email")
         code = request.POST.get("code")
 
-        #get specific user
-        user = CustomUser.objects.get(email = email)
+        # get specific user
+        user = CustomUser.objects.get(email=email)
 
         if "user_code" in request.session:
             user.code = request.session["user_code"]
@@ -417,6 +147,7 @@ def verify(request):
             return render(request, "verify.html")
 
     return render(request, "verify.html")
+
 
 def login(request):
     if request.method == "POST":
@@ -446,8 +177,10 @@ def login(request):
         return render(request, "login.html")
 
 
+### Waterlevel
 
-def load_water_level_data():
+
+def water_level_data(request):
     # URL to fetch the water levels in GeoJSON format
     wfs_url = (
         "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
@@ -457,32 +190,324 @@ def load_water_level_data():
     response = requests.get(wfs_url)
     data = response.json()  # GeoJSON data
 
-    return data
-
-def build_code_response(code_nr):
-
-    first_digit = [int(num) for num in str(code_nr)][0]
     ################## Space for optional Data processing before sending it to frontend ##################
 
-    if first_digit == 1:
-        return "Low Water"
-    elif first_digit == 2:
-        return "Medium Water"
-    elif first_digit == 3:
-        return "Increased Water Flow"
-    elif first_digit == 4:
-        return "Flood Level 1"
-    elif first_digit == 5:
-        return "Flood Level 2"
-    elif first_digit == 6:
-        return "Flood Level 3"
-    else:
-        return "No Data"
-
-def water_level_data(request):
-
-    data = load_water_level_data()
     return JsonResponse(data)  # Return the data as a JSON response to the frontend
+
+
+
+def get_severity_score(num):
+
+    if num == 1:
+        return "Low Level"
+    elif num == 2:
+        return "Moderate Level"
+    elif num == 3:
+        return "Medium Level"
+    elif num == 4:
+        return "High Level"
+    else:
+        return "Critical Level"
+
+
+### Task
+
+def agent_tasks(request):
+    if request.user.is_authenticated and request.user.role == 'agent':
+        tasks = Task.objects.filter(agent=request.user)
+        return render(request, 'agent_tasks.html',{'tasks':tasks})
+
+def manager_tasks(request):
+    if request.user.is_authenticated and request.user.role == 'manager':
+        context = {}
+        tasks = Task.objects.filter(manager=request.user)
+        context["tasks"] = tasks
+
+        return render(request, 'manager_tasks.html', {'tasks': tasks})
+
+def task_details(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    assigned_agents = task.agent.all()
+    available_agents = CustomUser.objects.filter(role='agent').exclude(id__in=assigned_agents.values_list('id'))
+    user = CustomUser.objects.filter(role='user')
+    if request.user in task.agent.all() or request.user == task.manager:
+
+        return render(request, 'detailed_task.html', {'task':task, 'assigned_agents':assigned_agents, 'available_agents':available_agents, 'user':user})
+
+
+
+def change_task_status(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user in task.agent.all():
+        task.status = Task.Status.DONE
+        task.save()
+
+        manager = CustomUser.objects.get(id=task.manager_id)
+
+        title = "This Task has been completed"
+
+        notification = Notification.objects.create(title=title, description=task.description, user_id=manager.id, report_id=task.report_id)
+        notification.save()
+
+
+    return redirect('agent_tasks')
+
+
+def send_email_invite(request, task_id):
+
+    if request.method == "POST":
+        email_address = request.POST.get('email_address')
+        user = CustomUser.objects.get(email=email_address)
+
+        task = Task.objects.get(id=task_id)
+        report = Report.objects.get(id=task.report.id)
+
+        if user:
+            if user.role  in ["manager", "agent"]:
+                title="You have been assigned for a task"
+
+                notification = Notification.objects.create(title=title, description=task.description, user_id=user.id,
+                                                           report_id=report.id)
+                notification.save()
+
+                task.agent.add(user)
+
+            elif user.role == "admin":
+                pass
+
+            else:
+                user.role = "agent"
+                user.save()
+                title = "You have been assigned for a task"
+
+                # create Notification for this user
+                notification = Notification.objects.create(title=title, description=task.description, user_id=user.id, report_id=report.id)
+                notification.save()
+
+
+                task.agent.add(user)
+
+                yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+                yag.send(
+                    to=email_address,
+                    subject="Task Invitation",
+                    contents=f"You have been invited to a task and have been promoted to Agent. Take a look at your new Tasks Page"
+                )
+
+        elif not user:
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+            registration_link = f"http://127.0.0.1:8000/register/?email={email_address}&role=agent"
+            yag.send(
+                to=email_address,
+                subject="Task Invitation",
+                contents=f"You have been invited to a task. Register here: {registration_link}"
+            )
+
+
+    return redirect('manager_tasks')
+
+
+
+def update_task_description(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user in task.agent.all() or request.user == task.manager:
+        if request.method == 'POST':
+            new_description = request.POST.get('description')
+            if new_description:
+                task.description = new_description
+                task.save()
+
+    return redirect('task-details', task_id=task.id)
+
+def update_task_status(request,task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user  in task.agent.all() or request.user == task.manager:
+        if request.method == 'POST':
+            new_status = request.POST.get('status')
+            if new_status:
+                task.status = new_status
+                task.save()
+
+    return redirect('task-details', task_id=task.id)
+
+def update_task_agents(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if request.user in task.agent.all() or request.user == task.manager:
+        if request.method == 'POST':
+            agent_id = request.POST.get('agent')
+            if agent_id:
+                agent = get_object_or_404(CustomUser, id=agent_id, role='agent')
+                task.agent.add(agent)
+
+                title = "You have been assigned for a task"
+
+                notification = Notification.objects.create(title=title, description=task.description, user_id=agent_id, report_id=task.report_id)
+                notification.save()
+
+    return redirect('task-details', task_id=task.id)
+
+def create_task(request, report_id):
+    report = Report.objects.get(id=report_id)
+
+
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        assigned_date = request.POST.get('assigned_date')
+        due_date = request.POST.get('due_date')
+        agent_id = request.POST.get('agent')
+
+
+        agent = CustomUser.objects.get(id=agent_id)
+
+
+        task = Task.objects.create(description=description, manager=request.user, report=report, assigned_date=assigned_date, due_date=due_date, status=Task.Status.TO_DO)
+
+        if agent:
+            task.agent.add(agent)
+
+            title = "You have been assigned for a task"
+
+            notification1 = Notification.objects.create(title=title, description=task.description, user_id=agent.id, report_id=report.id)
+            notification1.save()
+
+            if request.user.id != report.user_id and report.user_id != agent.id:
+                title = "A task has been created for your report"
+                notification2 = Notification.objects.create(title=title, description=task.description, user_id=report.user_id, report_id=report_id)
+                notification2.save()
+
+        subscriptions = Subscription.objects.filter(report_id=report_id)
+        subscribers = [subscription.user_id for subscription in subscriptions]
+
+
+        if request.user.id not in subscribers:
+            sub = Subscription.objects.create(report_id=report_id, user_id=request.user.id)
+            sub.save()
+
+
+        return redirect('report-details', id=report.id)
+
+### Report
+
+def report(request):
+    return render(request, "report.html")
+
+def report_details(request, id):
+    context = {}
+    report = Report.objects.get(id=id)
+    available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__report=report)
+    agents = CustomUser.objects.filter(role='agent')
+    tasks = Task.objects.filter(agent=request.user, report=report.id)
+    subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
+
+
+    if request.user.id:
+
+        # fetch Vote model from database
+        all_report_votes = Vote.objects.filter(report_id=id)
+        # fetch user ids and pass it to context as a list
+        users = [review.user_id for review in all_report_votes]
+        # fetch Comment model from database
+        all_comments = Comment.objects.filter(report_id=id).order_by("-date")
+        # fetch Notifications for user from database
+        notifications = len(Notification.objects.filter(user_id=request.user.id, read=False))
+
+
+
+        votestats = {}
+
+        if request.user.id in users:
+
+            current_severity = [get_severity_score(review.rating) for review in all_report_votes if request.user.id == review.user_id][0]
+            flag = ["yes" if request.user.id == review.user_id and review.validity == False else "no" for review in all_report_votes][0]
+
+            context["current_severity"] = current_severity
+            context["flag"] = flag
+
+        votestats["num_ratings"] = len([review for review in all_report_votes])
+        votestats["total_rating"] = sum([int(review.rating) for review in all_report_votes])
+        votestats["flag_count"] = len([review.validity for review in all_report_votes if review.validity == False])
+
+        context["report"] = report
+        context["available_agents"] = available_agents
+        context["agents"] = agents
+        context["tasks"] = tasks
+        context["subscriptions"] = subscriptions
+        context["priority"] = ["manager", "admin"]
+        context["users"] = users
+        context["comments"] = all_comments
+        context["notifications"] = notifications
+        context["votestats"] = votestats
+
+
+
+
+
+
+    return render(request, "reportdetails.html", context)
+
+def process_report_entry(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        location = request.POST.get('location')
+        picture_description = request.POST.get('picture_description')
+        picture = request.FILES.get('picture')
+        log = 0
+        lat = 0
+
+        user = CustomUser.objects.get(id=request.user.id)
+
+
+        if location:
+            # calling the Nominatim tool and create Nominatim class
+            loc = Nominatim(user_agent="Geopy Library")
+
+            # entering the location name
+            getLoc = loc.geocode(location)
+
+            # extract longitude and latitude
+            log = getLoc.longitude
+            lat = getLoc.latitude
+
+        rep = Report(title=title, description=description, lon=log, lat=lat, picture=picture,
+                     picture_description=picture_description, user_id=CustomUser.objects.get(id=user.id).id)
+        rep.save()
+
+
+        # automatic first subscriber upon creation of a report
+
+        subscription = Subscription(report_id=rep.id, user_id=CustomUser.objects.get(id=user.id).id)
+
+        subscription.save()
+
+
+        return render(request, "report_create_success.html")
+    else:
+        return HttpResponse("Invalid request method!")
+
+
+def delete_report(request, id):
+
+    report = Report.objects.get(id=id)
+
+    tasks = Task.objects.filter(report_id=id)
+
+
+    if request.user.role not in ["manager", "admin"]:
+
+        for task in tasks:
+            if task.status != Task.Status.DONE:
+                return HttpResponse("This Report cannot be deleted because of active tasks assigned to it.")
+
+        report.delete()
+        return render(request, "report_delete_success.html")
+
+
+    else:
+
+        report.delete()
+        return render(request, "report_delete_success.html")
+
 
 
 def report_data(request):
@@ -542,7 +567,7 @@ def check_reference(text, user_id, report_id):
             title = f"{current_user.first_name} {current_user.last_name} added a comment to a report"
             description = text
 
-            notification = Notification(title=title, description=description, user_id=subscription.user_id,
+            notification = Notification.ojects.create(title=title, description=description, user_id=subscription.user_id,
                                         report_id=report_id)
             notification.save()
 
@@ -605,6 +630,81 @@ def toggle_subscribe(request, report_id):
         return HttpResponse("Invalid request method!")
 
 
+### Vote
+
+
+def process_vote_entry(request,report_id):
+    if request.method == 'POST':
+        sev_rating = request.POST.get("severityselect")
+        validity = request.POST.get("invcheck")
+
+        if not validity:
+            validity = True
+
+        elif validity:
+            sev_rating = 0
+
+
+        vote = Vote(report_id=report_id, user_id=request.user.id,rating=sev_rating, validity=validity)
+
+        vote.save()
+
+        return HttpResponse("Vote sucessfully inserted!")
+    else:
+        return HttpResponse("Invalid request method!")
+
+
+def edit_vote(request, report_id):
+
+
+    if request.method == 'POST':
+
+        current_vote_query = Vote.objects.filter(user_id=CustomUser.objects.get(id=request.user.id).id, report_id=report_id)
+        vote_id = current_vote_query.values('id')[0]["id"]
+
+        current_vote = Vote.objects.get(id=vote_id)
+
+        new_rating = request.POST.get("severityselect")
+        new_validity = request.POST.get("invcheck")
+
+        if not new_validity:
+            new_validity = True
+
+
+        current_vote.rating = new_rating
+        current_vote.validity = new_validity
+        current_vote.save()
+
+        return HttpResponse("Vote sucessfully edited")
+    else:
+        return HttpResponse("No changes to previous rating detected")
+
+
+
+### Profile
+
+def profile(request):
+    context = {}
+
+    notifications = Notification.objects.filter(user_id=request.user.id)
+
+    geolocator = Nominatim(user_agent="Geopy Library")
+
+    location = geolocator.reverse(f"{request.user.latitude}, {request.user.longitude}")
+
+    context["home_address"] = location.address
+    context["notifications"] = notifications
+
+    return render(request, "userprofile.html", context)
+
+
+def agent(request):
+    return render(request, "agent_tasks.html")
+
+
+
+
+### Password Reset
 
 
 def prev_water_levels(request, hzb):
@@ -768,6 +868,8 @@ def password_reset_done(request):
 def password_reset_complete(request):
     return render(request, "registration/password_reset_complete.html")
 
+### Profile
+
 def password_update(request):
     if request.method == "POST":
         current_password = request.POST["currentpassword"]
@@ -840,6 +942,8 @@ def location_update(request):
 def location_update_success(request):
     return render(request, "location_update_success.html")
 
+
+### Notifications
 
 def notification_details(request, notification_id):
     context = {}
