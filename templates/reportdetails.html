@@ -245,9 +245,72 @@
 </div>
 <!-- Tab for Task Creation -->
 <div id="tasks" class="tasks" style="display: none;">
-    <div class="container mt-5">
     {% if user.id and user.role == "manager" %}
+    <div class="container mt-5">
         <h2>Create Task for this Report</h2>
+                            <form method="post" action="{% url 'create_task' report.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description" name="description" placeholder="Enter the Description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assigned_date" class="form-label">Task Assigned Date</label>
+                            <input type="date" class="form-control" id="assigned_date" name="assigned_date" placeholder="Enter the assigned date"  required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="due_date" class="form-label">Task Due Date</label>
+                            <input type="date" class="form-control" id="due_date" name="due_date" placeholder="Enter the due date"  required>
+                        </div>
+                        <input type="hidden" name="manager_id" value="{{ user.id }}">
+                        <div class="mb-3">
+                            <label for="agent" class="form-label">Assign Agent</label>
+                            <select name="agent" id="agent" class="form-select" required>
+                                <option value="" disabled selected>Select an agent</option>
+                                {% for agent in agents %}
+                                    <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Task</button>
+                    </form>
+    {% elif user.id and user.role == "agent" %}
+        {% if tasks %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Manager</th>
+                        <th>Assigned Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.description }}</td>
+                        <td>{{ task.manager.first_name }} {{ task.manager.last_name }}</td>
+                        <td>{{ task.assigned_date }}</td>
+                        <td>{{ task.due_date }}</td>
+                        <td>{{ task.status }}</td>
+                        <td>
+                        {% if task.status == 'In Progress' %}
+                            <form method="post" action="{% url 'change_status' task.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm">Mark as Done</button>
+                            </form>
+                        {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No tasks assigned to you currently </p>
+        {% endif %}
+    {% elif not user.id %}
+        <p>Only agents and managers are able to see tasks</p>    
         <form method="post" action="{% url 'create_task' report.id %}">
             {% csrf_token %}
 
