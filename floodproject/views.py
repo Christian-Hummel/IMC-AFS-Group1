@@ -816,6 +816,7 @@ def toggle_subscribe(request, report_id):
 
 def process_vote_entry(request,report_id):
     if request.method == 'POST':
+        context = {}
         sev_rating = request.POST.get("severityselect")
         validity = request.POST.get("invcheck")
 
@@ -830,15 +831,29 @@ def process_vote_entry(request,report_id):
 
         vote.save()
 
-        return HttpResponse("Vote sucessfully inserted!")
+        all_report_votes = Vote.objects.filter(report_id=report_id)
+        flagged = len([review for review in all_report_votes if not review.validity])
+
+        if flagged > 4:
+            report = Report.objects.get(id=report_id)
+            high_priority_users = CustomUser.objects.filter(role__in=("admin","manager"))
+
+            title = "A Report has been marked inappropriate by multiple users"
+            for user in high_priority_users:
+                if request.user.id != user.id:
+                    notification = Notification.objects.create(title=title, description=report.description, report_id=report_id,user_id=user.id)
+                    notification.save()
+
+        context["report"] = report_id
+
+        return render(request, "vote_success.html", context)
     else:
         return HttpResponse("Invalid request method!")
 
 
 def edit_vote(request, report_id):
-
-
     if request.method == 'POST':
+        context = {}
 
         current_vote_query = Vote.objects.filter(user_id=CustomUser.objects.get(id=request.user.id).id, report_id=report_id)
         vote_id = current_vote_query.values('id')[0]["id"]
@@ -856,7 +871,22 @@ def edit_vote(request, report_id):
         current_vote.validity = new_validity
         current_vote.save()
 
-        return HttpResponse("Vote sucessfully edited")
+        all_report_votes = Vote.objects.filter(report_id=report_id)
+        flagged = len([review for review in all_report_votes if not review.validity])
+
+        if flagged > 4:
+            report = Report.objects.get(id=report_id)
+            high_priority_users = CustomUser.objects.filter(role__in=("admin","manager"))
+
+            title = "A Report has been marked inappropriate by multiple users"
+            for user in high_priority_users:
+                if request.user.id != user.id:
+                    notification = Notification.objects.create(title=title, description=report.description, report_id=report_id,user_id=user.id)
+                    notification.save()
+
+        context["report"] = report_id
+
+        return render(request, "vote_edit_success.html", context)
     else:
         return HttpResponse("No changes to previous rating detected")
 
