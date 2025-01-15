@@ -263,6 +263,10 @@
                             <label for="due_date" class="form-label">Task Due Date</label>
                             <input type="date" class="form-control" id="due_date" name="due_date" placeholder="Enter the due date"  required>
                         </div>
+                        <div class="mb-3">
+                            <label for="alt_location" class="form-label">Georeferenced location</label>
+                            <input type="text" class="form-control" id="alt_location" name="alt_location" placeholder="Enter alternative location, blank for report location">
+                        </div>
                         <input type="hidden" name="manager_id" value="{{ user.id }}">
                         <div class="mb-3">
                             <label for="agent" class="form-label">Assign Agent</label>
