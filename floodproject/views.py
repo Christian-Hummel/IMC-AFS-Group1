@@ -704,7 +704,35 @@ def agent(request):
 
 
 
-### Password Reset
+
+
+def load_water_level_data():
+    # URL to fetch the water levels in GeoJSON format
+    wfs_url = (
+        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
+    )
+    # Get the data from the WFS URL
+    response = requests.get(wfs_url)
+    data = response.json()  # GeoJSON data
+    return data
+def build_code_response(code_nr):
+    first_digit = [int(num) for num in str(code_nr)][0]
+    ################## Space for optional Data processing before sending it to frontend ##################
+    if first_digit == 1:
+        return "Low Water"
+    elif first_digit == 2:
+        return "Medium Water"
+    elif first_digit == 3:
+        return "Increased Water Flow"
+    elif first_digit == 4:
+        return "Flood Level 1"
+    elif first_digit == 5:
+        return "Flood Level 2"
+    elif first_digit == 6:
+        return "Flood Level 3"
+    else:
+        return "No Data"
+
 
 
 def prev_water_levels(request, hzb):
