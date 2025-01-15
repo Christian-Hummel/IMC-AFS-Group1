@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import auth, User
@@ -38,6 +39,12 @@ def register(request):
         password_repeat = request.POST["password_repeat"]
         email = request.POST["email"]
         role = request.POST.get("role", "user")
+
+        try:
+            task_user = CustomUser.objects.get(email=email)
+
+        except ObjectDoesNotExist:
+            task_user = None
 
         # calling the Nominatim tool and create Nominatim class
         loc = Nominatim(user_agent="Geopy Library")
@@ -85,27 +92,56 @@ def register(request):
             messages.info(request, "Passwords do not match!")
             return redirect("register")
 
-        user = CustomUser.objects.create_user(
-            email=email,
-            first_name=first_name.capitalize(),
-            last_name=last_name.capitalize(),
-            latitude=lat,
-            longitude=lng,
-            password=password,
-            role=role,
-        )
+        if not task_user:
 
-        user.set_password(password)
-        user.create_code()
-        user.save()
+            user = CustomUser.objects.create_user(
+                email=email,
+                first_name=first_name.capitalize(),
+                last_name=last_name.capitalize(),
+                latitude=lat,
+                longitude=lng,
+                password=password,
+                role=role,
+            )
 
-        # Send email with verification code using yagmail
-        yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
-        subject = "Your Verification Code"
-        message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
-        yag.send(to=email, subject=subject, contents=message)
+            user.set_password(password)
+            user.create_code()
+            user.save()
 
-        return redirect("verify")
+            # Send email with verification code using yagmail
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+            subject = "Your Verification Code"
+            message = f"Hello {first_name},\n\nYour verification code is: {user.code}\n\nThank you!"
+            yag.send(to=email, subject=subject, contents=message)
+            return redirect("verify")
+
+        elif task_user:
+
+            task_user.first_name = first_name
+            task_user.last_name
+            task_user.latitude = lat
+            task_user.longitude = lng
+
+
+            task_user.set_password(password)
+            task_user.create_code()
+            task_user.save()
+
+            update_session_auth_hash(request, request.user)
+
+            # Send email with verification code using yagmail
+            yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+            subject = "Your Verification Code"
+            message = f"Hello {first_name},\n\nYour verification code is: {task_user.code}\n\nThank you!"
+            yag.send(to=email, subject=subject, contents=message)
+            return redirect("verify")
+
+
+
+
+
+
+
 
     else:
         email_prefill = request.GET.get("email", "")
@@ -357,7 +393,12 @@ def send_email_invite(request, task_id):
 
     if request.method == "POST":
         email_address = request.POST.get('email_address')
-        user = CustomUser.objects.get(email=email_address)
+
+        try:
+            user = CustomUser.objects.get(email=email_address)
+
+        except ObjectDoesNotExist:
+            user = None
 
         task = Task.objects.get(id=task_id)
         report = Report.objects.get(id=task.report.id)
@@ -395,13 +436,37 @@ def send_email_invite(request, task_id):
                 )
 
         elif not user:
+
             yag = yagmail.SMTP('example.mail3119@gmail.com', 'zvna lahf ulgg erua')
+
             registration_link = f"http://127.0.0.1:8000/register/?email={email_address}&role=agent"
+
             yag.send(
+
                 to=email_address,
+
                 subject="Task Invitation",
+
                 contents=f"You have been invited to a task. Register here: {registration_link}"
+
             )
+
+
+
+            new_user = CustomUser.objects.create_user(
+                email=email_address,
+                first_name="Testuser",
+                last_name="Testuser",
+                latitude=48.14979565,
+                longitude=15.54658477610598,
+                password="1234",
+                role="agent",
+            )
+            new_user.save()
+
+            task.agent.add(new_user)
+
+
 
 
     return redirect('manager_tasks')
