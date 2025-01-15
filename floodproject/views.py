@@ -36,7 +36,7 @@ def index(request):
 
     return render(request, "main.html", context)
 
-### Register/ Login / Verify
+### Register/ Verify / Login
 
 def register(request):
     if request.method == "POST":
@@ -193,6 +193,110 @@ def water_level_data(request):
     ################## Space for optional Data processing before sending it to frontend ##################
 
     return JsonResponse(data)  # Return the data as a JSON response to the frontend
+
+
+
+def load_water_level_data():
+    # URL to fetch the water levels in GeoJSON format
+    wfs_url = (
+        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
+    )
+    # Get the data from the WFS URL
+    response = requests.get(wfs_url)
+    data = response.json()  # GeoJSON data
+    return data
+
+
+def build_code_response(code_nr):
+    first_digit = [int(num) for num in str(code_nr)][0]
+    ################## Space for optional Data processing before sending it to frontend ##################
+    if first_digit == 1:
+        return "Low Water"
+    elif first_digit == 2:
+        return "Medium Water"
+    elif first_digit == 3:
+        return "Increased Water Flow"
+    elif first_digit == 4:
+        return "Flood Level 1"
+    elif first_digit == 5:
+        return "Flood Level 2"
+    elif first_digit == 6:
+        return "Flood Level 3"
+    else:
+        return "No Data"
+
+
+def prev_water_levels(request, hzb):
+
+    current_data = load_water_level_data()
+
+    #print(current_data)
+
+    with open(r"floodproject/historical_data/historical.json","r") as file:
+        plot_data = json.load(file)
+
+    hzb = str(hzb)
+    current_unit = ""
+
+    # extract current water levels from json request data
+    try:
+
+        for dict in current_data["features"]:
+            #print(f"first level {dict['properties']}")
+            if str(dict["properties"]["hzbnr"]) == hzb:
+                gesamtcode = dict["properties"]["gesamtcode"]
+                plot_data[hzb]["danger_level"] = build_code_response(gesamtcode)
+                plot_data[hzb]["current_value"] = dict["properties"]["wert"]
+                plot_data[hzb]["current_unit"] = dict["properties"]["einheit"]
+                current_unit = plot_data[hzb]["current_unit"]
+
+                # print(plot_data)
+
+                df = pd.DataFrame({
+                    'year': plot_data[hzb]["years"],
+                    'value': plot_data[hzb]["values"]
+                })
+
+                # Calculate all-time high and low
+                all_time_high = df['value'].max()
+                all_time_low = df['value'].min()
+
+                # Calculate median and quartiles
+                median_value = df['value'].median()
+                q1 = df['value'].quantile(0.25)
+                q3 = df['value'].quantile(0.75)
+
+                fig = px.line(df, x='year', y='value')
+
+                # Add all-time high and low to the plot
+                fig.add_hline(y=all_time_high, line_dash="dash", line_color="red", annotation_text="All-Time High",
+                              annotation_position="bottom right")
+                fig.add_hline(y=all_time_low, line_dash="dash", line_color="blue", annotation_text="All-Time Low",
+                              annotation_position="bottom right")
+
+                # Add median and quartiles to the plot
+                fig.add_hline(y=median_value, line_dash="dash", line_color="green", annotation_text="Median",
+                              annotation_position="bottom right")
+                fig.add_hline(y=q1, line_dash="dot", line_color="blue", annotation_text="Q1",
+                              annotation_position="bottom right")
+                fig.add_hline(y=q3, line_dash="dot", line_color="red", annotation_text="Q3",
+                              annotation_position="bottom right")
+
+
+                fig.update_layout(xaxis_title="years",
+                                  yaxis_title=f"level in {current_unit}",
+                                  modebar_remove=['pan','zoom'])
+
+                plot_data[hzb]["plot"] = plot(fig, output_type='div')
+
+
+
+                return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
+
+    except:
+
+        return render(request, "watererror.html")
+
 
 
 
@@ -700,127 +804,6 @@ def profile(request):
 
 def agent(request):
     return render(request, "agent_tasks.html")
-
-
-
-
-
-
-def load_water_level_data():
-    # URL to fetch the water levels in GeoJSON format
-    wfs_url = (
-        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
-    )
-    # Get the data from the WFS URL
-    response = requests.get(wfs_url)
-    data = response.json()  # GeoJSON data
-    return data
-def build_code_response(code_nr):
-    first_digit = [int(num) for num in str(code_nr)][0]
-    ################## Space for optional Data processing before sending it to frontend ##################
-    if first_digit == 1:
-        return "Low Water"
-    elif first_digit == 2:
-        return "Medium Water"
-    elif first_digit == 3:
-        return "Increased Water Flow"
-    elif first_digit == 4:
-        return "Flood Level 1"
-    elif first_digit == 5:
-        return "Flood Level 2"
-    elif first_digit == 6:
-        return "Flood Level 3"
-    else:
-        return "No Data"
-
-
-
-def prev_water_levels(request, hzb):
-
-    current_data = load_water_level_data()
-
-    #print(current_data)
-
-    with open(r"floodproject/historical_data/historical.json","r") as file:
-        plot_data = json.load(file)
-
-    hzb = str(hzb)
-    current_unit = ""
-
-    # extract current water levels from json request data
-    try:
-
-        for dict in current_data["features"]:
-            #print(f"first level {dict['properties']}")
-            if str(dict["properties"]["hzbnr"]) == hzb:
-                gesamtcode = dict["properties"]["gesamtcode"]
-                plot_data[hzb]["danger_level"] = build_code_response(gesamtcode)
-                plot_data[hzb]["current_value"] = dict["properties"]["wert"]
-                plot_data[hzb]["current_unit"] = dict["properties"]["einheit"]
-                current_unit = plot_data[hzb]["current_unit"]
-
-                # print(plot_data)
-
-                df = pd.DataFrame({
-                    'year': plot_data[hzb]["years"],
-                    'value': plot_data[hzb]["values"]
-                })
-
-                # Calculate all-time high and low
-                all_time_high = df['value'].max()
-                all_time_low = df['value'].min()
-
-                # Calculate median and quartiles
-                median_value = df['value'].median()
-                q1 = df['value'].quantile(0.25)
-                q3 = df['value'].quantile(0.75)
-
-                fig = px.line(df, x='year', y='value')
-
-                # Add all-time high and low to the plot
-                fig.add_hline(y=all_time_high, line_dash="dash", line_color="red", annotation_text="All-Time High",
-                              annotation_position="bottom right")
-                fig.add_hline(y=all_time_low, line_dash="dash", line_color="blue", annotation_text="All-Time Low",
-                              annotation_position="bottom right")
-
-                # Add median and quartiles to the plot
-                fig.add_hline(y=median_value, line_dash="dash", line_color="green", annotation_text="Median",
-                              annotation_position="bottom right")
-                fig.add_hline(y=q1, line_dash="dot", line_color="blue", annotation_text="Q1",
-                              annotation_position="bottom right")
-                fig.add_hline(y=q3, line_dash="dot", line_color="red", annotation_text="Q3",
-                              annotation_position="bottom right")
-
-
-                fig.update_layout(xaxis_title="years",
-                                  yaxis_title=f"level in {current_unit}",
-                                  modebar_remove=['pan','zoom'])
-
-                plot_data[hzb]["plot"] = plot(fig, output_type='div')
-
-
-                # Alternative way but with less options
-
-                # x_data = plot_data[hzb]["years"]
-                # y_data = plot_data[hzb]["values"]
-
-                # plot_div = plot([Scatter(x=x_data, y=y_data,
-                #
-                #                          mode='lines', name='historic_water_data',
-                #                          opacity=0.8, marker_color='green')],
-                #                 output_type='div')
-
-                # plot_data[hzb]["plot"] = plot_div
-
-
-                return render(request, "waterdetails.html", context={'plot_data': plot_data[hzb]})
-
-    except:
-
-        return render(request, "watererror.html")
-
-
-
 
 
 
