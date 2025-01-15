@@ -167,13 +167,5 @@
             </div>
         </div>
     </div>
-    <footer>
-        <div class="container-fluid">
-            {% if user.is_authenticated %}
-                <p>Hello {{ user.first_name }}, your role is {{ user.role}}</p>
-                <p>Notification count {{ notifications }}</p>
-            {% endif %}
-        </div>
-    </footer>
 </body>
 </html>
