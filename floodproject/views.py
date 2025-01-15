@@ -687,7 +687,7 @@ def check_reference(text, user_id, report_id):
             title = f"{current_user.first_name} {current_user.last_name} added a comment to a report"
             description = text
 
-            notification = Notification.ojects.create(title=title, description=description, user_id=subscription.user_id,
+            notification = Notification.objects.create(title=title, description=description, user_id=subscription.user_id,
                                         report_id=report_id)
             notification.save()
 
