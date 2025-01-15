@@ -597,7 +597,7 @@ def delete_report(request, id):
 
         for task in tasks:
             if task.status != Task.Status.DONE:
-                return HttpResponse("This Report cannot be deleted because of active tasks assigned to it.")
+                return render(request, "report_delete_error.html")
 
         report.delete()
         return render(request, "report_delete_success.html")
