@@ -10,7 +10,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self.db)
         return user
 
-    def create_superuser(self, email, first_name, last_name, latitude, longitude, password=None, role = "admin"):
+    def create_superuser(self, email, first_name, last_name, latitude=47.7972, longitude=13.0477, password=None, role = "admin"):
         user = self.create_user(email = email, first_name = first_name, last_name = last_name, latitude=latitude, longitude=longitude, role = role)
         user.set_password(password)
         user.is_staff = True
@@ -74,12 +74,12 @@ class Task(models.Model):
     manager = models.ForeignKey(CustomUser, related_name='managed_tasks', on_delete=models.CASCADE)
     agent = models.ManyToManyField(CustomUser,related_name='agents_tasks')
     report = models.ForeignKey(Report,on_delete=models.CASCADE)
-    assignedDate = models.CharField(max_length=100)
-    dueDate = models.CharField(max_length=100)
+    assigned_date = models.CharField(max_length=100)
+    due_date = models.CharField(max_length=100)
     status = models.CharField(max_length=20,choices=Status.choices,default=Status.TO_DO)
 
     def __str__(self):
-        return f"{self.description} - {self.manager} - {self.agent} - {self.assignedDate} - {self.dueDate} - {self.status}"
+        return f"{self.description} - {self.manager} - {self.agent} - {self.assigned_date} - {self.due_date} - {self.status}"
 
 class Vote(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
@@ -89,7 +89,7 @@ class Vote(models.Model):
         default=0,
         validators=[
             MaxValueValidator(5),
-            MinValueValidator(1)
+            MinValueValidator(0)
         ]
     )
 
