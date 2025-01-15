@@ -311,37 +311,6 @@
             <p>No tasks assigned to you currently </p>
         {% endif %}
     {% elif not user.id %}
-        <p>Only agents and managers are able to see tasks</p>    
-        <form method="post" action="{% url 'create_task' report.id %}">
-            {% csrf_token %}
-
-            <!-- Task Description -->
-            <div class="mb-3">
-                <label for="task_description" class="form-label">Task Description</label>
-                <input type="text" class="form-control" id="task_description" name="description" placeholder="Enter task description" required>
-            </div>
-
-            <!-- Task Due Date -->
-            <div class="mb-3">
-                <label for="task_due_date" class="form-label">Due Date</label>
-                <input type="date" class="form-control" id="task_due_date" name="due_date" required>
-            </div>
-
-            <!-- Assign Agent -->
-            <div class="mb-3">
-                <label for="task_agent" class="form-label">Assign Agent</label>
-                <select name="agent" id="task_agent" class="form-select">
-                    <option value="" disabled selected>Select an agent</option>
-                    {% for agent in available_agents %}
-                        <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary">Create Task</button>
-        </form>
-        {% elif not user.id %}
         <p>Only agents and managers are able to see tasks</p>
         {% endif %}
     </div>
