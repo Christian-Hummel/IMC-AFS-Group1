@@ -82,19 +82,27 @@
                     </tr>
                     <tr>
                         <th>Manager</th>
-                        <td>{{ task.managerID.first_name }} {{ task.managerID.last_name }}</td>
+                        <td>{{ task.manager.first_name }} {{ task.manager.last_name }}</td>
                     </tr>
                     <tr>
                         <th>Report</th>
-                        <td>{{ task.reportID.title }}</td>
+                        <td>{{ task.report.title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Longitude</th>
+                        <td>{{ task.report.lon }}</td>
+                    </tr>
+                    <tr>
+                        <th>Latitude</th>
+                        <td>{{ task.report.lat }}</td>
                     </tr>
                     <tr>
                         <th>Assigned Date</th>
-                        <td>{{ task.assignedDate }}</td>
+                        <td>{{ task.assigned_date }}</td>
                     </tr>
                     <tr>
                         <th>Due Date</th>
-                        <td>{{ task.dueDate }}</td>
+                        <td>{{ task.due_date }}</td>
                     </tr>
                     <tr>
                         <th>Status</th>
@@ -118,6 +126,7 @@
 
 
             </table>
+            {% if task.status != "Done" %}
             <div class="container mt-5">
                 <h1>Assign Agents:</h1>
                 {% if available_agents %}
@@ -139,54 +148,43 @@
                 {% else %}
                         <p> There are no available agents to assign </p>
                 {% endif %}
+                </form>
+            </div>
+            {% elif task.status == "Done" %}
+            <div>
+                <strong>Change Status to assign agents</strong>
+            </div>
+            {% endif %}
+
+            <div class="container mt-5">
+                <h1>Promote Normal User to Agent:</h1>
+
+                    <form method="post" action="{% url 'send_email_invite' task.id %}">
+                        {% csrf_token %}
+                        <input type="email" name="email_address" class="form-control" placeholder="Enter email address">
+                        <button type="submit" class="btn btn-primary btn-sm">Send Email</button>
+                    </form>
+
             </div>
 
             <div class="container mt-5">
-                <h1>Promote Normal User:</h1>
-                {% if user %}
+                <h1>Assign New People to Task:</h1>
 
-                    <form method="post" action="{% url 'promote_user' task.id %}">
+                    <form method="post" action="{% url 'send_email_invite' task.id %}">
                         {% csrf_token %}
-                        <select name="user" id="user">
+                        <input type="email" name="email_address" class="form-control" placeholder="Enter email address">
+                        <button type="submit" class="btn btn-primary btn-sm">Send Email</button>
+                    </form>
 
-                            {% for u in user %}
-                                <option value="{{ u.id }}">{{ u.first_name }} {{ u.last_name }}</option>
-                            {% empty %}
-                                <option>No available users</option>
-                            {% endfor %}
-
-
-
-                        </select>
-                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
-                {% else %}
-                        <p> There are no available agents to assign </p>
-                {% endif %}
-            </div>
-
-            <div class="container mt-5">
-                <h1>Invite New People:</h1>
-                {% if available_agents %}
-
-                    <form method="post" action="{% url 'update_task_agents' task.id %}">
-                        {% csrf_token %}
-                        <select name="agent" id="agent">
-
-                            {% for agent in available_agents %}
-                                <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
-                            {% empty %}
-                                <option>No available agents</option>
-                            {% endfor %}
-
-
-
-                        </select>
-                    <button type="submit" id="update_task_agents" class="btn btn-primary btn-sm">Update</button>
-                {% else %}
-                        <p> There are no available agents to assign </p>
-                {% endif %}
             </div>
     </div>
-
+    {% if assigned_agents %}
+    <div class="container mt-5">
+        <h1>Currently assigned to this task:</h1>
+        {% for agent in assigned_agents %}
+        <strong>{{ agent.first_name }} {{ agent.last_name }}</strong>
+        {% endfor %}
+    {% endif %}
+    </div>
 </body>
 </html>
