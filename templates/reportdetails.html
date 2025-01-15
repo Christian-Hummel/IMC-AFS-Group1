@@ -1,28 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %} <!-- necessary to connect to CSS in django -->
     <meta charset="UTF-8">
     <title>{{ report.title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    {% load static %} <!-- necessary to connect to CSS in django -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> <!-- for icons -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 
-<script src={% static 'js/report.js' %}></script>
-
 
 <body>
+
+<script src={% static 'js/jquery-3.7.1.min.js' %}></script>
+
+<!-- jquery -needed for asynchronous calls (update thread comments) -->
+
+
+<script src={% static 'js/report.js' %}></script>
+
+<!-- url of current report with different paths passed to javascript file -->
+
+<script>
+    var submitUrl = '{% url 'submit_comment' report.id%}'
+    var subscribeUrl = '{% url 'toggle_subscribe' report.id%}'
+</script>
+
 
 <!-- request id and role of current user -->
 {{ request.user.id|json_script:"user_id" }}
 {{ request.user.role|json_script:"user_role" }}
 
+<!-- subscription list for manager check -->
+{{ subscriptions |json_script:"subscriptions" }}
+
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'main' %}">Home</a>
+            <div class="navbar-logo-container">
+                <a class="navbar-brand" href="#">
+                    <img src="{% static 'img/logo.png' %}" alt="Logo" class="navbar-logo">
+                </a>
+            </div>
+            {% if user.is_authenticated and user.role == 'agent' %}
+                <a class="navbar-brand" href="{% url 'agent_tasks' %}">Tasks</a>
+            {% elif user.is_authenticated and user.role == 'manager' %}
+                <a class="navbar-brand" href="{% url 'manager_tasks' %}">Tasks</a>
+            {% endif %}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -33,6 +61,16 @@
                         <i class="fas fa-plus me-2"></i> New Report
                     </a>
                     </li>
+                        {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="button" href="{% url 'profile' %}">
+                            {% if notifications > 0 %}
+                            <span class="badge bg-danger position-absolute m-1 start-100 translate-middle"> {{ notifications }}</span>
+                            {% endif %}
+                        <i class="fa-solid fa-circle-user me-2"></i> Profile
+                        </a>
+                    </li>
+                        {% endif %}
                     <li class="nav-item">
                         {% if not user.is_authenticated %}
                         <a class="nav-link" href="{% url 'login' %}">Login</a>
@@ -48,7 +86,7 @@
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button class="btn-logout" type="submit">logout</button>
+                        <button class="btn btn-blue position-relative d-flex align-items-center me-3 py-2 px-4" type="submit">logout</button>
                         </form>
                     </li>
                     {% endif %}
@@ -61,7 +99,20 @@
 
 
 
+
+
+
+
 <div class="report-container" id="report-container">
+    <div class="button-container" id="button-container">
+        <button id="detailsbutton" class="active" onclick="toggleTabs('details')">Details</button>
+        <button id="commentsbutton" onclick="toggleTabs('comments')">Comments</button>
+        <button id="tasksbutton" onclick="toggleTabs('tasks')">Tasks</button>
+    </div>
+
+
+    <!-- Tab for report details -->
+<div id="details" class="details" style="display: block">
 
     <div class="row">
         <div class="col-md-8">
@@ -79,15 +130,31 @@
             src="{{ report.picture.url }}"
             alt="{{ report.picture_description }}"
     />
+        <br>
+        <br>
     {% endif %}
-    <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
+
+
+
+        {% if user.role in priority and not user.id in subscriptions and not report.user_id is user.id or user.id and user.id not in subscriptions and not report.user_id is user.id %}
+        <button id="subscribe" class="btn btn-blue" onclick="toggleSubscribe()">Subscribe</button>
+        <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
+        {% elif user.id in subscriptions and not report.user_id is user.id %}
+        <button id="unsubscribe" class="btn btn-blue" onclick="toggleSubscribe()">Unsubscribe</button>
+        <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
+        {% endif %}
+
+        <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
+        {% if user.id == report.user_id or user.role in priority %}
+        <a href="{% url 'delete-report' report.id %}" class="btn btn-danger">Delete Report</a>
+        {% endif %}
 
         </div>
         <div class="col-md-4">
 
 
 <!-- if condition for peer review functionality -->
-  {% if not user.id in users and not report.user_id is user.id %}
+  {% if not user.id in users and not report.user_id is user.id%}
         <form id="reportvote" class="reportvote" method="post" action="{% url 'process-vote-entry' report.id%}">
             {% csrf_token %}
             <select id="severityselect" name="severityselect" hidden="hidden">
@@ -100,7 +167,7 @@
             </select>
             <label id="checklabel" class="checkbox"><input type="hidden" id="invcheck" name="invcheck" value="False"></label>
             <p></p>
-            <button id="vsubmit" hidden="hidden">Submit Review</button>
+            <button id="vsubmit" class="btn btn-secondary" hidden="hidden">Submit Review</button>
         </form>
     {% elif user.id in users %}
         <p>Severity score previously issued: <strong>{{ current_severity }}</strong></p>
@@ -116,35 +183,139 @@
                     <option value="4">Critical Level</option>
             </select>
             <label id="checklabel" class="checkbox"><input type="hidden" id="invcheck" name="invcheck" value="False"></label>
-            <p></p>
-            <button id="vsubmit" hidden="hidden">Confirm Changes</button>
+            <br>
+            <button id="vsubmit" class="btn btn-secondary" hidden="hidden">Confirm Changes</button>
         </form>
 
     {% endif %}
-        <p></p>
-        {#{%  if user.role is "manager" %}#}
-        <button id="showstats" onclick="showVotestats()">Show rating statistics</button>
+        <br>
+        {% if user.role in priority %}
+        <button id="showstats" class="btn btn-secondary" onclick="showVotestats()">Show rating statistics</button>
         <div id="votestats" class="votestats" style="display: none">
         Number of Reviews:<strong> {{ votestats.num_ratings }}</strong>
         <br>Total severity rating:<strong> {{ votestats.total_rating }}</strong></br>
         Flagged by <strong>{{ votestats.flag_count }}</strong> Users
         </div>
-{#{% endif %}#}
+        {% endif %}
 
     </div>
-
 </div>
 </div>
 
-<!-- if condition to check for certain values in a list or table contents -->
-<!-- try calling Vote objects in views.py, extract them into lists, add them as key, value pair to context -->
 
 
+<!-- Tab for report comments -->
+<div id="comments" class="comments" style="display: none">
+    {% if user.id in subscriptions or user.role in priority %}
+
+    <!-- option for creating a comment-->
+    <form id="submitcomment" method="post">
+        {% csrf_token %}
+        <label for="textcomment" class="form-label"></label>
+        <textarea id="textcomment" name="textcomment" rows="4" cols="50" placeholder="Enter your Comment"></textarea>
+        <br>
+        <button type="submit" name="submit" class="btn btn-primary">Submit</button>    </form>
+    <!-- hidden input with number of comments as value -->
+    <input id="ccount" name="ccount" value="{{ comments | length }}" hidden="hidden">
 
 
+    {% if not comments %}
+        <p id="comment-error">No comments yet</p>
+    {% else %}
+    <!-- Display comments with header -->
+    {% for comment in comments %}
+    <div class="comment">
+    <div class="comment-header">
+        <span class="font-weight-bold">{{ comment.username }}</span> &middot;
+ 		<span class="text-muted">{{ comment.date }}</span>
+    </div>
+    <div class="comment-body">
+        {{ comment.comment | safe }}
+    </div>
+    </div>
+        <br>
+    {% endfor %}
+    {% endif %}
+    {% elif not user.id %}
+    <p>Please log in to write a comment</p>
+    {% elif user.id not in subscriptions %}
+    <p>Please subscribe to view comments</p>
+    {% endif %}
 
 
-
+</div>
+<!-- Tab for Task Creation -->
+<div id="tasks" class="tasks" style="display: none;">
+    {% if user.id and user.role in priority %}
+    <div class="container mt-5">
+        <h2>Create Task for this Report</h2>
+                            <form method="post" action="{% url 'create_task' report.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="description" name="description" placeholder="Enter the Description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assigned_date" class="form-label">Task Assigned Date</label>
+                            <input type="date" class="form-control" id="assigned_date" name="assigned_date" placeholder="Enter the assigned date"  required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="due_date" class="form-label">Task Due Date</label>
+                            <input type="date" class="form-control" id="due_date" name="due_date" placeholder="Enter the due date"  required>
+                        </div>
+                        <input type="hidden" name="manager_id" value="{{ user.id }}">
+                        <div class="mb-3">
+                            <label for="agent" class="form-label">Assign Agent</label>
+                            <select name="agent" id="agent" class="form-select" required>
+                                <option value="" disabled selected>Select an agent</option>
+                                {% for agent in agents %}
+                                    <option value="{{ agent.id }}">{{ agent.first_name }} {{ agent.last_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Task</button>
+                    </form>
+    {% elif user.id and user.role == "agent" %}
+        {% if tasks %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Manager</th>
+                        <th>Assigned Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.description }}</td>
+                        <td>{{ task.manager.first_name }} {{ task.manager.last_name }}</td>
+                        <td>{{ task.assigned_date }}</td>
+                        <td>{{ task.due_date }}</td>
+                        <td>{{ task.status }}</td>
+                        <td>
+                        {% if task.status == 'In Progress' %}
+                            <form method="post" action="{% url 'change_status' task.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm">Mark as Done</button>
+                            </form>
+                        {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No tasks assigned to you currently </p>
+        {% endif %}
+    {% else %}
+        <p>Only agents and managers are able to see tasks</p>
+        {% endif %}
+    </div>
+</div>
+</div>
 
 
 
