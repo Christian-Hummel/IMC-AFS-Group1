@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %} <!-- necessary to connect to CSS in django -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error 500</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"> <!-- for icons -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body>
+    <h1>Report cannot be deleted</h1>
+    <p>This Report cannot be deleted because of active tasks assigned to it.</p>
+    <p>For more information contact the corresponding emergency response Manager </p>
+    <a class="btn btn-blue" type="button" href="{% url 'main' %}">Back to Home</a>
+</body>
+</html>
