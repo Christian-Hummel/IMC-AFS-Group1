@@ -138,10 +138,10 @@
 
         {% if user.role in priority and not user.id in subscriptions and not report.user_id is user.id or user.id and user.id not in subscriptions and not report.user_id is user.id %}
         <button id="subscribe" class="btn btn-blue" onclick="toggleSubscribe()">Subscribe</button>
-        <button id="unsubscribe" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
+        <button id="unsubscribe" class="btn btn-blue" style="display: none" onclick="toggleSubscribe()">Unsubscribe</button>
         {% elif user.id in subscriptions and not report.user_id is user.id %}
         <button id="unsubscribe" class="btn btn-blue" onclick="toggleSubscribe()">Unsubscribe</button>
-        <button id="subscribe" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
+        <button id="subscribe" class="btn btn-blue" style="display: none" onclick="toggleSubscribe()">Subscribe</button>
         {% endif %}
 
         <a href="{% url 'main' %}" class="btn btn-secondary">Back to Map</a>
