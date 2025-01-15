@@ -516,11 +516,12 @@ def report_details(request, id):
     report = Report.objects.get(id=id)
     available_agents = CustomUser.objects.filter(role='agent').exclude(agents_tasks__report=report)
     agents = CustomUser.objects.filter(role='agent')
-    tasks = Task.objects.filter(agent=request.user, report=report.id)
     subscriptions = [subscription.user_id for subscription in Subscription.objects.filter(report_id=id, active=True)]
 
 
     if request.user.id:
+
+        tasks = Task.objects.filter(agent=request.user, report=report.id)
 
         # fetch Vote model from database
         all_report_votes = Vote.objects.filter(report_id=id)
@@ -547,19 +548,18 @@ def report_details(request, id):
         votestats["total_rating"] = sum([int(review.rating) for review in all_report_votes])
         votestats["flag_count"] = len([review.validity for review in all_report_votes if review.validity == False])
 
-        context["report"] = report
+
         context["available_agents"] = available_agents
         context["agents"] = agents
-        context["tasks"] = tasks
         context["subscriptions"] = subscriptions
+        context["tasks"] = tasks
         context["priority"] = ["manager", "admin"]
         context["users"] = users
         context["comments"] = all_comments
         context["notifications"] = notifications
         context["votestats"] = votestats
 
-
-
+    context["report"] = report
 
 
 
