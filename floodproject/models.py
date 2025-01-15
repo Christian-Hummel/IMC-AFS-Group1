@@ -26,7 +26,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         MANAGER = 'manager', 'Manager'
         ADMIN = 'admin', 'Admin'
     id = models.AutoField(primary_key=True)
-    email = models.EmailField(unique=True,)
+    email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     latitude = models.FloatField(max_length=10, default=47.4231277, null=False, blank=False)
