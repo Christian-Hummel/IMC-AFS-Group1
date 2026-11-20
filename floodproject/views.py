@@ -70,9 +70,10 @@ def register(request):
         try:
             getLoc = loc.geocode(address)
         except GeocoderServiceError:
+            logger.warning("Registration address lookup failed.")
             messages.error(
                 request,
-                "Address lookup is temporarily unavailable. Check your internet connection and try again.",
+                "We couldn't look up this address right now. Please try again later.",
             )
             return render(
                 request,
@@ -82,7 +83,10 @@ def register(request):
 
         # Works only partially - many invalid cases will get some values assigned
         if not getLoc:
-            messages.error(request, "Address not found. Please check the address and try again.")
+            messages.error(
+                request,
+                "We couldn't find this address. Check the spelling and include the town or postcode.",
+            )
             return render(
                 request,
                 "register.html",

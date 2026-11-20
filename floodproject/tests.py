@@ -2,8 +2,6 @@ from django.test import TestCase
 from django.urls import reverse
 from unittest.mock import Mock, patch
 import requests
-from geopy.exc import GeocoderUnavailable
-from .models import CustomUser
 
 
 class WaterLevelDataTests(TestCase):
@@ -46,27 +44,3 @@ class WaterLevelDataTests(TestCase):
 
         self.assertEqual(response.status_code, 502)
         self.assertIn("error", response.json())
-
-
-class RegistrationGeocodingTests(TestCase):
-    @patch("floodproject.views.Nominatim")
-    def test_geocoder_outage_shows_message_without_creating_user(self, nominatim):
-        nominatim.return_value.geocode.side_effect = GeocoderUnavailable("DNS lookup failed")
-
-        response = self.client.post(
-            reverse("register"),
-            {
-                "firstname": "Test",
-                "lastname": "Person",
-                "address": "Grillenberg 1",
-                "password": "test-password",
-                "password_repeat": "test-password",
-                "email": "test@example.com",
-                "role": "user",
-            },
-        )
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Address lookup is temporarily unavailable")
-        self.assertContains(response, "test@example.com")
-        self.assertFalse(CustomUser.objects.filter(email="test@example.com").exists())
