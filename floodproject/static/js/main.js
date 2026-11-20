@@ -131,7 +131,12 @@ function initializeMap() {
 
 function fetchWaterLevelData(waterLevelCluster, autmap) {
     fetch('/water-levels/')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Water-level request failed with status ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
 
             // Create GeoJSON layer and add markers to the cluster
@@ -140,15 +145,9 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                     // color-coding for water levels markers
                     let gesamtcode = feature.properties.gesamtcode;
                     let color = getColor(gesamtcode); // Get color based on the gesamtcodes first digit
-                    
-                    // Parse the lon and lat from the feature properties
-                    let lon = parseFloat(feature.properties.lon.replace(",", "."));
-                    let lat = parseFloat(feature.properties.lat.replace(",", "."));
 
-                    if (!isNaN(lon) && !isNaN(lat)) {
-                        
-                        // Create and retutn the circle marker
-                        return L.circleMarker([lat, lon], {
+                    if (Number.isFinite(latlng.lat) && Number.isFinite(latlng.lng)) {
+                        return L.circleMarker(latlng, {
                             radius: 8,
                             fillColor: color,
                             color: '#000',
@@ -156,9 +155,7 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                             opacity: 1,
                             fillOpacity: 0.8,
                         });
-                        
                     }
-                    // console.warn("Invalid coordinates for feature:", feature);
                     return null; // Skip invalid markers
                 },
 
@@ -170,7 +167,7 @@ function fetchWaterLevelData(waterLevelCluster, autmap) {
                             <strong>Water body:</strong> ${feature.properties.gewaesser || "N/A"} <br>
                             <strong>Amount:</strong> ${feature.properties.wert || "N/A"} ${feature.properties.einheit} <br>
                             <strong>Trend:</strong> ${trend} <br>
-                            <strong>Time:</strong> ${feature.properties.zeitpunkt || "N/A"} <br>
+                            <strong>Time:</strong> ${feature.properties.zeitpunkt || feature.properties.zp || "N/A"} <br>
                             <strong>More info:</strong> <a href="${feature.properties.internet}" target="_blank">Details</a> <br>
                                 <a href="/water-levels/${feature.properties.hzbnr}" style="margin-left: 1.8cm;">Previous Levels</a> 
                         `;

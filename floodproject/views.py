@@ -8,12 +8,29 @@ from django.core import serializers
 from .models import Report, Vote, CustomUser, Comment, Subscription, Task, Notification
 import requests
 import json
+import logging
 from geopy.geocoders import Nominatim
 import pandas as pd
 from plotly.offline import plot
 import plotly.express as px
 import yagmail
 from django.urls import reverse
+from geopy.exc import GeocoderServiceError
+
+
+logger = logging.getLogger(__name__)
+
+WATER_LEVEL_DATA_SOURCES = (
+    (
+        "legacy WFS",
+        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell",
+    ),
+    ("eHYD", "https://ehyd.gv.at/services/PegelAktuell/json"),
+)
+
+
+class WaterLevelDataUnavailable(Exception):
+    pass
 
 
 # Create your views here.
@@ -50,11 +67,27 @@ def register(request):
         loc = Nominatim(user_agent="Geopy Library")
 
         # entering the location name
-        getLoc = loc.geocode(address)
+        try:
+            getLoc = loc.geocode(address)
+        except GeocoderServiceError:
+            messages.error(
+                request,
+                "Address lookup is temporarily unavailable. Check your internet connection and try again.",
+            )
+            return render(
+                request,
+                "register.html",
+                {"email_prefill": email, "role_prefill": role},
+            )
 
         # Works only partially - many invalid cases will get some values assigned
         if not getLoc:
-            return HttpResponse("Address not found")
+            messages.error(request, "Address not found. Please check the address and try again.")
+            return render(
+                request,
+                "register.html",
+                {"email_prefill": email, "role_prefill": role},
+            )
 
         # printing address
         lng = getLoc.longitude
@@ -199,30 +232,36 @@ def login(request):
 
 
 def water_level_data(request):
-    # URL to fetch the water levels in GeoJSON format
-    wfs_url = (
-        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
-    )
+    try:
+        data = load_water_level_data()
+    except WaterLevelDataUnavailable:
+        return JsonResponse(
+            {"error": "Current water-level data is temporarily unavailable."},
+            status=502,
+        )
 
-    # Get the data from the WFS URL
-    response = requests.get(wfs_url)
-    data = response.json()  # GeoJSON data
-
-    ################## Space for optional Data processing before sending it to frontend ##################
-
-    return JsonResponse(data)  # Return the data as a JSON response to the frontend
-
+    return JsonResponse(data)
 
 
 def load_water_level_data():
-    # URL to fetch the water levels in GeoJSON format
-    wfs_url = (
-        "https://gis.lfrz.gv.at/wmsgw/?key=a64a0c9c9a692ed7041482cb6f03a40a&request=GetFeature&service=WFS&version=2.0.0&outputFormat=json&typeNames=inspire:pegelaktuell"
-    )
-    # Get the data from the WFS URL
-    response = requests.get(wfs_url)
-    data = response.json()  # GeoJSON data
-    return data
+    failures = []
+    for source_name, url in WATER_LEVEL_DATA_SOURCES:
+        try:
+            response = requests.get(url, timeout=15)
+            response.raise_for_status()
+            data = response.json()
+            if not isinstance(data, dict) or not isinstance(data.get("features"), list):
+                raise ValueError("Response is not a GeoJSON feature collection")
+            if source_name != WATER_LEVEL_DATA_SOURCES[0][0]:
+                logger.info("Using %s as the current water-level data source", source_name)
+            return data
+        except (requests.RequestException, ValueError) as exc:
+            logger.warning("Current water-level source %s failed: %s", source_name, exc)
+            failures.append(exc)
+
+    raise WaterLevelDataUnavailable(
+        "All current water-level data sources failed."
+    ) from failures[-1]
 
 
 def build_code_response(code_nr):
